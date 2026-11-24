@@ -48,7 +48,7 @@
     --shadow: 0 10px 28px rgba(0, 0, 0, .13);
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth !important; }
   body { margin: 0; min-width: 320px; background: var(--bg); color: var(--ink); font-family: var(--font); letter-spacing: .005em; transition: background .2s ease, color .2s ease; }
   button, input, select { font: inherit; }
   button { cursor: pointer; }
@@ -62,19 +62,206 @@
   .brand-tagline { color: var(--muted); font-size: 10px; margin-top: 3px; }
   .top-date { text-align: right; color: var(--muted); font-size: 11px; line-height: 1.6; }
   .top-date strong { display: block; color: var(--ink); font-size: 13px; font-weight: 650; }
-  .timer-card { position: relative; z-index: 2; isolation: isolate; overflow: visible; min-height: 300px; padding: 23px 24px 22px; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--timer-bg); color: var(--timer-ink); box-shadow: var(--shadow); }
+  .timer-card { --timer-label-color: var(--accent); position: relative; z-index: 2; isolation: isolate; overflow: visible; min-height: 300px; padding: 23px 24px 22px; border: 1px solid var(--line); border-color: color-mix(in srgb, var(--line) 82%, var(--timer-label-color)); border-radius: var(--radius-xl); background: var(--timer-bg); background: color-mix(in srgb, var(--timer-bg) 88%, var(--timer-label-color)); color: var(--timer-ink); box-shadow: var(--shadow); transition: background .48s ease, border-color .48s ease, box-shadow .35s ease; }
   .timer-card::before { content: ""; position: absolute; z-index: -1; width: 260px; height: 260px; top: 40px; left: 50%; transform: translateX(-50%); border: 1px solid color-mix(in srgb, var(--timer-ink) 8%, transparent); border-radius: 50%; pointer-events: none; }
-  .timer-head { display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+  .timer-ambient { position: absolute; z-index: 0; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; opacity: 1; contain: paint; }
+  /* Only a few fine streamlines remain; there is no painted river or water-surface wash. */
+  .river-current-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    overflow: hidden; pointer-events: none;
+    color: color-mix(in srgb, var(--ambient-color, var(--accent)) 30%, var(--timer-ink));
+    opacity: .52;
+  }
+  .river-flow-group { transform-box: fill-box; transform-origin: center; will-change: transform; }
+/* Dappled canopy shadows drift over the current, as if trees line both riverbanks. */
+  .dapple-sun {
+    position:absolute; inset:-18%; pointer-events:none; opacity:.24;
+    background:
+      radial-gradient(ellipse 18% 28% at 18% 26%, rgba(255,249,222,.66) 0%, transparent 78%),
+      radial-gradient(ellipse 22% 24% at 76% 68%, rgba(255,248,222,.52) 0%, transparent 80%),
+      radial-gradient(ellipse 16% 22% at 56% 18%, rgba(255,255,236,.44) 0%, transparent 80%);
+    filter:blur(13px);
+    animation:dapple-light-drift 31s ease-in-out infinite alternate;
+    will-change:transform, background-position;
+  }
+  .dapple-spots {
+    position:absolute; inset:-24%; pointer-events:none; opacity:.19;
+    background:
+      radial-gradient(ellipse 8% 13% at 15% 42%, rgba(255,253,231,.84) 0%, transparent 78%),
+      radial-gradient(ellipse 11% 9% at 37% 21%, rgba(255,250,218,.72) 0%, transparent 82%),
+      radial-gradient(ellipse 7% 12% at 62% 59%, rgba(255,255,239,.76) 0%, transparent 80%),
+      radial-gradient(ellipse 12% 8% at 83% 34%, rgba(255,246,215,.70) 0%, transparent 82%),
+      radial-gradient(ellipse 9% 14% at 48% 82%, rgba(255,253,231,.68) 0%, transparent 82%);
+    background-size:145% 140%, 150% 160%, 155% 145%, 145% 155%, 160% 145%;
+    background-position:0% 35%, 100% 0%, 20% 100%, 75% 45%, 45% 10%;
+    filter:blur(8px);
+    animation:dapple-spots-drift 39s cubic-bezier(.43,0,.57,1) infinite alternate;
+    will-change:transform, background-position, opacity;
+  }
+  .canopy-shadow-svg {
+    position:absolute; inset:-5% -4%; width:108%; height:110%;
+    overflow:hidden; pointer-events:none; color:rgba(47,57,43,.72);
+    opacity:.42; mix-blend-mode:multiply; filter:blur(2.8px);
+  }
+  .canopy-shadow-group { transform-box:fill-box; transform-origin:center; will-change:transform; }
+  /* Distant canopy is softer and slower; the near branch is larger and has a clearer edge. */
+  .canopy-shadow-a { animation:canopy-sway-a 27s ease-in-out infinite alternate; filter:blur(5px); }
+  .canopy-shadow-b { animation:canopy-sway-b 34s ease-in-out infinite alternate; filter:blur(3.8px); }
+  .canopy-shadow-c { animation:canopy-sway-c 30s ease-in-out infinite alternate; filter:blur(6px); }
+  .canopy-shadow-d { animation:canopy-sway-d 39s ease-in-out infinite alternate; filter:blur(2.4px); }
+  .canopy-branch { fill:none; stroke:currentColor; stroke-width:8; stroke-linecap:round; opacity:.64; }
+  .canopy-twig { fill:none; stroke:currentColor; stroke-width:4.2; stroke-linecap:round; opacity:.48; }
+  .canopy-leaf { fill:currentColor; opacity:.68; }
+  .cloud-veil {
+    position:absolute; inset:-22% -35%; pointer-events:none; opacity:.12;
+    background:linear-gradient(108deg, transparent 8%, rgba(92,101,97,.03) 29%, rgba(88,99,99,.23) 48%, rgba(94,99,91,.11) 62%, transparent 87%);
+    background-size:180% 100%; background-position:-20% 50%;
+    filter:blur(23px); mix-blend-mode:multiply;
+    animation:cloud-cover-drift 74s ease-in-out infinite alternate;
+    will-change:transform, background-position, opacity;
+  }
+  [data-theme="dark"] .dapple-sun { opacity:.13; }
+  [data-theme="dark"] .dapple-spots { opacity:.12; }
+  [data-theme="dark"] .cloud-veil { opacity:.10; mix-blend-mode:screen; background:linear-gradient(108deg, transparent 8%, rgba(12,20,24,.02) 29%, rgba(9,18,24,.34) 48%, rgba(17,24,27,.16) 62%, transparent 87%); }
+  [data-theme="dark"] .canopy-shadow-svg { color:rgba(213,221,195,.58); opacity:.20; mix-blend-mode:screen; filter:blur(4.8px); }
+  .timer-card[data-ambient-strength="subtle"] .dapple-spots { opacity:.20; }
+  .timer-card[data-ambient-strength="balanced"] .dapple-spots { opacity:.27; }
+  .timer-card[data-ambient-strength="rich"] .dapple-spots { opacity:.34; }
+  .timer-card[data-ambient-strength="subtle"] .cloud-veil { opacity:.12; }
+  .timer-card[data-ambient-strength="balanced"] .cloud-veil { opacity:.17; }
+  .timer-card[data-ambient-strength="rich"] .cloud-veil { opacity:.22; }
+  .timer-card[data-ambient-strength="subtle"] .canopy-shadow-svg { opacity:.34; }
+  .timer-card[data-ambient-strength="balanced"] .canopy-shadow-svg { opacity:.43; }
+  .timer-card[data-ambient-strength="rich"] .canopy-shadow-svg { opacity:.51; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="subtle"] .canopy-shadow-svg { opacity:.19; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="balanced"] .canopy-shadow-svg { opacity:.26; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="rich"] .canopy-shadow-svg { opacity:.33; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="subtle"] .dapple-spots { opacity:.11; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="balanced"] .dapple-spots { opacity:.15; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="rich"] .dapple-spots { opacity:.20; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="subtle"] .cloud-veil { opacity:.08; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="balanced"] .cloud-veil { opacity:.12; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="rich"] .cloud-veil { opacity:.16; }
+  @keyframes dapple-spots-drift {
+    0% { transform:translate3d(-3%,-2%,0) scale(.98); background-position:0% 35%,100% 0%,20% 100%,75% 45%,45% 10%; opacity:.72; }
+    38% { transform:translate3d(2%,3%,0) scale(1.035); background-position:65% 80%,24% 52%,88% 25%,18% 90%,76% 34%; opacity:1; }
+    72% { transform:translate3d(4%,-1%,0) scale(1.015); background-position:100% 8%,0% 100%,45% 0%,56% 14%,8% 86%; opacity:.82; }
+    100% { transform:translate3d(-2%,2%,0) scale(1.04); background-position:26% 100%,78% 20%,0% 64%,100% 62%,58% 0%; opacity:.94; }
+  }
+  @keyframes cloud-cover-drift {
+    0% { transform:translate3d(-8%,0,0) scale(1); background-position:-20% 50%; opacity:.55; }
+    42% { transform:translate3d(1%,1%,0) scale(1.025); background-position:46% 50%; opacity:1; }
+    74% { transform:translate3d(7%,-1%,0) scale(1.015); background-position:84% 50%; opacity:.48; }
+    100% { transform:translate3d(12%,0,0) scale(1.02); background-position:120% 50%; opacity:.82; }
+  }
+  @keyframes canopy-sway-d {
+    0% { transform:translate3d(9px,-4px,0) rotate(1.2deg) scale(1.02); }
+    47% { transform:translate3d(-7px,6px,0) rotate(-1.1deg) scale(1.04); }
+    100% { transform:translate3d(-15px,-2px,0) rotate(.7deg) scale(1.01); }
+  }
+  @keyframes dapple-light-drift {
+    0% { transform:translate3d(-2%,-1%,0) scale(1); background-position:0% 20%,100% 80%,45% 0%; }
+    50% { transform:translate3d(2%,2%,0) scale(1.04); background-position:50% 70%,35% 20%,80% 55%; }
+    100% { transform:translate3d(4%,-2%,0) scale(1.02); background-position:100% 35%,0% 65%,15% 100%; }
+  }
+  @keyframes canopy-sway-a {
+    0% { transform:translate3d(-10px,-4px,0) rotate(-1.8deg); }
+    50% { transform:translate3d(7px,5px,0) rotate(1.2deg); }
+    100% { transform:translate3d(13px,-3px,0) rotate(-.6deg); }
+  }
+  @keyframes canopy-sway-b {
+    0% { transform:translate3d(9px,4px,0) rotate(1.3deg); }
+    48% { transform:translate3d(-8px,-5px,0) rotate(-1.6deg); }
+    100% { transform:translate3d(-14px,3px,0) rotate(.8deg); }
+  }
+  @keyframes canopy-sway-c {
+    0% { transform:translate3d(-6px,4px,0) rotate(-1deg) scale(1); }
+    54% { transform:translate3d(8px,-5px,0) rotate(1.5deg) scale(1.02); }
+    100% { transform:translate3d(11px,3px,0) rotate(-.6deg) scale(1.01); }
+  }
+  .river-flow-a { animation: river-line-sway-a 34s ease-in-out infinite alternate; }
+  .river-flow-b { animation: river-line-sway-b 41s ease-in-out infinite alternate; }
+  .river-flow-c { animation: river-line-sway-c 37s ease-in-out infinite alternate; }
+  .river-flow-line {
+    fill: none; stroke: currentColor; stroke-width: 1.25;
+    stroke-linecap: round; opacity: .16;
+  }
+  .river-flow-trace {
+    fill: none; stroke: currentColor; stroke-width: 1.55;
+    stroke-linecap: round; stroke-dasharray: 42 180;
+    opacity: .25; animation: river-line-drift-a 28s linear infinite;
+  }
+  .river-flow-trace.trace-b {
+    stroke-width: 1.35; stroke-dasharray: 28 205; opacity: .20;
+    animation-name: river-line-drift-b; animation-duration: 35s;
+  }
+  .river-flow-trace.trace-c {
+    stroke-width: 1.2; stroke-dasharray: 34 230; opacity: .18;
+    animation-name: river-line-drift-c; animation-duration: 32s;
+  }
+  [data-theme="dark"] .river-current-svg {
+    color: color-mix(in srgb, var(--ambient-color, var(--accent)) 34%, #dce9e7);
+    opacity: .58;
+  }
+  [data-theme="dark"] .river-flow-line { opacity: .15; }
+  [data-theme="dark"] .river-flow-trace { opacity: .24; }
+  .timer-card[data-ambient-strength="subtle"] .river-current-svg { opacity: .37; }
+  .timer-card[data-ambient-strength="balanced"] .river-current-svg { opacity: .52; }
+  .timer-card[data-ambient-strength="rich"] .river-current-svg { opacity: .65; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="subtle"] .river-current-svg { opacity: .40; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="balanced"] .river-current-svg { opacity: .56; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="rich"] .river-current-svg { opacity: .68; }
+  /* The fine flow animation always runs, including when the OS requests reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .timer-card .river-flow-group,
+    .timer-card .river-flow-trace,
+    .timer-card .canopy-shadow-group,
+    .timer-card .dapple-sun,
+    .timer-card .dapple-spots,
+    .timer-card .cloud-veil {
+      animation-play-state: running !important;
+    }
+  }
+  /* The app's own OFF switch pauses the background even when OS reduced-motion is ignored. */
+  .timer-card.ambient-disabled .timer-ambient { opacity: 0; }
+  .timer-card.ambient-disabled .river-flow-group,
+  .timer-card.ambient-disabled .river-flow-trace,
+  .timer-card.ambient-disabled .canopy-shadow-group,
+  .timer-card.ambient-disabled .dapple-sun,
+  .timer-card.ambient-disabled .dapple-spots,
+  .timer-card.ambient-disabled .cloud-veil {
+    animation-play-state: paused !important;
+    will-change: auto;
+  }
+  @keyframes river-line-drift-a { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -222; } }
+  @keyframes river-line-drift-b { from { stroke-dashoffset: -90; } to { stroke-dashoffset: -315; } }
+  @keyframes river-line-drift-c { from { stroke-dashoffset: -180; } to { stroke-dashoffset: -420; } }
+  @keyframes river-line-sway-a {
+    0% { transform: translate3d(-7px, -2px, 0); }
+    52% { transform: translate3d(5px, 3px, 0); }
+    100% { transform: translate3d(9px, -1px, 0); }
+  }
+  @keyframes river-line-sway-b {
+    0% { transform: translate3d(6px, 2px, 0); }
+    48% { transform: translate3d(-5px, -3px, 0); }
+    100% { transform: translate3d(-8px, 2px, 0); }
+  }
+  @keyframes river-line-sway-c {
+    0% { transform: translate3d(-3px, 3px, 0); }
+    54% { transform: translate3d(4px, -2px, 0); }
+    100% { transform: translate3d(7px, 1px, 0); }
+  }
+  .timer-head { position: relative; z-index: 2; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
   .eyebrow { color: var(--timer-muted); font-size: 10px; letter-spacing: .12em; font-weight: 650; }
   .live-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 99px; background: color-mix(in srgb, var(--timer-ink) 6%, transparent); color: var(--timer-muted); font-size: 10px; }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--timer-muted); }
   .live-pill.active .live-dot { background: #78916a; animation: live-soft-pulse 2.6s ease-in-out infinite; }
   @keyframes live-soft-pulse { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
   .timer-stage { min-height: 192px; display: grid; place-items: center; position: relative; text-align: center; }
-  .clock-orbit { position: absolute; width: 248px; height: 248px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%; border: 1px solid color-mix(in srgb, var(--timer-ink) 9%, transparent); opacity: .75; }
+  .clock-orbit { z-index: 1; position: absolute; width: 248px; height: 248px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%; border: 1px solid color-mix(in srgb, var(--timer-ink) 9%, transparent); opacity: .75; }
   .clock-orbit::before { content: ""; position: absolute; inset: 15px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--timer-ink) 5%, transparent); }
   .clock-tick, .clock-hand, .clock-pin { display: none; }
-  .timer-content { position: relative; z-index: 1; padding-top: 5px; }
+  .timer-content { position: relative; z-index: 2; padding-top: 5px; }
   .timer-label-caption { color: var(--timer-muted); font-size: 11px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 7px; }
   .timer-caption-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; }
   .timer-label-caption:empty { display: none; }
@@ -104,7 +291,15 @@
   .label-picker.open .picker-chevron { transform: rotate(180deg); }
   .label-picker-menu { position: absolute; top: calc(100% + 8px); left: 0; z-index: 30; width: max(100%, 190px); max-width: min(240px, calc(100vw - 32px)); max-height: min(260px, 42vh); overflow: auto; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 38px rgba(58, 43, 31, .16); transform-origin: top left; animation: picker-soft-open .2s cubic-bezier(.2,.7,.25,1) both; overscroll-behavior: contain; }
   .label-picker-menu[hidden] { display: none !important; }
+  .label-picker-menu.label-picker-portal { position: fixed !important; z-index: 10001 !important; margin: 0; }
+  .label-picker-submenu { position: fixed; z-index: 10002; max-height: min(260px, 42vh); overflow: auto; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 38px rgba(58, 43, 31, .16); overscroll-behavior: contain; transform-origin: top left; animation: submenu-soft-open .18s cubic-bezier(.2,.7,.25,1) both; }
+  .label-picker-submenu[hidden] { display: none !important; }
+  .picker-submenu-title { padding: 9px 10px 8px; color: var(--muted); font-size: 10px; font-weight: 750; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+  .picker-option-arrow { width: 13px; height: 13px; flex: 0 0 13px; color: var(--muted); margin-left: auto; }
+  .picker-option.has-sublabels .picker-option-check { margin-left: 0; }
+  .picker-option.is-expanded { background: var(--accent-soft); color: var(--accent-strong); }
   @keyframes picker-soft-open { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes submenu-soft-open { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
   .picker-option { width: 100%; min-height: 40px; padding: 0 10px; display: flex; align-items: center; gap: 10px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); text-align: left; font-size: 12px; transform: translateX(0); transition: transform .14s ease, background .16s ease; }
   .picker-option:hover, .picker-option:focus-visible { background: var(--surface-2); outline: none; }
   .picker-option:active { transform: scale(.99); }
@@ -136,9 +331,12 @@
   .auto-stop-head strong { display: block; font-size: 12px; font-weight: 720; }
   .auto-stop-head p { margin: 4px 0 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
   .auto-stop-badge { flex: 0 0 auto; padding: 5px 8px; border-radius: 99px; background: var(--accent-soft); color: var(--accent-strong); font-size: 9px; font-weight: 700; }
-  .auto-stop-fields { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
-  .auto-stop-field, .auto-stop-source { display: grid; gap: 5px; min-width: 0; color: var(--muted); font-size: 10px; font-weight: 650; }
-  .auto-stop-field input, .label-auto-stop input { width: 100%; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 11px; }
+  /* 自動終了の入力欄は横幅を分割せず、パネル幅いっぱいに使う */
+  .auto-stop-fields { display: grid; grid-template-columns: minmax(0,1fr); gap: 12px; width: 100%; min-width: 0; }
+  .auto-stop-field, .auto-stop-source { display: grid; gap: 6px; min-width: 0; width: 100%; color: var(--muted); font-size: 10px; font-weight: 650; }
+  .auto-stop-field { grid-column: 1 / -1; }
+  .auto-stop-field input, .label-auto-stop input { display: block; width: 100%; max-width: none; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 13px; }
+  .auto-stop-field .select-control, .auto-stop-source .select-control { width: 100%; min-width: 0; }
   .select-control { position: relative; z-index: 1; width: 100%; min-width: 0; }
   .select-control.open { z-index: 70; }
   .select-native { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; clip-path: inset(50%) !important; white-space: nowrap !important; border: 0 !important; }
@@ -170,10 +368,11 @@
   .auto-stop-review-row label { display: grid; gap: 5px; color: var(--muted); font-size: 10px; font-weight: 650; }
   .auto-stop-review-row input { width: 100%; min-width: 0; height: 38px; padding: 0 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 11px; }
   .auto-stop-review-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
-  .label-auto-stop { grid-column: 1 / -1; display: grid; gap: 7px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--bg) 72%, var(--surface)); }
+  .label-auto-stop { display: grid; gap: 7px; min-width: 0; padding: 10px 0 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: transparent; }
   .label-auto-stop-title { color: var(--muted); font-size: 10px; font-weight: 700; }
-  .label-auto-values { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .label-auto-values label { display: grid; gap: 4px; color: var(--muted); font-size: 9px; font-weight: 650; }
+  .label-auto-values { display: grid; grid-template-columns: minmax(0,1fr); gap: 9px; width: 100%; min-width: 0; }
+  .label-auto-values label { display: grid; gap: 5px; width: 100%; min-width: 0; color: var(--muted); font-size: 9px; font-weight: 650; }
+  .label-auto-stop .select-control { width: 100%; min-width: 0; }
   .label-auto-stop .setting-note { margin-top: 0; }
   .settings-wrap { margin: 12px 0 27px; }
   .settings { overflow: visible; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
@@ -188,13 +387,46 @@
   .settings-body { padding: 17px 16px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; border-top: 1px solid var(--line); transform-origin: top center; }
   .settings summary { transition: background-color .2s ease; }
   .settings summary:active { background: color-mix(in srgb, var(--accent) 5%, transparent); }
-  .settings { transition: border-color .2s ease, box-shadow .2s ease; }
+  .settings { transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
   .settings[open] { border-color: var(--line); box-shadow: none; }
+  .ambient-settings { display: grid; gap: 11px; }
+  .ambient-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 39px; cursor: pointer; }
+  .ambient-toggle-copy { min-width: 0; display: grid; gap: 3px; }
+  .ambient-toggle-copy strong { color: var(--ink); font-size: 11px; font-weight: 650; }
+  .ambient-toggle-copy small { color: var(--muted); font-size: 9px; line-height: 1.5; }
+  .ambient-switch { position: relative; flex: 0 0 40px; width: 40px; height: 24px; }
+  .ambient-switch input { position: absolute; inset: 0; width: 40px; height: 24px; margin: 0; opacity: 0; cursor: pointer; }
+  .ambient-switch-track { position: absolute; inset: 0; border: 1px solid var(--line); border-radius: 99px; background: var(--surface-3); pointer-events: none; transition: background .2s ease, border-color .2s ease; }
+  .ambient-switch-track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.14); transition: transform .2s cubic-bezier(.2,.7,.25,1); }
+  .ambient-switch input:checked + .ambient-switch-track { border-color: color-mix(in srgb, var(--accent) 48%, var(--line)); background: color-mix(in srgb, var(--accent) 38%, var(--surface-3)); }
+  .ambient-switch input:checked + .ambient-switch-track::after { transform: translateX(16px); }
+  .ambient-switch input:focus-visible + .ambient-switch-track { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .ambient-strength-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(120px, 1fr); align-items: center; gap: 12px; color: var(--ink); font-size: 11px; }
   .setting-group-title { margin: 0 0 11px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
   .label-list { display: grid; gap: 11px; }
-  .label-edit-row { display: grid; grid-template-columns: minmax(0,1fr) 30px; align-items: center; gap: 7px 8px; }
+  .label-edit-row { display: grid; grid-template-columns: 62px minmax(0,1fr) 30px; align-items: center; gap: 7px 8px; padding: 7px; border: 1px solid transparent; border-radius: 12px; background: color-mix(in srgb, var(--surface-2) 35%, transparent); }
+  .label-order-controls { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 3px; width: 62px; }
+  .label-order-btn { width: 29px; min-height: 34px; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--muted); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .label-order-btn svg { width: 14px; height: 14px; }
+  .label-order-btn:hover:not(:disabled), .label-order-btn:active:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
+  .label-order-btn:disabled { opacity: .28; cursor: not-allowed; }
+  .label-order-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .label-edit-row input[type="text"] { width: 100%; min-width: 0; height: 35px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 12px; }
   .label-palette { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 1px 2px 2px; }
+  .label-options-disclosure { grid-column: 1 / -1; min-width: 0; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--bg) 75%, var(--surface)); }
+  .label-options-disclosure > summary { min-height: 37px; display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 700; cursor: pointer; list-style: none; }
+  .label-options-disclosure > summary::-webkit-details-marker { display: none; }
+  .label-options-disclosure > summary::after { content: '⌄'; color: var(--muted); font-size: 15px; transition: transform .18s ease; }
+  .label-options-disclosure[open] > summary::after { transform: rotate(180deg); }
+  .label-options-count { margin-left: auto; color: var(--muted); font-size: 9px; font-weight: 600; }
+  .label-options-content { display: grid; gap: 11px; padding: 0 0 10px; }
+  .label-options-disclosure[open] .label-options-content { animation: picker-soft-open .2s cubic-bezier(.2,.7,.25,1) both; }
+  .label-options-section { display: grid; gap: 7px; }
+  .label-options-heading { color: var(--muted); font-size: 10px; font-weight: 700; }
+  .sublabel-editor { display: grid; gap: 7px; }
+  .sublabel-edit-row { display: grid; grid-template-columns: minmax(0,1fr) 28px; gap: 6px; align-items: center; }
+  .sublabel-edit-row input { width: 100%; min-width: 0; height: 33px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 11px; }
+  .sublabel-add-btn { min-height: 31px; padding: 0 9px; border: 1px dashed var(--line); border-radius: 8px; background: transparent; color: var(--accent-strong); font-size: 10px; font-weight: 650; }
   .palette-swatch { width: 22px; height: 22px; flex: 0 0 22px; padding: 0; border: 2px solid var(--surface); border-radius: 50%; box-shadow: 0 0 0 1px var(--line); transition: box-shadow .16s ease, transform .16s ease; }
   .palette-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--accent); transform: scale(1.04); }
   .palette-swatch:active { transform: scale(.96); }
@@ -208,6 +440,8 @@
   .small-action.primary { border-color: var(--accent); background: var(--accent); color: white; }
   .setting-note { margin: 9px 0 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
   .overview { margin-bottom: 27px; }
+  .overview.day-change-in { animation: overview-refresh-in .24s ease-out both; }
+  @keyframes overview-refresh-in { from { opacity: .72; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
   .overview-title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .overview-title-row h2 { line-height: 1.25; }
   .day-nav { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; }
@@ -261,7 +495,7 @@
   .records-disclosure[open] > summary { margin-bottom: 13px; }
   .records-disclosure[open] .records-chevron { transform: rotate(180deg); }
   .records-disclosure .record-list { padding-bottom: 14px; }
-  @media (prefers-reduced-motion: reduce) { .records-chevron { transition: none; } }
+  .records-disclosure[open] .record-list { animation: picker-soft-open .22s cubic-bezier(.2,.7,.25,1) both; }
   .record-list { display: grid; }
   .record-row { display: grid; grid-template-columns: 8px minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
   .record-row:first-child { border-top: 0; }
@@ -307,7 +541,7 @@
     .label-picker { flex-basis: 126px; width: 126px; }
     .timer-label-trigger { height: 41px; padding: 0 10px; }
     .settings-body { grid-template-columns: 1fr; gap: 18px; }
-    .auto-stop-fields { grid-template-columns: 1fr 1fr; }
+    .auto-stop-fields { grid-template-columns: minmax(0,1fr); }
     .auto-stop-review-row { grid-template-columns: 1fr; }
     .summary-card { padding: 14px; }
     .activity-card { padding: 14px 12px 11px; }
@@ -359,17 +593,22 @@
     from { opacity: .86; }
     to { opacity: .96; }
   }
-  .btn, .small-action, .month-btn, .day-cell, .add-label-btn, .icon-btn, .timer-label-trigger {
-    transition: background-color .2s ease, border-color .2s ease,
-      color .2s ease, box-shadow .2s ease, opacity .16s ease;
+  .btn, .small-action, .month-btn, .day-cell, .add-label-btn, .icon-btn, .timer-label-trigger, .select-trigger, .palette-swatch, .label-order-btn {
+    transition: transform .16s cubic-bezier(.2,.7,.25,1), background-color .2s ease,
+      border-color .2s ease, color .2s ease, box-shadow .2s ease, opacity .16s ease;
   }
-  .btn:active, .small-action:active, .month-btn:active, .day-cell:active, .add-label-btn:active {
-    transform: none !important;
-    opacity: .84;
+  .btn:active, .small-action:active, .month-btn:active, .day-cell:active, .add-label-btn:active, .icon-btn:active, .label-order-btn:active {
+    transform: scale(.985) !important;
+    opacity: .86;
   }
-  .summary-card, .breakdown-card, .records-card, .calendar-card {
-    transition: border-color .22s ease, box-shadow .22s ease;
+  .summary-card, .activity-card, .breakdown-card, .records-card, .calendar-card {
+    transition: border-color .22s ease, box-shadow .22s ease, background-color .22s ease, transform .22s ease;
   }
+  .day-cell.selected { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent); }
+  .select-trigger:active, .palette-swatch:active { transform: scale(.975); }
+  .picker-option { transition: transform .14s ease, background .16s ease, color .16s ease; }
+  .picker-option:active { transform: scale(.985); }
+  .label-options-disclosure, .auto-stop-disclosure, .records-disclosure { transition: border-color .2s ease, box-shadow .2s ease; }
   .stacked-part { transition: width .5s ease-out; }
   .breakdown-meter > span { transition: width .5s ease-out; }
   .day-cell.selected { animation: none; }
@@ -380,13 +619,6 @@
     }
     .month-btn:hover, .icon-btn:hover, .day-cell:hover { transform: none; }
     .btn-primary:hover { filter: brightness(1.025); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      scroll-behavior: auto !important;
-      animation: none !important;
-      transition: none !important;
-    }
   }
 </style>
 </head>
@@ -403,6 +635,70 @@
     </header>
 
     <section class="timer-card" id="timerCard" aria-label="タイマー">
+      <div class="timer-ambient" id="timerAmbient" aria-hidden="true">
+        <svg class="river-current-svg" viewBox="0 0 900 460" preserveAspectRatio="xMidYMid slice" focusable="false">
+          <g class="river-flow-group river-flow-a">
+            <path class="river-flow-line" d="M-55 104 C70 74 148 132 254 110 S426 74 545 108 S735 138 955 91"/>
+            <path class="river-flow-trace" d="M-55 104 C70 74 148 132 254 110 S426 74 545 108 S735 138 955 91"/>
+            </g>
+          <g class="river-flow-group river-flow-b">
+            <path class="river-flow-line" d="M-65 242 C78 211 160 274 300 247 S492 212 625 247 S806 278 965 238"/>
+            <path class="river-flow-trace trace-b" d="M-65 242 C78 211 160 274 300 247 S492 212 625 247 S806 278 965 238"/>
+            </g>
+          <g class="river-flow-group river-flow-c">
+            <path class="river-flow-line" d="M-70 365 C80 333 175 395 325 370 S538 331 681 369 S849 397 970 359"/>
+            <path class="river-flow-trace trace-c" d="M-70 365 C80 333 175 395 325 370 S538 331 681 369 S849 397 970 359"/>
+            </g>
+        </svg>
+        <div class="dapple-sun" aria-hidden="true"></div>
+        <div class="dapple-spots" aria-hidden="true"></div>
+        <svg class="canopy-shadow-svg" viewBox="0 0 900 460" preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
+          <g transform="translate(-24 -16)">
+            <g class="canopy-shadow-group canopy-shadow-a">
+              <path class="canopy-branch" d="M-20 24 C72 45 105 83 168 118 S268 172 331 198"/>
+              <path class="canopy-twig" d="M72 58 C98 28 113 10 126 -16 M137 100 C170 70 194 52 223 39 M207 143 C232 112 270 99 296 88"/>
+              <path class="canopy-leaf" d="M102 45 C119 12 151 5 174 16 C160 49 130 64 102 45Z"/>
+              <path class="canopy-leaf" d="M123 20 C119 -10 137 -32 161 -38 C171 -10 154 13 123 20Z"/>
+              <path class="canopy-leaf" d="M179 81 C193 47 227 36 249 51 C232 80 205 96 179 81Z"/>
+              <path class="canopy-leaf" d="M207 56 C203 27 224 5 248 4 C254 33 237 55 207 56Z"/>
+              <path class="canopy-leaf" d="M251 125 C269 94 302 87 321 105 C300 131 273 141 251 125Z"/>
+            </g>
+          </g>
+          <g transform="translate(900 18) scale(-1 1)">
+            <g class="canopy-shadow-group canopy-shadow-b">
+              <path class="canopy-branch" d="M-12 20 C60 38 104 76 157 112 S258 162 334 186"/>
+              <path class="canopy-twig" d="M78 60 C99 28 124 10 151 -3 M143 105 C170 78 195 59 222 49 M225 150 C247 119 279 105 311 96"/>
+              <path class="canopy-leaf" d="M113 43 C130 11 163 1 185 17 C169 47 140 62 113 43Z"/>
+              <path class="canopy-leaf" d="M137 19 C131 -12 152 -33 175 -37 C185 -8 168 13 137 19Z"/>
+              <path class="canopy-leaf" d="M185 88 C203 56 237 46 256 62 C237 90 211 102 185 88Z"/>
+              <path class="canopy-leaf" d="M216 59 C214 30 235 9 257 8 C263 36 245 57 216 59Z"/>
+              <path class="canopy-leaf" d="M265 130 C284 99 316 91 335 110 C314 136 287 146 265 130Z"/>
+            </g>
+          </g>
+          <g transform="translate(90 248)">
+            <g class="canopy-shadow-group canopy-shadow-c">
+              <path class="canopy-twig" d="M-70 160 C24 116 76 95 148 58 S257 5 330 -28"/>
+              <path class="canopy-twig" d="M70 100 C67 65 47 43 22 20 M181 41 C199 13 220 -3 249 -12"/>
+              <path class="canopy-leaf" d="M16 37 C-6 11 0 -20 21 -34 C44 -10 42 18 16 37Z"/>
+              <path class="canopy-leaf" d="M91 88 C60 69 54 37 72 18 C100 37 110 64 91 88Z"/>
+              <path class="canopy-leaf" d="M207 16 C188 -13 201 -43 225 -54 C243 -26 236 0 207 16Z"/>
+              <path class="canopy-leaf" d="M266 -2 C271 -36 300 -55 325 -43 C314 -11 292 3 266 -2Z"/>
+            </g>
+          </g>
+          <g transform="translate(842 318) scale(-1 1)">
+            <g class="canopy-shadow-group canopy-shadow-d">
+              <path class="canopy-branch" d="M-38 176 C35 137 81 99 135 61 S238 8 306 -18"/>
+              <path class="canopy-twig" d="M52 119 C48 83 29 57 4 37 M126 66 C145 36 169 16 198 3 M194 27 C220 1 245 -10 272 -15"/>
+              <path class="canopy-leaf" d="M2 54 C-18 25 -7 -7 15 -20 C38 7 31 35 2 54Z"/>
+              <path class="canopy-leaf" d="M60 94 C37 63 47 33 72 20 C95 48 88 78 60 94Z"/>
+              <path class="canopy-leaf" d="M150 38 C137 7 156 -22 182 -29 C198 1 181 28 150 38Z"/>
+              <path class="canopy-leaf" d="M202 10 C201 -20 226 -41 252 -34 C255 -5 232 15 202 10Z"/>
+              <path class="canopy-leaf" d="M235 -6 C250 -34 282 -43 305 -27 C286 -2 259 8 235 -6Z"/>
+            </g>
+          </g>
+        </svg>
+        <div class="cloud-veil" aria-hidden="true"></div>
+      </div>
       <div class="timer-head">
         <div class="live-pill" id="statusPill"><i class="live-dot"></i><span id="statusText">待機中</span></div>
       </div>
@@ -480,7 +776,7 @@
             <h3 class="setting-group-title">ラベルをカスタム</h3>
             <div class="label-list" id="labelEditor"></div>
             <button class="add-label-btn" id="addLabelBtn" type="button">＋ ラベルを追加</button>
-            <p class="setting-note">色は用意されたテンプレートから選べます。ラベル名と色の変更は過去の記録にも反映されます。</p>
+            <p class="setting-note">色はテンプレートから選べます。ラベル左側の「↑」「↓」ボタンで順番を変更できます。自動終了とサブラベルは各ラベルの折りたたみにまとめています。</p>
           </section>
           <section>
             <h3 class="setting-group-title">表示テーマ</h3>
@@ -490,6 +786,24 @@
               <option value="dark">ダーク — フォレスト</option>
               <option value="system">システム設定に合わせる</option>
             </select>
+            <h3 class="setting-group-title" style="margin-top:20px">タイマー背景</h3>
+            <div class="ambient-settings">
+              <label class="ambient-toggle-row" for="ambientEnabled">
+                <span class="ambient-toggle-copy"><strong>木漏れ日と揺れる枝葉</strong><small>枝葉の影・木漏れ日・雲による明暗変化を再生します。OSの視覚効果制限とは独立しています。</small></span>
+                <span class="ambient-switch"><input id="ambientEnabled" type="checkbox" checked><span class="ambient-switch-track" aria-hidden="true"></span></span>
+              </label>
+              <div class="ambient-strength-row"><label for="ambientStrength">動きの強さ</label>
+                <select class="setting-select" id="ambientStrength">
+                  <option value="subtle">控えめ</option>
+                  <option value="balanced">標準</option>
+                  <option value="rich">豊か</option>
+                </select>
+              </div>
+              <label class="ambient-toggle-row" for="ambientFollowLabel">
+                <span class="ambient-toggle-copy"><strong>ラベルカラーに連動</strong><small>選択中のラベルに合わせて、水面の色合いと木漏れ日の印象を変えます。</small></span>
+                <span class="ambient-switch"><input id="ambientFollowLabel" type="checkbox" checked><span class="ambient-switch-track" aria-hidden="true"></span></span>
+              </label>
+            </div>
             <h3 class="setting-group-title" style="margin-top:20px">データのバックアップ</h3>
             <div class="data-actions">
               <button class="small-action primary" id="exportBtn" type="button">JSONを書き出す</button>
@@ -502,7 +816,7 @@
       </details>
     </div>
 
-    <section class="overview" aria-labelledby="overviewTitle">
+    <section class="overview" id="overview" aria-labelledby="overviewTitle">
       <div class="section-heading">
         <div class="overview-title-row">
           <h2 id="overviewTitle" tabindex="-1">今日の記録</h2>
@@ -561,6 +875,15 @@
 (() => {
   'use strict';
   const STORAGE_KEY = 'daylog.data.v3';
+  const DATA_VERSION = 5;
+  const MAX_IMPORT_BYTES = 25 * 1024 * 1024;
+  const MAX_LABELS = 12;
+  const MAX_SUBLABELS = 20;
+  const MAX_SESSIONS = 100000;
+  const MAX_SEGMENTS_PER_SESSION = 5000;
+  const RECOVERY_STORAGE_KEY = 'daylog.recovery.v1';
+  let startupDataWarning = '';
+  let startupMigrationPending = false;
   const LABEL_COLOR_TEMPLATES = [
     { name: 'セージ', color: '#879978' },
     { name: 'テラコッタ', color: '#c18f6c' },
@@ -580,9 +903,11 @@
   const $ = (id) => document.getElementById(id);
   const todayKey = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
   const parseDay = (key) => { const [y,m,d] = key.split('-').map(Number); return new Date(y,m-1,d,0,0,0,0); };
-  const makeId = () => (crypto && crypto.randomUUID) ? crypto.randomUUID() : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2,9)}`;
+  const makeId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2,9)}`;
+  const isPlainObject = value => !!value && typeof value === 'object' && !Array.isArray(value);
+  const isFiniteNumber = value => typeof value === 'number' && Number.isFinite(value);
   const safeColor = (c) => {
-    const raw = /^#[0-9a-f]{6}$/i.test(c || '') ? c.toLowerCase() : '#879978';
+    const raw = /^#[0-9a-f]{6}$/i.test(typeof c === 'string' ? c : '') ? c.toLowerCase() : '#879978';
     if (LABEL_COLOR_TEMPLATES.some(preset => preset.color === raw)) return raw;
     const rgb = raw.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
     let nearest = LABEL_COLOR_TEMPLATES[0], nearestDistance = Infinity;
@@ -596,37 +921,269 @@
   const clone = (v) => JSON.parse(JSON.stringify(v));
   const normalizeAutoStop = (value) => {
     const mode = ['duration','time'].includes(value?.mode) ? value.mode : 'off';
-    const durationMinutes = Math.min(10080, Math.max(1, Math.round(Number(value?.durationMinutes) || 60)));
+    const rawDuration = Number(value?.durationMinutes);
+    const durationMinutes = Math.min(10080, Math.max(1, Math.round(Number.isFinite(rawDuration) && rawDuration > 0 ? rawDuration : 60)));
     const time = /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value?.time || '')) ? String(value.time) : '18:00';
     return { mode, durationMinutes, time };
   };
-  const initialData = () => ({ version: 3, labels: clone(DEFAULT_LABELS).map(label => ({...label, autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}})), sessions: [], settings: { theme: 'light' } });
-  function loadData() {
+  const normalizeSubLabels = (items, strict = false) => {
+    if (!Array.isArray(items)) {
+      if (strict && items != null) throw new Error('サブラベルの形式が正しくありません。');
+      return [];
+    }
+    if (strict && items.length > MAX_SUBLABELS) throw new Error(`サブラベルは1つのラベルにつき${MAX_SUBLABELS}個までです。`);
+    const seen = new Set();
+    const result = [];
+    for (const item of items.slice(0, MAX_SUBLABELS)) {
+      if (strict && !(typeof item === 'string' || isPlainObject(item))) throw new Error('サブラベルに不正な項目があります。');
+      const name = String(typeof item === 'string' ? item : (typeof item?.name === 'string' ? item.name : '')).trim().slice(0,24);
+      let id = typeof item === 'object' && item && typeof item.id === 'string' ? item.id.trim().slice(0,128) : '';
+      if (!id) id = makeId();
+      if (!name) {
+        if (strict) throw new Error('サブラベル名が空の項目があります。');
+        continue;
+      }
+      if (seen.has(id)) {
+        if (strict) throw new Error('同じサブラベルIDが重複しています。');
+        id = makeId();
+      }
+      seen.add(id);
+      result.push({ id, name });
+    }
+    return result;
+  };
+  const normalizeSettings = (value, labels) => {
+    const theme = ['light','dark','system'].includes(value?.theme) ? value.theme : 'light';
+    const requestedLabelId = typeof value?.selectedLabelId === 'string' ? value.selectedLabelId : '';
+    const selectedLabelId = labels.some(label => label.id === requestedLabelId) ? requestedLabelId : (labels[0]?.id || '');
+    const selectedLabel = labels.find(label => label.id === selectedLabelId);
+    const requestedSubLabelId = typeof value?.selectedSubLabelId === 'string' ? value.selectedSubLabelId : '';
+    const selectedSubLabelId = selectedLabel?.subLabels.some(item => item.id === requestedSubLabelId) ? requestedSubLabelId : '';
+    const autoStopScope = value?.autoStopScope === 'custom' ? 'custom' : 'default';
+    const ambientStrength = ['subtle','balanced','rich'].includes(value?.ambientStrength) ? value.ambientStrength : 'subtle';
+    return {
+      theme,
+      selectedLabelId,
+      selectedSubLabelId,
+      autoStopScope,
+      autoStopOverride: normalizeAutoStop(value?.autoStopOverride),
+      ambientEnabled: value?.ambientEnabled !== false,
+      ambientStrength,
+      ambientFollowLabel: value?.ambientFollowLabel !== false
+    };
+  };
+  function normalizeData(input, { strict = false } = {}) {
+    if (!isPlainObject(input) || !Array.isArray(input.labels) || !Array.isArray(input.sessions)) {
+      throw new Error('データの基本構造が正しくありません。');
+    }
+    if (input.labels.length > MAX_LABELS) throw new Error(`ラベルは${MAX_LABELS}個までです。`);
+    if (input.sessions.length > MAX_SESSIONS) throw new Error('記録件数が上限を超えています。');
+    if (strict && input.labels.length === 0) throw new Error('ラベルが1件もありません。');
+
+    const labelIds = new Set();
+    const labels = [];
+    for (const item of input.labels) {
+      if (!isPlainObject(item)) {
+        if (strict) throw new Error('ラベル情報に不正な項目があります。');
+        continue;
+      }
+      let id = typeof item.id === 'string' ? item.id.trim().slice(0,128) : '';
+      if (!id) id = makeId();
+      if (labelIds.has(id)) {
+        if (strict) throw new Error('同じラベルIDが重複しています。');
+        id = makeId();
+      }
+      labelIds.add(id);
+      const name = String(typeof item.name === 'string' ? item.name : 'ラベル').trim().slice(0,24) || 'ラベル';
+      labels.push({
+        id,
+        name,
+        color: safeColor(item.color),
+        subLabels: normalizeSubLabels(item.subLabels, strict),
+        autoStopDefault: normalizeAutoStop(item.autoStopDefault)
+      });
+    }
+    if (!labels.length) {
+      if (strict) throw new Error('有効なラベルがありません。');
+      DEFAULT_LABELS.forEach(label => labels.push({ ...clone(label), subLabels: [], autoStopDefault: { mode:'off', durationMinutes:60, time:'18:00' } }));
+    }
+
+    const sessionIds = new Set();
+    const sessions = [];
+    let activeCount = 0;
+    for (const item of input.sessions) {
+      if (!isPlainObject(item)) {
+        if (strict) throw new Error('記録情報に不正な項目があります。');
+        continue;
+      }
+      let id = typeof item.id === 'string' ? item.id.trim().slice(0,128) : '';
+      if (!id) id = makeId();
+      if (sessionIds.has(id)) {
+        if (strict) throw new Error('同じ記録IDが重複しています。');
+        id = makeId();
+      }
+      sessionIds.add(id);
+      if (!Array.isArray(item.segments)) {
+        if (strict) throw new Error('記録の時間区間が配列ではありません。');
+        continue;
+      }
+      if (item.segments.length > MAX_SEGMENTS_PER_SESSION) throw new Error('1件の記録に含まれる時間区間が多すぎます。');
+      const segments = [];
+      for (const part of item.segments) {
+        if (!isPlainObject(part)) {
+          if (strict) throw new Error('時間区間に不正な項目があります。');
+          continue;
+        }
+        const startAt = Number(part.startAt);
+        const endAt = part.endAt == null ? null : Number(part.endAt);
+        if (!Number.isFinite(startAt) || startAt <= 0 || (endAt !== null && (!Number.isFinite(endAt) || endAt < startAt))) {
+          if (strict) throw new Error('時間区間の開始・終了時刻が正しくありません。');
+          continue;
+        }
+        segments.push({ startAt, endAt });
+      }
+      const createdAtRaw = Number(item.createdAt);
+      if (strict && (!Number.isFinite(createdAtRaw) || createdAtRaw <= 0)) throw new Error('記録の開始時刻が正しくありません。');
+      const createdAt = Number.isFinite(createdAtRaw) && createdAtRaw > 0 ? createdAtRaw : (segments[0]?.startAt || Date.now());
+      const endedAtRaw = item.endedAt == null ? null : Number(item.endedAt);
+      if (strict && endedAtRaw !== null && (!Number.isFinite(endedAtRaw) || endedAtRaw < createdAt)) throw new Error('記録の終了時刻が正しくありません。');
+      let endedAt = endedAtRaw !== null && Number.isFinite(endedAtRaw) && endedAtRaw >= createdAt ? endedAtRaw : null;
+      if (strict && !['running','paused','done'].includes(item.status)) throw new Error('記録の状態が正しくありません。');
+      let status = ['running','paused','done'].includes(item.status) ? item.status : 'done';
+      if (strict && status !== 'done' && endedAt !== null) throw new Error('計測中の記録に終了時刻が設定されています。');
+      if (!strict && status !== 'done') endedAt = null;
+      const openSegmentIndexes = segments.map((part,index)=>part.endAt == null ? index : -1).filter(index=>index>=0);
+      if (strict && status !== 'done' && segments.length === 0) throw new Error('計測中・一時停止中の記録に時間区間がありません。');
+      if (strict && status === 'running' && (openSegmentIndexes.length !== 1 || openSegmentIndexes[0] !== segments.length - 1)) {
+        throw new Error('計測中の記録に有効な実行中区間がありません。');
+      }
+      if (strict && status !== 'running' && openSegmentIndexes.length > 0) {
+        throw new Error('一時停止・終了済みの記録に未終了の時間区間があります。');
+      }
+      if (!strict && openSegmentIndexes.length > 0) {
+        for (const index of openSegmentIndexes) {
+          const nextStart = segments[index + 1]?.startAt;
+          const closeAt = status === 'running' && index === segments.length - 1 ? null : (Number.isFinite(nextStart) ? Math.max(segments[index].startAt, nextStart) : segments[index].startAt);
+          if (closeAt !== null) segments[index].endAt = closeAt;
+        }
+      }
+      if (!strict && status === 'running' && !segments.some(part => part.endAt == null)) {
+        const lastEnd = segments.length ? segments[segments.length - 1].endAt : null;
+        segments.push({ startAt:Math.max(createdAt, Number.isFinite(lastEnd) ? lastEnd : createdAt), endAt:null });
+      }
+      const autoStopAtRaw = item.autoStopAt == null ? null : Number(item.autoStopAt);
+      if (strict && autoStopAtRaw !== null && (!Number.isFinite(autoStopAtRaw) || autoStopAtRaw <= 0)) throw new Error('自動終了の予定時刻が正しくありません。');
+      const autoStopAt = autoStopAtRaw !== null && Number.isFinite(autoStopAtRaw) && autoStopAtRaw > 0 ? autoStopAtRaw : null;
+      const remainingRaw = item.autoStopRemainingMs == null ? null : Number(item.autoStopRemainingMs);
+      if (strict && remainingRaw !== null && (!Number.isFinite(remainingRaw) || remainingRaw < 0)) throw new Error('自動終了の残り時間が正しくありません。');
+      const autoStopRemainingMs = remainingRaw !== null && Number.isFinite(remainingRaw) && remainingRaw >= 0 ? remainingRaw : null;
+      const autoStop = normalizeAutoStop(item.autoStop);
+      if (status !== 'done') activeCount++;
+      sessions.push({
+        id,
+        labelId: typeof item.labelId === 'string' ? item.labelId : '',
+        labelName: String(typeof item.labelName === 'string' ? item.labelName : 'その他').slice(0,48),
+        labelColor: safeColor(item.labelColor),
+        subLabelId: typeof item.subLabelId === 'string' ? item.subLabelId : '',
+        subLabelName: String(typeof item.subLabelName === 'string' ? item.subLabelName : '').slice(0,48),
+        createdAt,
+        endedAt,
+        status,
+        segments,
+        autoStop,
+        autoStopAt,
+        autoStopRemainingMs,
+        autoStopReview: item.autoStopReview === true,
+        autoStopReviewSegmentIndex: Number.isInteger(item.autoStopReviewSegmentIndex) && item.autoStopReviewSegmentIndex >= 0 && item.autoStopReviewSegmentIndex < segments.length ? item.autoStopReviewSegmentIndex : -1
+      });
+    }
+    if (strict && activeCount > 1) throw new Error('計測中・一時停止中の記録が複数あります。');
+    if (!strict && activeCount > 1) {
+      let keptActive = false;
+      for (const session of sessions) {
+        if (session.status === 'done') continue;
+        if (!keptActive) { keptActive = true; continue; }
+        session.status = 'done';
+        session.autoStopAt = null;
+        session.autoStopRemainingMs = null;
+        session.endedAt = session.segments.reduce((max, part) => Math.max(max, part.endAt ?? part.startAt), session.createdAt);
+        session.segments.forEach(part => { if (part.endAt == null) part.endAt = Math.max(part.startAt, session.endedAt); });
+      }
+    }
+    for (const session of sessions) {
+      if (session.status === 'done' && session.endedAt == null) {
+        session.endedAt = session.segments.reduce((max, part) => Math.max(max, part.endAt ?? part.startAt), session.createdAt);
+      }
+    }
+    return {
+      version: DATA_VERSION,
+      labels,
+      sessions,
+      settings: normalizeSettings(input.settings, labels)
+    };
+  }
+  function parseBackupPayload(parsed) {
+    if (!isPlainObject(parsed) || parsed.app !== 'DAYLOG' || !isPlainObject(parsed.data)) {
+      throw new Error('DAYLOGのバックアップファイルではありません。');
+    }
+    if (parsed.format != null && parsed.format !== 'daylog-backup') {
+      throw new Error('バックアップ形式が正しくありません。');
+    }
+    if (parsed.formatVersion != null && (!Number.isInteger(parsed.formatVersion) || parsed.formatVersion < 1 || parsed.formatVersion > DATA_VERSION)) {
+      throw new Error('このバックアップ形式には対応していません。DAYLOGを最新版にしてください。');
+    }
+    return normalizeData(parsed.data, { strict:true });
+  }
+  const initialData = () => normalizeData({
+    labels: clone(DEFAULT_LABELS).map(label => ({ ...label, subLabels:[], autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'} })),
+    sessions: [],
+    settings: { theme:'light' }
+  });
+  function preserveBrokenStorage(raw) {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      if (typeof raw === 'string' && raw.length <= 1500000) {
+        localStorage.setItem(RECOVERY_STORAGE_KEY, JSON.stringify({ savedAt:new Date().toISOString(), raw }));
+      }
+    } catch { /* Recovery copy is best-effort; never block app startup. */ }
+  }
+  function loadData() {
+    let raw = null;
+    try {
+      raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return initialData();
-      const parsed = JSON.parse(raw);
-      if (!parsed || !Array.isArray(parsed.labels) || !Array.isArray(parsed.sessions)) return initialData();
-      return {
-        version: 3,
-        labels: parsed.labels.filter(x => x && typeof x.id === 'string').map(x => ({ id:x.id, name:String(x.name || 'ラベル').slice(0,24), color:safeColor(x.color), autoStopDefault:normalizeAutoStop(x.autoStopDefault) })),
-        sessions: parsed.sessions.filter(x => x && typeof x.id === 'string' && Array.isArray(x.segments)).map(s => ({
-          id:s.id, labelId:String(s.labelId || ''), labelName:String(s.labelName || 'その他'), labelColor:safeColor(s.labelColor),
-          createdAt:Number(s.createdAt) || Date.now(), endedAt:s.endedAt == null ? null : Number(s.endedAt),
-          status:['running','paused','done'].includes(s.status) ? s.status : 'done',
-          segments:s.segments.filter(p => p && Number.isFinite(Number(p.startAt))).map(p => ({ startAt:Number(p.startAt), endAt:p.endAt == null ? null : Number(p.endAt) })),
-          autoStop:normalizeAutoStop(s.autoStop), autoStopAt:Number.isFinite(Number(s.autoStopAt)) && s.autoStopAt != null ? Number(s.autoStopAt) : null,
-          autoStopRemainingMs:Number.isFinite(Number(s.autoStopRemainingMs)) && s.autoStopRemainingMs != null ? Math.max(0,Number(s.autoStopRemainingMs)) : null,
-          autoStopReview:s.autoStopReview === true, autoStopReviewSegmentIndex:Number.isInteger(s.autoStopReviewSegmentIndex) ? s.autoStopReviewSegmentIndex : -1
-        })),
-        settings: { theme: ['light','dark','system'].includes(parsed.settings?.theme) ? parsed.settings.theme : 'light' }
-      };
-    } catch { return initialData(); }
+      let parsed;
+      try { parsed = JSON.parse(raw); }
+      catch (error) {
+        preserveBrokenStorage(raw);
+        startupDataWarning = '保存データのJSONが破損していたため、初期データで起動しました。回収コピーを保存できた場合は、端末内に保持しています。';
+        return initialData();
+      }
+      if (!isPlainObject(parsed) || !Array.isArray(parsed.labels) || !Array.isArray(parsed.sessions)) {
+        preserveBrokenStorage(raw);
+        startupDataWarning = '保存データの形式が不正なため、初期データで起動しました。';
+        return initialData();
+      }
+      try {
+        const normalized = normalizeData(parsed);
+        startupMigrationPending = parsed.version !== DATA_VERSION || !isPlainObject(parsed.settings) ||
+          ['selectedLabelId','selectedSubLabelId','autoStopScope','autoStopOverride','ambientEnabled','ambientStrength','ambientFollowLabel'].some(key => !Object.prototype.hasOwnProperty.call(parsed.settings, key));
+        return normalized;
+      } catch (error) {
+        preserveBrokenStorage(raw);
+        startupDataWarning = `保存データの一部に問題があり、初期データで起動しました。${error?.message || ''}`;
+        return initialData();
+      }
+    } catch (error) {
+      if (typeof raw === 'string') preserveBrokenStorage(raw);
+      startupDataWarning = '端末の保存領域を読み込めませんでした。ブラウザの保存設定を確認してください。';
+      return initialData();
+    }
   }
   let data = loadData();
-  let selectedLabelId = data.labels[0]?.id || '';
-  let autoStopScope = 'default';
-  let autoStopOverride = { mode:'off', durationMinutes:60, time:'18:00' };
+  let selectedLabelId = data.settings.selectedLabelId || data.labels[0]?.id || '';
+  let selectedSubLabelId = data.settings.selectedSubLabelId || '';
+  let autoStopScope = data.settings.autoStopScope || 'default';
+  let autoStopOverride = clone(data.settings.autoStopOverride || { mode:'off', durationMinutes:60, time:'18:00' });
   let autoStopTimeoutId = 0;
   let selectedDay = todayKey();
   let visibleMonth = new Date();
@@ -636,9 +1193,49 @@
   let lastWholeReadout = null;
   let lastFractionTens = null;
   let lastFractionUnits = null;
-  const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch { showToast('保存できませんでした。端末の空き容量を確認してください。'); } };
+  function syncRuntimeSettings() {
+    const selectedLabel = data.labels.find(label => label.id === selectedLabelId) || data.labels[0] || null;
+    data.settings = {
+      ...normalizeSettings(data.settings, data.labels),
+      theme: ['light','dark','system'].includes(data.settings?.theme) ? data.settings.theme : 'light',
+      selectedLabelId: selectedLabel?.id || '',
+      selectedSubLabelId: selectedLabel?.subLabels?.some(item => item.id === selectedSubLabelId) ? selectedSubLabelId : '',
+      autoStopScope: autoStopScope === 'custom' ? 'custom' : 'default',
+      autoStopOverride: normalizeAutoStop(autoStopOverride)
+    };
+    selectedLabelId = data.settings.selectedLabelId;
+    selectedSubLabelId = data.settings.selectedSubLabelId;
+  }
+  function buildBackupPayload() {
+    syncRuntimeSettings();
+    return {
+      app:'DAYLOG',
+      format:'daylog-backup',
+      formatVersion:DATA_VERSION,
+      exportedAt:new Date().toISOString(),
+      data:normalizeData(data, { strict:true })
+    };
+  }
+  function persistDataSnapshot(candidate) {
+    const serialized = JSON.stringify(candidate);
+    localStorage.setItem(STORAGE_KEY, serialized);
+    return serialized.length;
+  }
+  const save = () => {
+    try {
+      data.version = DATA_VERSION;
+      syncRuntimeSettings();
+      persistDataSnapshot(data);
+      return true;
+    } catch (error) {
+      showToast('保存できませんでした。端末の空き容量またはブラウザの保存設定を確認してください。');
+      return false;
+    }
+  };
   const getActive = () => data.sessions.find(s => s.status === 'running' || s.status === 'paused') || null;
   const findLabel = (id) => data.labels.find(l => l.id === id);
+  const findSubLabel = (labelId, subLabelId) => findLabel(labelId)?.subLabels?.find(item => item.id === subLabelId);
+  const labelPath = (labelName, subLabelName) => subLabelName ? `${labelName} › ${subLabelName}` : labelName;
   const getLabelAutoStop = (id = selectedLabelId) => normalizeAutoStop(findLabel(id)?.autoStopDefault);
   const getEffectiveAutoStop = () => autoStopScope === 'custom' ? normalizeAutoStop(autoStopOverride) : getLabelAutoStop();
   function nextLocalTimeStamp(now, time) {
@@ -730,7 +1327,7 @@
       for (const part of session.segments) {
         const end = part.endAt ?? (session.status === 'running' ? now : part.startAt);
         const start = Math.max(part.startAt,dayStart), finish=Math.min(end,dayEnd);
-        if (finish > start) out.push({ sessionId:session.id,labelId:session.labelId,labelName:session.labelName,labelColor:session.labelColor,startAt:start,endAt:finish,status:session.status });
+        if (finish > start) out.push({ sessionId:session.id,labelId:session.labelId,labelName:session.labelName,labelColor:session.labelColor,subLabelId:session.subLabelId||'',subLabelName:session.subLabelName||'',startAt:start,endAt:finish,status:session.status });
       }
     }
     return out.sort((a,b)=>a.startAt-b.startAt);
@@ -765,9 +1362,15 @@
     return windows;
   }
   function getDayStats(key) {
-    const slices=getSegmentsForDay(key), byLabel=new Map();
-    for (const s of slices) byLabel.set(s.labelId,(byLabel.get(s.labelId)||0)+(s.endAt-s.startAt));
-    return { slices, total:[...byLabel.values()].reduce((a,b)=>a+b,0), byLabel };
+    const slices=getSegmentsForDay(key), byLabel=new Map(), byActivity=new Map();
+    for (const s of slices) {
+      const duration=s.endAt-s.startAt;
+      byLabel.set(s.labelId,(byLabel.get(s.labelId)||0)+duration);
+      const activityId=s.subLabelId ? `${s.labelId}::${s.subLabelId}` : `${s.labelId}::`;
+      const activity=byActivity.get(activityId)||{id:activityId,labelId:s.labelId,name:labelPath(s.labelName,s.subLabelName),color:s.labelColor,ms:0};
+      activity.ms+=duration; byActivity.set(activityId,activity);
+    }
+    return { slices, total:[...byLabel.values()].reduce((a,b)=>a+b,0), byLabel, byActivity };
   }
   function formatTopDate() {
     const now=new Date();
@@ -800,8 +1403,7 @@
     }
     if (tens !== lastFractionTens) {
       $('timerTens').textContent = tens;
-      if (lastFractionTens !== null && active?.status === 'running' &&
-          !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      if (lastFractionTens !== null && active?.status === 'running') {
         decimal.classList.remove('soft-tick');
         void decimal.offsetWidth;
         decimal.classList.add('soft-tick');
@@ -818,11 +1420,35 @@
     if (changed) $('timerValue').setAttribute('aria-label', `${whole}.${hundredths} 経過時間`);
   }
 
+  function applyTimerAmbient(currentLabelColor = null) {
+    const card = $('timerCard');
+    const settings = data.settings || {};
+    const enabled = settings.ambientEnabled !== false;
+    const strength = ['subtle','balanced','rich'].includes(settings.ambientStrength) ? settings.ambientStrength : 'subtle';
+    const followLabel = settings.ambientFollowLabel !== false;
+    const active = getActive();
+    const label = active ? findLabel(active.labelId) : findLabel(selectedLabelId);
+    const chosenColor = currentLabelColor || safeColor(label?.color || active?.labelColor || '#a86f50');
+    card.classList.toggle('ambient-disabled', !enabled);
+    card.dataset.ambientStrength = strength;
+    card.style.setProperty('--ambient-color', followLabel ? chosenColor : 'var(--accent)');
+    const enabledControl = $('ambientEnabled');
+    const strengthControl = $('ambientStrength');
+    const followControl = $('ambientFollowLabel');
+    if (enabledControl) enabledControl.checked = enabled;
+    if (strengthControl && strengthControl.value !== strength) { strengthControl.value = strength; syncCustomSelect(strengthControl); }
+    if (followControl) followControl.checked = followLabel;
+  }
+
   function renderTimer() {
     const active = getActive();
     const mode = !active ? 'idle' : active.status;
     const timerCard = $('timerCard');
     const timerValue = $('timerValue');
+    const tintLabel = active ? (findLabel(active.labelId) || { color: active.labelColor }) : (findLabel(selectedLabelId) || data.labels[0]);
+    const currentLabelColor = safeColor(tintLabel?.color || active?.labelColor || '#a86f50');
+    timerCard.style.setProperty('--timer-label-color', currentLabelColor);
+    applyTimerAmbient(currentLabelColor);
     $('timerLabelPicker').parentElement.classList.toggle('has-active', !!active);
     timerCard.classList.toggle('is-running', mode === 'running');
     timerCard.classList.toggle('is-paused', mode === 'paused');
@@ -844,7 +1470,7 @@
       const caption = $('timerCaption');
       caption.replaceChildren();
       const labelDot = document.createElement('span'); labelDot.className = 'timer-caption-dot'; labelDot.style.backgroundColor = safeColor(findLabel(active.labelId)?.color || active.labelColor); labelDot.setAttribute('aria-hidden', 'true');
-      const labelText = document.createElement('span'); labelText.textContent = active.labelName;
+      const labelText = document.createElement('span'); labelText.textContent = labelPath(active.labelName, active.subLabelName);
       caption.append(labelDot, labelText);
       $('timerSubtext').textContent = `開始時刻 ${fmtTime(active.createdAt)}`;
       $('mainTimerBtn').textContent = active.status === 'running' ? '一時停止' : '再開';
@@ -915,6 +1541,7 @@
   }
   function updateAutoStopOverrideFromControls() {
     autoStopOverride = normalizeAutoStop({ mode:$('autoStopMode').value, durationMinutes:$('autoStopDuration').value, time:$('autoStopTime').value });
+    save();
   }
   function stopTimerFrames() {
     if (timerFrameId) cancelAnimationFrame(timerFrameId);
@@ -955,8 +1582,9 @@
     } else if (autoStop.mode === 'time') {
       autoStopAt = nextLocalTimeStamp(now, autoStop.time);
     }
-    data.sessions.push({id:makeId(),labelId:label.id,labelName:label.name,labelColor:label.color,createdAt:now,endedAt:null,status:'running',segments:[{startAt:now,endAt:null}],autoStop,autoStopAt,autoStopRemainingMs,autoStopReview:false,autoStopReviewSegmentIndex:-1});
-    save(); renderAll(); showToast(`${label.name}の計測を開始しました`);
+    const subLabel=findSubLabel(label.id,selectedSubLabelId);
+    data.sessions.push({id:makeId(),labelId:label.id,labelName:label.name,labelColor:label.color,subLabelId:subLabel?.id||'',subLabelName:subLabel?.name||'',createdAt:now,endedAt:null,status:'running',segments:[{startAt:now,endAt:null}],autoStop,autoStopAt,autoStopRemainingMs,autoStopReview:false,autoStopReviewSegmentIndex:-1});
+    save(); renderAll(); showToast(`${labelPath(label.name,subLabel?.name)}の計測を開始しました`);
   }
   function pauseSession() {
     if (processAutoStopExpiry()) { renderAll(); showToast('設定した時刻に自動終了しました'); return; }
@@ -1058,8 +1686,10 @@
     const rect = trigger.getBoundingClientRect();
     const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
     const viewportHeight = window.innerHeight;
-    const maxWidth = Math.max(120, Math.min(280, viewportWidth - 24));
-    const width = Math.min(maxWidth, Math.max(rect.width, 190));
+    const isAutoStopSelect = !!control.closest('#autoStopPanel, .label-auto-stop');
+    const widthLimit = isAutoStopSelect ? 420 : 280;
+    const maxWidth = Math.max(120, Math.min(widthLimit, viewportWidth - 24));
+    const width = Math.min(maxWidth, Math.max(rect.width, Math.min(190, maxWidth)));
     const left = Math.max(12, Math.min(rect.left, viewportWidth - width - 12));
     menu.style.width = `${width}px`;
     menu.style.maxWidth = `${maxWidth}px`;
@@ -1148,20 +1778,66 @@
   window.addEventListener('resize', () => {
     document.querySelectorAll('.select-control.open').forEach(control => closeCustomSelect(control));
   });
+  document.addEventListener('scroll',event=>{if(!labelMenu.contains(event.target)&&!labelSubMenu.contains(event.target))closeTimerLabelMenu();},true);
+  window.addEventListener('resize',()=>closeTimerLabelMenu());
+
+  function moveLabelOrder(labelId, direction) {
+    const currentIndex = data.labels.findIndex(label => label.id === labelId);
+    if (currentIndex < 0) return;
+    const nextIndex = Math.max(0, Math.min(data.labels.length - 1, currentIndex + direction));
+    if (nextIndex === currentIndex) return;
+
+    const editor = $('labelEditor');
+    const openSettings = new Set(
+      [...editor.querySelectorAll('.label-options-disclosure[open]')]
+        .map(details => details.closest('.label-edit-row')?.dataset.labelId)
+        .filter(Boolean)
+    );
+    const [moved] = data.labels.splice(currentIndex, 1);
+    data.labels.splice(nextIndex, 0, moved);
+    save();
+    renderLabels();
+    renderSelectFallback();
+
+    [...editor.querySelectorAll('.label-edit-row')].forEach(row => {
+      if (openSettings.has(row.dataset.labelId)) {
+        row.querySelector('.label-options-disclosure')?.setAttribute('open', '');
+      }
+    });
+    const movedRow = [...editor.querySelectorAll('.label-edit-row')]
+      .find(row => row.dataset.labelId === labelId);
+    movedRow?.querySelector(direction < 0 ? '.label-order-up' : '.label-order-down')
+      ?.focus({ preventScroll: true });
+    showToast('ラベルの順番を変更しました');
+  }
 
   function renderLabels() {
     const active=getActive();
     const editor=$('labelEditor'); editor.innerHTML='';
     data.labels.forEach(label=>{
-      const row=document.createElement('div'); row.className='label-edit-row';
-      row.innerHTML=`<input type="text" maxlength="24" aria-label="ラベル名" value="${escapeHtml(label.name)}"><button class="icon-btn" type="button" aria-label="ラベルを削除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></button>`;
-      const nameInput=row.querySelector('input[type=text]'), remove=row.querySelector('button');
+      label.subLabels=normalizeSubLabels(label.subLabels);
+      const row=document.createElement('div'); row.className='label-edit-row'; row.dataset.labelId=label.id;
+      const orderControls=document.createElement('div'); orderControls.className='label-order-controls';
+      const makeOrderButton=(direction, className, symbol, labelText)=>{
+        const button=document.createElement('button'); button.type='button'; button.className=`label-order-btn ${className}`;
+        button.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${direction<0?'m6 14 6-6 6 6':'m6 10 6 6 6-6'}"/></svg>`;
+        button.setAttribute('aria-label',`${label.name}を${labelText}へ移動`); button.title=`${labelText}へ移動`;
+        button.disabled=(direction<0 ? data.labels[0]?.id===label.id : data.labels[data.labels.length-1]?.id===label.id);
+        button.addEventListener('click',()=>moveLabelOrder(label.id,direction));
+        return button;
+      };
+      const moveUp=makeOrderButton(-1,'label-order-up','', '上');
+      const moveDown=makeOrderButton(1,'label-order-down','', '下');
+      orderControls.append(moveUp,moveDown);
+      const nameInput=document.createElement('input'); nameInput.type='text'; nameInput.maxLength=24; nameInput.setAttribute('aria-label','ラベル名'); nameInput.value=label.name;
+      const remove=document.createElement('button'); remove.className='icon-btn'; remove.type='button'; remove.setAttribute('aria-label','ラベルを削除');
+      remove.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg>';
+      row.append(orderControls,nameInput,remove);
       const palette=document.createElement('div'); palette.className='label-palette'; palette.setAttribute('role','group'); palette.setAttribute('aria-label',`${label.name}の色テンプレート`);
       LABEL_COLOR_TEMPLATES.forEach(preset=>{
         const swatch=document.createElement('button');
         swatch.type='button'; swatch.className='palette-swatch'; swatch.style.backgroundColor=preset.color;
-        swatch.title=preset.name; swatch.setAttribute('aria-label',`${preset.name}を選択`);
-        swatch.setAttribute('aria-pressed',String(label.color===preset.color));
+        swatch.title=preset.name; swatch.setAttribute('aria-label',`${preset.name}を選択`); swatch.setAttribute('aria-pressed',String(label.color===preset.color));
         swatch.addEventListener('click',()=>{
           if(label.color===preset.color) return;
           label.color=preset.color;
@@ -1170,91 +1846,205 @@
         });
         palette.appendChild(swatch);
       });
-      nameInput.addEventListener('change',()=>{const name=nameInput.value.trim();if(!name){nameInput.value=label.name;return;}label.name=name;data.sessions.filter(s=>s.labelId===label.id).forEach(s=>s.labelName=name);save();renderAll();});
+      nameInput.addEventListener('change',()=>{
+        const name=nameInput.value.trim(); if(!name){nameInput.value=label.name;return;}
+        label.name=name; data.sessions.filter(s=>s.labelId===label.id).forEach(session=>session.labelName=name);
+        save(); renderAll();
+      });
       remove.disabled=active?.labelId===label.id; remove.style.opacity=remove.disabled?'.25':'1';
-      remove.addEventListener('click',()=>{if(data.labels.length<=1){showToast('ラベルは最低1つ必要です');return;}if(!confirm(`「${label.name}」をラベル一覧から削除しますか？\n過去の記録は残ります。`))return;data.labels=data.labels.filter(l=>l.id!==label.id);if(selectedLabelId===label.id)selectedLabelId=data.labels[0].id;save();renderAll();});
+      remove.addEventListener('click',()=>{
+        if(data.labels.length<=1){showToast('ラベルは最低1つ必要です');return;}
+        if(!confirm(`「${label.name}」をラベル一覧から削除しますか？\n過去の記録は残ります。`))return;
+        data.labels=data.labels.filter(item=>item.id!==label.id);
+        if(selectedLabelId===label.id){selectedLabelId=data.labels[0].id;selectedSubLabelId='';}
+        save(); renderAll();
+      });
       row.appendChild(palette);
-      label.autoStopDefault = normalizeAutoStop(label.autoStopDefault);
-      const autoBox = document.createElement('div'); autoBox.className = 'label-auto-stop';
-      autoBox.innerHTML = `<span class="label-auto-stop-title">${escapeHtml(label.name)}｜自動終了のデフォルト</span><select class="label-auto-mode" aria-label="${escapeHtml(label.name)}の自動終了方法"><option value="off">自動終了しない</option><option value="duration">指定した時間後</option><option value="time">指定時刻</option></select><div class="label-auto-values"><label class="label-auto-duration-wrap">経過時間（分）<input class="label-auto-duration" type="number" min="1" max="10080" step="1" inputmode="numeric"></label><label class="label-auto-time-wrap">終了時刻<input class="label-auto-time" type="time"></label></div><p class="setting-note">このラベルで計測を始めるときの初期設定です。タイマー下で、その回だけ変更できます。</p>`;
-      const autoMode = autoBox.querySelector('.label-auto-mode');
-      const autoDuration = autoBox.querySelector('.label-auto-duration');
+
+      // サブラベルと自動終了のデフォルトを、ラベルごとの1つの折りたたみにまとめる。
+      const optionsDetails=document.createElement('details'); optionsDetails.className='label-options-disclosure';
+      optionsDetails.dataset.labelId=label.id;
+      const optionsSummary=document.createElement('summary');
+      optionsSummary.innerHTML=`<span>自動終了・サブラベル</span><span class="label-options-count"></span>`;
+      const optionsContent=document.createElement('div'); optionsContent.className='label-options-content';
+
+      const subSection=document.createElement('section'); subSection.className='label-options-section';
+      const subHeading=document.createElement('div'); subHeading.className='label-options-heading'; subHeading.textContent='サブラベル';
+      const subList=document.createElement('div'); subList.className='sublabel-editor';
+      const addSub=document.createElement('button'); addSub.type='button'; addSub.className='sublabel-add-btn'; addSub.textContent='＋ サブラベルを追加';
+      const refreshSubLabels=()=>{
+        const count=label.subLabels.length;
+        optionsSummary.querySelector('.label-options-count').textContent=count ? `サブ ${count}` : '追加なし';
+        subList.replaceChildren();
+        label.subLabels.forEach(sub=>{
+          const subRow=document.createElement('div'); subRow.className='sublabel-edit-row';
+          const input=document.createElement('input'); input.type='text'; input.maxLength=24; input.value=sub.name; input.setAttribute('aria-label',`${label.name}のサブラベル名`);
+          const del=document.createElement('button'); del.type='button'; del.className='icon-btn'; del.setAttribute('aria-label',`${sub.name}を削除`); del.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg>';
+          input.addEventListener('change',()=>{
+            const value=input.value.trim(); if(!value){input.value=sub.name;return;}
+            sub.name=value;
+            data.sessions.filter(session=>session.labelId===label.id && session.subLabelId===sub.id).forEach(session=>session.subLabelName=value);
+            save(); renderSelectFallback(); renderTimer();
+          });
+          del.addEventListener('click',()=>{
+            if(!confirm(`「${sub.name}」をサブラベルから削除しますか？\n過去の記録名はそのまま残ります。`))return;
+            label.subLabels=label.subLabels.filter(item=>item.id!==sub.id);
+            if(selectedLabelId===label.id && selectedSubLabelId===sub.id) selectedSubLabelId='';
+            save(); refreshSubLabels(); renderSelectFallback();
+          });
+          subRow.append(input,del); subList.appendChild(subRow);
+        });
+        addSub.disabled=count>=20; addSub.style.opacity=addSub.disabled?'.45':'1';
+      };
+      addSub.addEventListener('click',()=>{
+        if(label.subLabels.length>=20)return;
+        label.subLabels.push({id:makeId(),name:`サブラベル${label.subLabels.length+1}`});
+        optionsDetails.open=true; save(); refreshSubLabels();
+      });
+      refreshSubLabels();
+      subSection.append(subHeading,subList,addSub);
+
+      label.autoStopDefault=normalizeAutoStop(label.autoStopDefault);
+      const autoBox=document.createElement('section'); autoBox.className='label-auto-stop';
+      autoBox.innerHTML=`<div class="label-options-heading">自動終了のデフォルト</div><select class="label-auto-mode" aria-label="${escapeHtml(label.name)}の自動終了方法"><option value="off">自動終了しない</option><option value="duration">指定した時間後</option><option value="time">指定時刻</option></select><div class="label-auto-values"><label class="label-auto-duration-wrap">経過時間（分）<input class="label-auto-duration" type="number" min="1" max="10080" step="1" inputmode="numeric"></label><label class="label-auto-time-wrap">終了時刻<input class="label-auto-time" type="time"></label></div><p class="setting-note">このラベルで計測を始めるときの初期設定です。タイマー下で、その回だけ変更できます。</p>`;
+      const autoMode=autoBox.querySelector('.label-auto-mode');
+      const autoDuration=autoBox.querySelector('.label-auto-duration');
       decorateSelect(autoMode);
-      const autoTime = autoBox.querySelector('.label-auto-time');
-      const autoValues = autoBox.querySelector('.label-auto-values');
-      autoMode.value = label.autoStopDefault.mode;
-      syncCustomSelect(autoMode);
-      autoDuration.value = String(label.autoStopDefault.durationMinutes);
-      autoTime.value = label.autoStopDefault.time;
-      const refreshAutoFields = () => {
-        autoValues.hidden = autoMode.value === 'off';
-        autoBox.querySelector('.label-auto-duration-wrap').hidden = autoMode.value !== 'duration';
-        autoBox.querySelector('.label-auto-time-wrap').hidden = autoMode.value !== 'time';
+      const autoTime=autoBox.querySelector('.label-auto-time');
+      const autoValues=autoBox.querySelector('.label-auto-values');
+      autoMode.value=label.autoStopDefault.mode; syncCustomSelect(autoMode);
+      autoDuration.value=String(label.autoStopDefault.durationMinutes); autoTime.value=label.autoStopDefault.time;
+      const refreshAutoFields=()=>{
+        autoValues.hidden=autoMode.value==='off';
+        autoBox.querySelector('.label-auto-duration-wrap').hidden=autoMode.value!=='duration';
+        autoBox.querySelector('.label-auto-time-wrap').hidden=autoMode.value!=='time';
       };
-      const saveAutoDefault = () => {
-        label.autoStopDefault = normalizeAutoStop({mode:autoMode.value,durationMinutes:autoDuration.value,time:autoTime.value});
-        save();
-        if (selectedLabelId === label.id && autoStopScope === 'default') renderAutoStopControls();
+      const saveAutoDefault=()=>{
+        label.autoStopDefault=normalizeAutoStop({mode:autoMode.value,durationMinutes:autoDuration.value,time:autoTime.value});
+        save(); if(selectedLabelId===label.id && autoStopScope==='default') renderAutoStopControls();
       };
-      autoMode.addEventListener('change', () => { refreshAutoFields(); saveAutoDefault(); });
-      autoDuration.addEventListener('change', saveAutoDefault);
-      autoTime.addEventListener('change', saveAutoDefault);
+      autoMode.addEventListener('change',()=>{refreshAutoFields();saveAutoDefault();});
+      autoDuration.addEventListener('change',saveAutoDefault); autoTime.addEventListener('change',saveAutoDefault);
       refreshAutoFields();
-      row.appendChild(autoBox);
+      optionsContent.append(subSection,autoBox);
+      optionsDetails.append(optionsSummary,optionsContent);
+      row.appendChild(optionsDetails);
       editor.appendChild(row);
     });
     $('addLabelBtn').disabled=data.labels.length>=12;
     $('addLabelBtn').style.opacity=data.labels.length>=12?'.4':'1';
   }
+
+  function positionTimerLabelMenu(showSubmenu=false) {
+    const trigger=$('timerLabelSelect'), menu=$('timerLabelMenu');
+    if(!trigger || !menu) return;
+    const rect=trigger.getBoundingClientRect(), vw=document.documentElement.clientWidth||window.innerWidth, vh=window.innerHeight;
+    let menuWidth, menuLeft, submenuHeight=0;
+    if(showSubmenu) {
+      // Keep the parent list on the left and expand the sublabel list to its right.
+      // On narrow phones both columns shrink together so the pair stays in the viewport.
+      const panelWidth=Math.max(112,Math.min(210,Math.floor((vw-30-6)/2)));
+      const groupWidth=panelWidth*2+6;
+      const groupLeft=Math.max(12,Math.min(rect.left+rect.width/2-groupWidth/2,vw-groupWidth-12));
+      menuWidth=panelWidth; menuLeft=groupLeft;
+      menu.style.width=`${panelWidth}px`; menu.style.left=`${groupLeft}px`;
+      labelSubMenu.style.width=`${panelWidth}px`; labelSubMenu.style.left=`${groupLeft+panelWidth+6}px`;
+      submenuHeight=labelSubMenu.scrollHeight||0;
+    } else {
+      menuWidth=Math.min(240,Math.max(190,vw-24));
+      menuLeft=Math.max(12,Math.min(rect.left,vw-menuWidth-12));
+      menu.style.width=`${menuWidth}px`; menu.style.left=`${menuLeft}px`;
+    }
+    const below=Math.max(0,vh-rect.bottom-12), above=Math.max(0,rect.top-12);
+    const cap=Math.min(260,Math.floor(vh*.42));
+    const contentHeight=Math.min(Math.max(menu.scrollHeight||0,submenuHeight)||cap,cap);
+    const useBelow=below>=Math.min(contentHeight,150)||below>=above;
+    const available=Math.max(100,Math.min(cap,useBelow?below:above));
+    const top=useBelow?Math.min(vh-available-8,rect.bottom+6):Math.max(8,rect.top-available-6);
+    menu.style.top=`${top}px`; menu.style.maxHeight=`${available}px`;
+    if(showSubmenu){labelSubMenu.style.top=`${top}px`;labelSubMenu.style.maxHeight=`${available}px`;}
+  }
+
   function closeTimerLabelMenu(restoreFocus=false) {
     const picker=$('timerLabelPicker'), trigger=$('timerLabelSelect'), menu=$('timerLabelMenu');
     if(!picker || !trigger || !menu) return;
-    picker.classList.remove('open');
-    trigger.setAttribute('aria-expanded','false');
-    menu.hidden=true;
+    picker.classList.remove('open'); trigger.setAttribute('aria-expanded','false');
+    menu.hidden=true; menu.classList.remove('label-picker-portal'); menu.removeAttribute('style');
+    if(menu.parentNode!==picker) picker.appendChild(menu);
+    labelSubMenu.hidden=true; labelSubMenu.removeAttribute('style'); labelSubMenu.replaceChildren(); openSubLabelForId='';
     if(restoreFocus) trigger.focus({preventScroll:true});
   }
+
+  function chooseTimerLabel(label, subLabel=null) {
+    selectedLabelId=label.id; selectedSubLabelId=subLabel?.id||'';
+    closeTimerLabelMenu(true); save(); renderSelectFallback(); renderAutoStopControls();
+    const trigger=$('timerLabelSelect'); trigger.classList.remove('selection-feedback'); void trigger.offsetWidth; trigger.classList.add('selection-feedback');
+  }
+
+  function openTimerSubLabelMenu(label) {
+    openSubLabelForId=label.id; labelSubMenu.replaceChildren();
+    const title=document.createElement('div'); title.className='picker-submenu-title'; title.textContent=`${label.name} のサブラベル`; labelSubMenu.appendChild(title);
+    const addChoice=(name,subLabel)=>{
+      const option=document.createElement('button'); option.type='button'; option.className='picker-option'; option.setAttribute('role','option');
+      option.setAttribute('aria-selected',String((subLabel?.id||'')===selectedSubLabelId && label.id===selectedLabelId));
+      const dot=document.createElement('span'); dot.className='picker-option-dot'; dot.style.backgroundColor=safeColor(label.color); dot.setAttribute('aria-hidden','true');
+      const text=document.createElement('span'); text.className='picker-option-name'; text.textContent=name;
+      const check=document.createElementNS('http://www.w3.org/2000/svg','svg'); check.setAttribute('viewBox','0 0 24 24'); check.setAttribute('class','picker-option-check'); check.setAttribute('fill','none'); check.setAttribute('stroke','currentColor'); check.setAttribute('stroke-width','2'); check.setAttribute('aria-hidden','true');
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m5 12 4 4L19 6'); check.appendChild(path);
+      option.append(dot,text,check); option.addEventListener('click',()=>chooseTimerLabel(label,subLabel)); labelSubMenu.appendChild(option);
+    };
+    addChoice('サブラベルなし',null);
+    label.subLabels.forEach(sub=>addChoice(sub.name,sub));
+    labelSubMenu.hidden=false; if(labelSubMenu.parentNode!==document.body) document.body.appendChild(labelSubMenu);
+    $('timerLabelMenu').querySelectorAll('.picker-option').forEach(option=>option.classList.toggle('is-expanded',option.dataset.labelId===label.id));
+    positionTimerLabelMenu(true);
+    requestAnimationFrame(()=>labelSubMenu.querySelector('[role="option"]')?.focus({preventScroll:true}));
+  }
+
   function openTimerLabelMenu(preferredIndex=null) {
     const picker=$('timerLabelPicker'), trigger=$('timerLabelSelect'), menu=$('timerLabelMenu');
     if(!picker || picker.hidden || !data.labels.length) return;
-    menu.hidden=false;
-    picker.classList.add('open');
-    trigger.setAttribute('aria-expanded','true');
+    if(menu.parentNode!==document.body) document.body.appendChild(menu);
+    menu.classList.add('label-picker-portal'); menu.hidden=false; picker.classList.add('open'); trigger.setAttribute('aria-expanded','true');
+    positionTimerLabelMenu(false);
     const options=[...menu.querySelectorAll('[role="option"]')];
-    const selected=options.findIndex(option=>option.getAttribute('aria-selected')==='true');
+    const selected=options.findIndex(option=>option.dataset.labelId===selectedLabelId);
     const index=preferredIndex==null?Math.max(0,selected):Math.max(0,Math.min(options.length-1,preferredIndex));
     requestAnimationFrame(()=>options[index]?.focus({preventScroll:true}));
   }
+
   function renderSelectFallback() {
-    // Branded label picker: the trigger and listbox share the label template colors.
     const picker=$('timerLabelPicker'), trigger=$('timerLabelSelect'), menu=$('timerLabelMenu');
-    const active=getActive();
-    if(active) closeTimerLabelMenu();
-    picker.hidden=!!active;
-    trigger.replaceChildren();
+    const active=getActive(); if(active) closeTimerLabelMenu();
+    picker.hidden=!!active; trigger.replaceChildren();
     const current=active ? (findLabel(active.labelId)||{name:active.labelName,color:active.labelColor}) : (findLabel(selectedLabelId)||data.labels[0]);
+    const currentSub=active ? (active.subLabelName ? {name:active.subLabelName} : null) : findSubLabel(selectedLabelId,selectedSubLabelId);
+    if(!currentSub && !active && selectedSubLabelId) selectedSubLabelId='';
     const dot=document.createElement('span'); dot.className='picker-dot'; dot.setAttribute('aria-hidden','true'); dot.style.backgroundColor=safeColor(current?.color);
-    const text=document.createElement('span'); text.className='picker-current'; text.textContent=current?.name||'ラベルを選択';
+    const text=document.createElement('span'); text.className='picker-current'; text.textContent=labelPath(current?.name||'ラベルを選択',currentSub?.name||'');
     const chevron=document.createElementNS('http://www.w3.org/2000/svg','svg'); chevron.setAttribute('viewBox','0 0 24 24'); chevron.setAttribute('class','picker-chevron'); chevron.setAttribute('fill','none'); chevron.setAttribute('stroke','currentColor'); chevron.setAttribute('stroke-width','1.8'); chevron.setAttribute('aria-hidden','true');
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m7 10 5 5 5-5'); chevron.appendChild(path);
-    trigger.append(dot,text,chevron);
-    trigger.disabled=!!active;
-    trigger.setAttribute('aria-label',`計測するラベル：${current?.name||'未選択'}`);
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m7 10 5 5 5-5'); chevron.appendChild(path); trigger.append(dot,text,chevron);
+    trigger.disabled=!!active; trigger.setAttribute('aria-label',`計測するラベル：${labelPath(current?.name||'未選択',currentSub?.name||'')}`);
     menu.replaceChildren();
     data.labels.forEach(label=>{
-      const option=document.createElement('button'); option.type='button'; option.className='picker-option'; option.setAttribute('role','option'); option.setAttribute('aria-selected',String(label.id===selectedLabelId)); option.dataset.labelId=label.id;
+      const option=document.createElement('button'); option.type='button'; option.className='picker-option'; option.setAttribute('role','option');
+      option.setAttribute('aria-selected',String(label.id===selectedLabelId)); option.dataset.labelId=label.id;
+      if(label.subLabels?.length) option.classList.add('has-sublabels');
       const optionDot=document.createElement('span'); optionDot.className='picker-option-dot'; optionDot.style.backgroundColor=safeColor(label.color); optionDot.setAttribute('aria-hidden','true');
       const optionName=document.createElement('span'); optionName.className='picker-option-name'; optionName.textContent=label.name;
-      const check=document.createElementNS('http://www.w3.org/2000/svg','svg'); check.setAttribute('viewBox','0 0 24 24'); check.setAttribute('class','picker-option-check'); check.setAttribute('fill','none'); check.setAttribute('stroke','currentColor'); check.setAttribute('stroke-width','2'); check.setAttribute('aria-hidden','true');
-      const checkPath=document.createElementNS('http://www.w3.org/2000/svg','path'); checkPath.setAttribute('d','m5 12 4 4L19 6'); check.appendChild(checkPath);
-      option.append(optionDot,optionName,check); menu.appendChild(option);
+      option.append(optionDot,optionName);
+      if(label.subLabels?.length){
+        const arrow=document.createElementNS('http://www.w3.org/2000/svg','svg'); arrow.setAttribute('viewBox','0 0 24 24'); arrow.setAttribute('class','picker-option-arrow'); arrow.setAttribute('fill','none'); arrow.setAttribute('stroke','currentColor'); arrow.setAttribute('stroke-width','2'); arrow.setAttribute('aria-hidden','true');
+        const arrowPath=document.createElementNS('http://www.w3.org/2000/svg','path'); arrowPath.setAttribute('d','m9 18 6-6-6-6'); arrow.appendChild(arrowPath); option.appendChild(arrow);
+      } else {
+        const check=document.createElementNS('http://www.w3.org/2000/svg','svg'); check.setAttribute('viewBox','0 0 24 24'); check.setAttribute('class','picker-option-check'); check.setAttribute('fill','none'); check.setAttribute('stroke','currentColor'); check.setAttribute('stroke-width','2'); check.setAttribute('aria-hidden','true');
+        const checkPath=document.createElementNS('http://www.w3.org/2000/svg','path'); checkPath.setAttribute('d','m5 12 4 4L19 6'); check.appendChild(checkPath); option.appendChild(check);
+      }
+      menu.appendChild(option);
     });
-    if(!active && picker.classList.contains('open')) {
-      trigger.setAttribute('aria-expanded','true'); menu.hidden=false;
-    } else {
-      trigger.setAttribute('aria-expanded','false'); menu.hidden=true;
-    }
+    if(!active && picker.classList.contains('open')){trigger.setAttribute('aria-expanded','true');menu.hidden=false;} else {trigger.setAttribute('aria-expanded','false');menu.hidden=true;}
   }
+
   function renderOverview() {
     const stats=getDayStats(selectedDay), total=stats.total;
     const selectedDate=parseDay(selectedDay);
@@ -1263,10 +2053,7 @@
     $('dailyTotal').textContent=fmtDuration(total);
     $('sessionCount').textContent=String(new Set(stats.slices.map(s=>s.sessionId)).size);
     $('breakdownTotal').textContent=`合計 ${fmtDuration(total)}`;
-    const labelsUsed=[...stats.byLabel.entries()].map(([id,ms])=>{
-      const label=findLabel(id), slice=stats.slices.find(s=>s.labelId===id);
-      return {id,name:label?.name||slice?.labelName||'その他',color:label?.color||slice?.labelColor||'#879978',ms};
-    }).sort((a,b)=>b.ms-a.ms);
+    const labelsUsed=[...stats.byActivity.values()].sort((a,b)=>b.ms-a.ms);
     $('stackedTrack').innerHTML='';$('breakdownList').innerHTML='';
     if(total<=0){$('stackedTrack').style.display='none';$('breakdownList').innerHTML='<div class="empty-state"><strong>まだ記録がありません</strong>タイマーを使うと、ここに内訳が表示されます。</div>';}
     else {
@@ -1285,8 +2072,8 @@
         for(const window of windows){
           const overlap=Math.max(0,Math.min(slice.endAt,window.end)-Math.max(slice.startAt,window.start));
           if(overlap<=0) continue;
-          const key=slice.labelId||slice.labelName;
-          const existing=parts.get(key)||{name:slice.labelName,color:slice.labelColor,ms:0};
+          const key=slice.subLabelId ? `${slice.labelId}::${slice.subLabelId}` : (slice.labelId||slice.labelName);
+          const existing=parts.get(key)||{name:labelPath(slice.labelName,slice.subLabelName),color:slice.labelColor,ms:0};
           existing.ms+=overlap; parts.set(key,existing);
         }
       }
@@ -1314,7 +2101,7 @@
     stats.slices.forEach(s=>{
       const row=document.createElement('div');row.className='record-row';
       const active=getActive()?.id===s.sessionId;
-      row.innerHTML=`<i class="record-marker" style="background:${s.labelColor}"></i><div class="record-main"><div class="record-name">${escapeHtml(s.labelName)}${active?' · 計測中':''}</div><div class="record-time">${fmtTime(s.startAt)} — ${active && s.endAt>=Date.now()-1000?'進行中':fmtTime(s.endAt)}</div></div><div class="record-duration">${fmtDuration(s.endAt-s.startAt,true)}</div>`;
+      row.innerHTML=`<i class="record-marker" style="background:${s.labelColor}"></i><div class="record-main"><div class="record-name">${escapeHtml(labelPath(s.labelName,s.subLabelName))}${active?' · 計測中':''}</div><div class="record-time">${fmtTime(s.startAt)} — ${active && s.endAt>=Date.now()-1000?'進行中':fmtTime(s.endAt)}</div></div><div class="record-duration">${fmtDuration(s.endAt-s.startAt,true)}</div>`;
       recordList.appendChild(row);
     });
   }
@@ -1351,10 +2138,14 @@
     formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderOverview();renderCalendar();applyTheme();drawClock();syncTimerFrames();scheduleAutoStop();
   }
   const labelPicker=$('timerLabelPicker'), labelTrigger=$('timerLabelSelect'), labelMenu=$('timerLabelMenu');
+  const labelSubMenu=document.createElement('div'); labelSubMenu.className='label-picker-submenu'; labelSubMenu.setAttribute('role','listbox'); labelSubMenu.setAttribute('aria-label','サブラベルを選択'); labelSubMenu.hidden=true;
+  let openSubLabelForId='';
+  document.body.appendChild(labelSubMenu);
   $('autoStopScope').addEventListener('change', event => {
     if (getActive()) return;
     if (event.target.value === 'custom' && autoStopScope !== 'custom') autoStopOverride = clone(getLabelAutoStop());
     autoStopScope = event.target.value === 'custom' ? 'custom' : 'default';
+    save();
     renderAutoStopControls();
   });
   $('autoStopMode').addEventListener('change', () => { if (getActive()) return; updateAutoStopOverrideFromControls(); renderAutoStopControls(); });
@@ -1395,15 +2186,14 @@
   labelMenu.addEventListener('click',event=>{
     const option=event.target.closest('[data-label-id]');
     if(!option || getActive()) return;
-    const label=findLabel(option.dataset.labelId);
-    if(!label) return;
-    selectedLabelId=label.id;
-    closeTimerLabelMenu(true);
-    renderSelectFallback();
-    renderAutoStopControls();
-    labelTrigger.classList.remove('selection-feedback');
-    void labelTrigger.offsetWidth;
-    labelTrigger.classList.add('selection-feedback');
+    const label=findLabel(option.dataset.labelId); if(!label) return;
+    if(label.subLabels?.length){openTimerSubLabelMenu(label);return;}
+    chooseTimerLabel(label,null);
+  });
+  labelSubMenu.addEventListener('keydown',event=>{
+    const options=[...labelSubMenu.querySelectorAll('[role="option"]')], index=options.indexOf(document.activeElement);
+    if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();options[Math.max(0,Math.min(options.length-1,index+(event.key==='ArrowDown'?1:-1)))]?.focus({preventScroll:true});}
+    else if(event.key==='Escape'||event.key==='ArrowLeft'){event.preventDefault();labelSubMenu.hidden=true;positionTimerLabelMenu(false);labelMenu.querySelector(`[data-label-id="${openSubLabelForId}"]`)?.focus({preventScroll:true});}
   });
   labelMenu.addEventListener('keydown',event=>{
     const options=[...labelMenu.querySelectorAll('[role="option"]')];
@@ -1416,13 +2206,15 @@
       event.preventDefault(); options[0]?.focus({preventScroll:true});
     } else if(event.key==='End'){
       event.preventDefault(); options.at(-1)?.focus({preventScroll:true});
+    } else if(event.key==='ArrowRight'){
+      event.preventDefault(); const focused=options[index]; const label=findLabel(focused?.dataset.labelId); if(label?.subLabels?.length) openTimerSubLabelMenu(label);
     } else if(event.key==='Escape'){
       event.preventDefault(); closeTimerLabelMenu(true);
     } else if(event.key==='Tab'){
       closeTimerLabelMenu();
     }
   });
-  document.addEventListener('pointerdown',event=>{if(!labelPicker.contains(event.target))closeTimerLabelMenu();});
+  document.addEventListener('pointerdown',event=>{if(!labelPicker.contains(event.target)&&!labelMenu.contains(event.target)&&!labelSubMenu.contains(event.target))closeTimerLabelMenu();});
   $('mainTimerBtn').addEventListener('click',()=>{
     const active=getActive();
     if(!active){
@@ -1442,7 +2234,6 @@
   const settingsSummary = settingsPanel?.querySelector(':scope > summary');
   const settingsBody = settingsPanel?.querySelector('.settings-body');
   let settingsMotionBusy = false;
-  const settingsReducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const clearSettingsMotionStyles = () => {
     if (!settingsBody) return;
     settingsBody.style.height = '';
@@ -1453,7 +2244,7 @@
   settingsSummary?.addEventListener('click', event => {
     event.preventDefault();
     if (settingsMotionBusy || !settingsPanel || !settingsBody) return;
-    if (settingsReducedMotion() || typeof settingsBody.animate !== 'function') {
+    if (typeof settingsBody.animate !== 'function') {
       settingsPanel.open = !settingsPanel.open;
       settingsSummary.setAttribute('aria-expanded', String(settingsPanel.open));
       return;
@@ -1494,8 +2285,11 @@
   });
   settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel?.open));
   $('stopTimerBtn').addEventListener('click',stopSession);
-  $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color,autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}};data.labels.push(label);selectedLabelId=label.id;save();renderAll();showToast('ラベルを追加しました');});
+  $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color,subLabels:[],autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}};data.labels.push(label);selectedLabelId=label.id;selectedSubLabelId='';save();renderAll();showToast('ラベルを追加しました');});
   $('themeSelect').addEventListener('change',e=>{data.settings.theme=e.target.value;save();applyTheme();});
+  $('ambientEnabled').addEventListener('change',e=>{data.settings.ambientEnabled=e.target.checked;save();renderTimer();});
+  $('ambientStrength').addEventListener('change',e=>{data.settings.ambientStrength=['subtle','balanced','rich'].includes(e.target.value)?e.target.value:'subtle';save();renderTimer();});
+  $('ambientFollowLabel').addEventListener('change',e=>{data.settings.ambientFollowLabel=e.target.checked;save();renderTimer();});
   window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(data.settings.theme==='system')applyTheme();});
   function selectDay(key, scrollToOverview = false) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || key > todayKey()) return;
@@ -1504,10 +2298,17 @@
     selectedDay = key;
     visibleMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     renderAll();
+    const overview = $('overview');
+    if (overview) {
+      overview.classList.remove('day-change-in');
+      void overview.offsetWidth;
+      overview.classList.add('day-change-in');
+      overview.addEventListener('animationend', () => overview.classList.remove('day-change-in'), { once: true });
+    }
     if (scrollToOverview) {
       requestAnimationFrame(() => {
         const heading = $('overviewTitle');
-        heading.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+        heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
         heading.focus({ preventScroll: true });
       });
     }
@@ -1525,28 +2326,72 @@
   $('nextMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();});
   $('todayBtn').addEventListener('click',()=>{selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);renderAll();});
   $('exportBtn').addEventListener('click',()=>{
-    const payload={app:'DAYLOG',formatVersion:3,exportedAt:new Date().toISOString(),data};
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download=`daylog-backup-${todayKey()}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast('JSONを書き出しました');
+    try {
+      const payload = buildBackupPayload();
+      const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `daylog-backup-${todayKey()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+      showToast('記録・ラベル・自動終了・背景アニメーション設定・テーマをJSONに保存しました');
+    } catch (error) {
+      showToast(error?.message || 'JSONを書き出せませんでした。');
+    }
   });
   $('importBtn').addEventListener('click',()=>$('importFile').click());
   $('importFile').addEventListener('change',async e=>{
-    const file=e.target.files?.[0];if(!file)return;
-    try{
-      const parsed=JSON.parse(await file.text()),incoming=parsed?.data;
-      if(parsed?.app!=='DAYLOG'||!incoming||!Array.isArray(incoming.labels)||!Array.isArray(incoming.sessions))throw new Error('format');
-      if(!confirm('JSONの内容で現在の記録を置き換えます。\n先に現在のデータを書き出しておくことをおすすめします。続けますか？'))return;
-      const cleaned={labels:incoming.labels.map(l=>({id:String(l.id||makeId()),name:String(l.name||'ラベル').slice(0,24),color:safeColor(l.color),autoStopDefault:normalizeAutoStop(l.autoStopDefault)})),sessions:incoming.sessions.map(s=>({id:String(s.id||makeId()),labelId:String(s.labelId||''),labelName:String(s.labelName||'その他'),labelColor:safeColor(s.labelColor),createdAt:Number(s.createdAt)||Date.now(),endedAt:s.endedAt==null?null:Number(s.endedAt),status:['running','paused','done'].includes(s.status)?s.status:'done',segments:Array.isArray(s.segments)?s.segments.filter(p=>p&&Number.isFinite(Number(p.startAt))).map(p=>({startAt:Number(p.startAt),endAt:p.endAt==null?null:Number(p.endAt)})):[],autoStop:normalizeAutoStop(s.autoStop),autoStopAt:Number.isFinite(Number(s.autoStopAt))&&s.autoStopAt!=null?Number(s.autoStopAt):null,autoStopRemainingMs:Number.isFinite(Number(s.autoStopRemainingMs))&&s.autoStopRemainingMs!=null?Math.max(0,Number(s.autoStopRemainingMs)):null,autoStopReview:s.autoStopReview===true,autoStopReviewSegmentIndex:Number.isInteger(s.autoStopReviewSegmentIndex)?s.autoStopReviewSegmentIndex:-1})),settings:{theme:['light','dark','system'].includes(incoming.settings?.theme)?incoming.settings.theme:'light'}};
-      if(!cleaned.labels.length)cleaned.labels=clone(DEFAULT_LABELS);
-      // Keep only one active session if the imported file is malformed.
-      let seenActive=false;cleaned.sessions.forEach(s=>{if(s.status!=='done'){if(seenActive)s.status='done';else seenActive=true;}});
-      data={version:3,...cleaned};selectedLabelId=data.labels[0].id;autoStopScope='default';autoStopOverride={mode:'off',durationMinutes:60,time:'18:00'};selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);save();renderAll();showToast('データを読み込みました');
-    }catch{alert('このJSONファイルを読み込めませんでした。DAYLOGから書き出したファイルを選択してください。');}
-    finally{e.target.value='';}
+    const file=e.target.files?.[0];
+    if(!file)return;
+    let importCommitted = false;
+    try {
+      if (file.size > MAX_IMPORT_BYTES) throw new Error('JSONファイルが大きすぎます（上限25MB）。');
+      const text = await file.text();
+      let parsed;
+      try { parsed = JSON.parse(text); }
+      catch { throw new Error('JSONの書式が壊れているか、途中で切れています。'); }
+      const staged = parseBackupPayload(parsed);
+      const sessionCount = staged.sessions.length;
+      const labelCount = staged.labels.length;
+      const subLabelCount = staged.labels.reduce((sum,label)=>sum+label.subLabels.length,0);
+      const summary = `ラベル ${labelCount}個／サブラベル ${subLabelCount}個／記録 ${sessionCount}件`;
+      if (!confirm(`JSONの内容で現在のデータを置き換えます。\n\n読み込む内容：${summary}\n\n現在の記録は置き換わります。先にバックアップを保存することをおすすめします。続けますか？`)) return;
+
+      // Write the fully validated candidate before swapping in-memory state.
+      // If storage is full or unavailable, the current app state remains untouched.
+      persistDataSnapshot(staged);
+      importCommitted = true;
+      data = staged;
+      selectedLabelId = data.settings.selectedLabelId || data.labels[0]?.id || '';
+      selectedSubLabelId = data.settings.selectedSubLabelId || '';
+      autoStopScope = data.settings.autoStopScope || 'default';
+      autoStopOverride = clone(data.settings.autoStopOverride || {mode:'off',durationMinutes:60,time:'18:00'});
+      selectedDay = todayKey();
+      visibleMonth = new Date();
+      visibleMonth.setDate(1);
+      clearAutoStopTimeout();
+      processAutoStopExpiry();
+      save();
+      renderAll();
+      scheduleAutoStop();
+      showToast(`JSONを読み込みました（${summary}）`);
+    } catch(error) {
+      const detail = error?.message || 'ファイルの形式や内容を確認してください。';
+      alert(importCommitted
+        ? `JSONデータは保存されましたが、画面の更新中に問題が発生しました。ページを再読み込みしてください。\n${detail}`
+        : `JSONを読み込めませんでした。\n${detail}\n\n現在のデータは変更していません。`);
+    } finally {
+      e.target.value='';
+    }
   });
   document.querySelectorAll('select').forEach(decorateSelect);
   processAutoStopExpiry();
   buildClockTicks();renderAll();
+  if (startupMigrationPending) { save(); startupMigrationPending = false; }
+  if (startupDataWarning) showToast(startupDataWarning);
   // Paint the readout in sync with the display refresh rate. Elapsed time is
   // always derived from persisted wall-clock timestamps, so tab suspension is safe.
   document.addEventListener('visibilitychange', () => {
