@@ -120,8 +120,63 @@
   @keyframes timer-start-soft { 0% { transform: scale(.975); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); } 48% { transform: scale(1.008); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 13%, transparent); } 100% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); } }
   .btn-secondary { border: 1px solid color-mix(in srgb, var(--timer-ink) 16%, transparent); background: transparent; color: var(--timer-ink); }
   .btn:disabled { opacity: .35; cursor: not-allowed; }
+  .auto-stop-card, .auto-stop-review { margin-top: 12px; padding: 15px 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); color: var(--ink); }
+  .auto-stop-disclosure { position: relative; z-index: auto; padding: 0 15px; overflow: visible; }
+  .auto-stop-disclosure > summary { min-height: 66px; padding: 10px 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; list-style: none; user-select: none; }
+  .auto-stop-disclosure > summary::-webkit-details-marker { display: none; }
+  .auto-stop-disclosure > summary:focus-visible { outline-offset: 1px; border-radius: 8px; }
+  .auto-stop-disclosure .auto-stop-head { min-width: 0; flex: 1; align-items: center; margin: 0; }
+  .auto-stop-disclosure .auto-stop-head > div { min-width: 0; }
+  .auto-stop-disclosure .auto-stop-head p { overflow-wrap: anywhere; }
+  .auto-stop-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
+  .auto-stop-disclosure[open] .auto-stop-chevron { transform: rotate(180deg); color: var(--accent-strong); }
+  .auto-stop-content { padding: 0 0 14px; }
+  .auto-stop-disclosure[open] .auto-stop-content { animation: picker-soft-open .18s ease both; }
+  .auto-stop-disclosure .auto-stop-fields { padding-top: 2px; }
+  .auto-stop-head strong { display: block; font-size: 12px; font-weight: 720; }
+  .auto-stop-head p { margin: 4px 0 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+  .auto-stop-badge { flex: 0 0 auto; padding: 5px 8px; border-radius: 99px; background: var(--accent-soft); color: var(--accent-strong); font-size: 9px; font-weight: 700; }
+  .auto-stop-fields { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
+  .auto-stop-field, .auto-stop-source { display: grid; gap: 5px; min-width: 0; color: var(--muted); font-size: 10px; font-weight: 650; }
+  .auto-stop-field input, .label-auto-stop input { width: 100%; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 11px; }
+  .select-control { position: relative; z-index: 1; width: 100%; min-width: 0; }
+  .select-control.open { z-index: 70; }
+  .select-native { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; clip-path: inset(50%) !important; white-space: nowrap !important; border: 0 !important; }
+  .select-trigger { width: 100%; min-width: 0; height: 36px; padding: 0 10px 0 11px; display: flex; align-items: center; justify-content: space-between; gap: 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 11px; text-align: left; transition: border-color .18s ease, background .18s ease, box-shadow .18s ease; }
+  .select-trigger:hover, .select-control.open .select-trigger { border-color: color-mix(in srgb, var(--accent) 58%, var(--line)); background: color-mix(in srgb, var(--bg) 82%, var(--surface)); }
+  .select-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .select-trigger:disabled { opacity: .52; cursor: not-allowed; }
+  .select-trigger-label { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .select-trigger .picker-chevron { width: 14px; height: 14px; flex: 0 0 14px; }
+  .select-control.open .select-trigger .picker-chevron { transform: rotate(180deg); }
+  .select-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 80; width: 100%; min-width: max-content; max-width: min(280px, calc(100vw - 36px)); max-height: min(250px, 42vh); overflow: auto; padding: 5px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 34px rgba(58, 43, 31, .15); overscroll-behavior: contain; }
+  .select-menu[hidden] { display: none !important; }
+  /* カスタム選択肢はbody直下へ移し、パネルやdetailsの重なり順に影響されない最前面レイヤーで表示 */
+  .select-menu.select-menu-portal { position: fixed !important; z-index: 10000 !important; margin: 0; }
+  .select-option { width: 100%; min-height: 36px; padding: 0 9px; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font-size: 11px; text-align: left; }
+  .select-option:hover, .select-option:focus-visible { outline: none; background: var(--surface-2); }
+  .select-option[aria-selected="true"] { background: var(--accent-soft); color: var(--accent-strong); font-weight: 700; }
+  .select-option-check { width: 14px; height: 14px; flex: 0 0 14px; margin-left: auto; color: var(--accent-strong); opacity: 0; }
+  .select-option[aria-selected="true"] .select-option-check { opacity: 1; }
+  .setting-select + .select-control { width: 100%; }
+  .auto-stop-source { grid-column: 1 / -1; }
+  .auto-stop-field[hidden], .label-auto-values[hidden] { display: none !important; }
+  .auto-stop-active-note { margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
+  .auto-stop-card.is-active .auto-stop-fields { opacity: .72; }
+  .auto-stop-review[hidden] { display: none !important; }
+  .auto-stop-review-title { margin: 0 0 5px; font-size: 12px; font-weight: 720; }
+  .auto-stop-review-text { margin: 0 0 11px; color: var(--muted); font-size: 10px; line-height: 1.65; }
+  .auto-stop-review-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 8px; }
+  .auto-stop-review-row label { display: grid; gap: 5px; color: var(--muted); font-size: 10px; font-weight: 650; }
+  .auto-stop-review-row input { width: 100%; min-width: 0; height: 38px; padding: 0 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 11px; }
+  .auto-stop-review-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .label-auto-stop { grid-column: 1 / -1; display: grid; gap: 7px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--bg) 72%, var(--surface)); }
+  .label-auto-stop-title { color: var(--muted); font-size: 10px; font-weight: 700; }
+  .label-auto-values { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .label-auto-values label { display: grid; gap: 4px; color: var(--muted); font-size: 9px; font-weight: 650; }
+  .label-auto-stop .setting-note { margin-top: 0; }
   .settings-wrap { margin: 12px 0 27px; }
-  .settings { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+  .settings { overflow: visible; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
   .settings summary { min-height: 52px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--ink); cursor: pointer; list-style: none; }
   .settings summary::-webkit-details-marker { display: none; }
   .settings-title { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 700; }
@@ -153,15 +208,19 @@
   .small-action.primary { border-color: var(--accent); background: var(--accent); color: white; }
   .setting-note { margin: 9px 0 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
   .overview { margin-bottom: 27px; }
+  .overview-title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .overview-title-row h2 { line-height: 1.25; }
+  .day-nav { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+  .day-nav-btn { width: 27px; height: 27px; padding: 0; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--muted); transition: background .16s ease, border-color .16s ease, color .16s ease, opacity .16s ease; }
+  .day-nav-btn svg { width: 12px; height: 12px; }
+  .day-nav-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
+  .day-nav-btn:active:not(:disabled) { transform: scale(.96); }
+  .day-nav-btn:disabled { opacity: .28; cursor: not-allowed; }
+  .day-nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
   .section-kicker { display: none; }
   h2 { margin: 0; font-size: 18px; font-weight: 680; letter-spacing: -.025em; }
   .section-side-note { color: var(--muted); font-size: 10px; }
-  .day-switcher { display: flex; align-items: center; gap: 7px; }
-  .day-switcher .section-side-note { min-width: 112px; text-align: center; font-variant-numeric: tabular-nums; }
-  .day-nav-btn { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); }
-  .day-nav-btn:disabled { opacity: .28; cursor: default; }
-  .day-nav-btn svg { width: 13px; height: 13px; }
   .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .activity-card { margin-bottom: 10px; padding: 16px 17px 13px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
   .activity-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
@@ -248,12 +307,11 @@
     .label-picker { flex-basis: 126px; width: 126px; }
     .timer-label-trigger { height: 41px; padding: 0 10px; }
     .settings-body { grid-template-columns: 1fr; gap: 18px; }
+    .auto-stop-fields { grid-template-columns: 1fr 1fr; }
+    .auto-stop-review-row { grid-template-columns: 1fr; }
     .summary-card { padding: 14px; }
     .activity-card { padding: 14px 12px 11px; }
     .hour-chart { gap: 2px; height: 78px; }
-    .day-switcher { gap: 4px; }
-    .day-switcher .section-side-note { min-width: 100px; font-size: 9px; }
-    .day-nav-btn { width: 26px; height: 26px; }
     .summary-value { font-size: 23px; }
     .calendar-card { padding: 14px 10px; }
     .calendar-grid { gap: 3px; }
@@ -372,6 +430,44 @@
       </div>
     </section>
 
+    <details class="auto-stop-card auto-stop-disclosure" id="autoStopPanel" aria-label="今回の自動終了設定">
+      <summary>
+        <div class="auto-stop-head">
+          <div><strong>今回の自動終了</strong><p id="autoStopHint">選択中のラベルに設定した自動終了を使います。</p></div>
+          <span class="auto-stop-badge" id="autoStopBadge">ラベル設定</span>
+        </div>
+        <svg class="auto-stop-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="auto-stop-content">
+        <div class="auto-stop-fields">
+          <div class="auto-stop-source"><span>今回の設定</span>
+            <select id="autoStopScope"><option value="default">ラベルのデフォルト</option><option value="custom">今回だけ変更</option></select>
+          </div>
+          <div class="auto-stop-field"><span>終了方法</span>
+            <select id="autoStopMode"><option value="off">自動終了しない</option><option value="duration">指定した時間後</option><option value="time">指定時刻</option></select>
+          </div>
+          <label class="auto-stop-field" id="autoStopDurationWrap">経過時間（分）
+            <input id="autoStopDuration" type="number" min="1" max="10080" step="1" inputmode="numeric" value="60">
+          </label>
+          <label class="auto-stop-field" id="autoStopTimeWrap">終了時刻
+            <input id="autoStopTime" type="time" value="18:00">
+          </label>
+        </div>
+        <p class="auto-stop-active-note" id="autoStopActiveNote">計測を始める前に、この回の自動終了方法を設定できます。</p>
+      </div>
+    </details>
+    <section class="auto-stop-review" id="autoStopReview" aria-live="polite" hidden>
+      <h3 class="auto-stop-review-title">自動終了しました</h3>
+      <p class="auto-stop-review-text" id="autoStopReviewText">終了時刻を確認してください。必要なら、次に開いたときでも修正できます。</p>
+      <div class="auto-stop-review-row">
+        <label for="autoStopReviewTime">記録上の終了時刻
+          <input id="autoStopReviewTime" type="datetime-local" step="60">
+        </label>
+        <button class="small-action primary" id="saveAutoStopReview" type="button">時刻を保存</button>
+      </div>
+      <div class="auto-stop-review-actions"><button class="small-action" id="confirmAutoStopReview" type="button">この時刻で確定</button></div>
+    </section>
+
     <div class="settings-wrap">
       <details class="settings" id="settingsPanel">
         <summary>
@@ -408,11 +504,16 @@
 
     <section class="overview" aria-labelledby="overviewTitle">
       <div class="section-heading">
-        <div><div class="section-kicker">DAY</div><h2 id="overviewTitle">今日の記録</h2></div>
-        <div class="day-switcher" aria-label="表示する日付">
-          <button class="day-nav-btn" id="prevDay" type="button" aria-label="前の日"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-          <div class="section-side-note" id="overviewDate">—</div>
-          <button class="day-nav-btn" id="nextDay" type="button" aria-label="次の日"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+        <div class="overview-title-row">
+          <h2 id="overviewTitle" tabindex="-1">今日の記録</h2>
+          <div class="day-nav" role="group" aria-label="表示する日付を変更">
+            <button class="day-nav-btn" id="prevDayBtn" type="button" aria-label="前の日へ" title="前の日へ">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button class="day-nav-btn" id="nextDayBtn" type="button" aria-label="次の日へ" title="次の日へ" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
         </div>
       </div>
       <div class="summary-grid">
@@ -430,14 +531,14 @@
         <div class="breakdown-list" id="breakdownList"><div class="empty-state"><strong>まだ記録がありません</strong>タイマーを使うと、ここに内訳が表示されます。</div></div>
       </article>
       <details class="records-card records-disclosure" id="sessionHistoryDetails">
-        <summary class="records-head"><span class="records-summary-title"><strong>セッション履歴</strong><span class="records-chevron" aria-hidden="true">⌄</span></span><span id="recordsDate">—</span></summary>
+        <summary class="records-head"><span class="records-summary-title"><strong>セッション履歴</strong><span class="records-chevron" aria-hidden="true">⌄</span></span></summary>
         <div class="record-list" id="recordList"><div class="empty-state">この日のセッションはありません。</div></div>
       </details>
     </section>
 
     <section class="calendar-section" aria-labelledby="calendarTitle">
       <div class="section-heading">
-        <div><div class="section-kicker">HISTORY</div><h2 id="calendarTitle">カレンダー</h2></div>
+        <div><div class="section-kicker">HISTORY</div><h2 id="calendarTitle">過去の記録を探す</h2></div>
         <button class="small-action" id="todayBtn" type="button">今日に戻る</button>
       </div>
       <div class="calendar-card">
@@ -447,10 +548,10 @@
             <div class="month-label" id="monthLabel">—</div>
             <button class="month-btn" id="nextMonth" type="button" aria-label="次の月"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
           </div>
-          <div class="section-side-note">日付を選択して詳細を表示</div>
+          <div class="section-side-note">日付をタップすると、その日の集計・履歴が上に表示されます</div>
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
-        <div class="calendar-footer"><span class="calendar-legend"><i></i>記録あり</span><span id="monthRecorded">今月の記録 0日</span></div>
+        <div class="calendar-footer"><span class="calendar-legend"><i></i>記録あり・日付をタップ</span><span id="monthRecorded">今月の記録 0日</span></div>
       </div>
     </section>
     <footer class="footer">DAYLOG</footer>
@@ -493,7 +594,13 @@
     return nearest.color;
   };
   const clone = (v) => JSON.parse(JSON.stringify(v));
-  const initialData = () => ({ version: 3, labels: clone(DEFAULT_LABELS), sessions: [], settings: { theme: 'light' } });
+  const normalizeAutoStop = (value) => {
+    const mode = ['duration','time'].includes(value?.mode) ? value.mode : 'off';
+    const durationMinutes = Math.min(10080, Math.max(1, Math.round(Number(value?.durationMinutes) || 60)));
+    const time = /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value?.time || '')) ? String(value.time) : '18:00';
+    return { mode, durationMinutes, time };
+  };
+  const initialData = () => ({ version: 3, labels: clone(DEFAULT_LABELS).map(label => ({...label, autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}})), sessions: [], settings: { theme: 'light' } });
   function loadData() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -502,12 +609,15 @@
       if (!parsed || !Array.isArray(parsed.labels) || !Array.isArray(parsed.sessions)) return initialData();
       return {
         version: 3,
-        labels: parsed.labels.filter(x => x && typeof x.id === 'string').map(x => ({ id:x.id, name:String(x.name || 'ラベル').slice(0,24), color:safeColor(x.color) })),
+        labels: parsed.labels.filter(x => x && typeof x.id === 'string').map(x => ({ id:x.id, name:String(x.name || 'ラベル').slice(0,24), color:safeColor(x.color), autoStopDefault:normalizeAutoStop(x.autoStopDefault) })),
         sessions: parsed.sessions.filter(x => x && typeof x.id === 'string' && Array.isArray(x.segments)).map(s => ({
           id:s.id, labelId:String(s.labelId || ''), labelName:String(s.labelName || 'その他'), labelColor:safeColor(s.labelColor),
           createdAt:Number(s.createdAt) || Date.now(), endedAt:s.endedAt == null ? null : Number(s.endedAt),
           status:['running','paused','done'].includes(s.status) ? s.status : 'done',
-          segments:s.segments.filter(p => p && Number.isFinite(Number(p.startAt))).map(p => ({ startAt:Number(p.startAt), endAt:p.endAt == null ? null : Number(p.endAt) }))
+          segments:s.segments.filter(p => p && Number.isFinite(Number(p.startAt))).map(p => ({ startAt:Number(p.startAt), endAt:p.endAt == null ? null : Number(p.endAt) })),
+          autoStop:normalizeAutoStop(s.autoStop), autoStopAt:Number.isFinite(Number(s.autoStopAt)) && s.autoStopAt != null ? Number(s.autoStopAt) : null,
+          autoStopRemainingMs:Number.isFinite(Number(s.autoStopRemainingMs)) && s.autoStopRemainingMs != null ? Math.max(0,Number(s.autoStopRemainingMs)) : null,
+          autoStopReview:s.autoStopReview === true, autoStopReviewSegmentIndex:Number.isInteger(s.autoStopReviewSegmentIndex) ? s.autoStopReviewSegmentIndex : -1
         })),
         settings: { theme: ['light','dark','system'].includes(parsed.settings?.theme) ? parsed.settings.theme : 'light' }
       };
@@ -515,6 +625,9 @@
   }
   let data = loadData();
   let selectedLabelId = data.labels[0]?.id || '';
+  let autoStopScope = 'default';
+  let autoStopOverride = { mode:'off', durationMinutes:60, time:'18:00' };
+  let autoStopTimeoutId = 0;
   let selectedDay = todayKey();
   let visibleMonth = new Date();
   visibleMonth.setDate(1);
@@ -526,6 +639,69 @@
   const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch { showToast('保存できませんでした。端末の空き容量を確認してください。'); } };
   const getActive = () => data.sessions.find(s => s.status === 'running' || s.status === 'paused') || null;
   const findLabel = (id) => data.labels.find(l => l.id === id);
+  const getLabelAutoStop = (id = selectedLabelId) => normalizeAutoStop(findLabel(id)?.autoStopDefault);
+  const getEffectiveAutoStop = () => autoStopScope === 'custom' ? normalizeAutoStop(autoStopOverride) : getLabelAutoStop();
+  function nextLocalTimeStamp(now, time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const target = new Date(now);
+    target.setHours(hours, minutes, 0, 0);
+    if (target.getTime() <= now) target.setDate(target.getDate() + 1);
+    return target.getTime();
+  }
+  function describeAutoStop(config, targetAt = null) {
+    if (!config || config.mode === 'off') return '自動終了なし';
+    if (config.mode === 'duration') return `${config.durationMinutes}分後`;
+    const target = targetAt ? new Date(targetAt) : null;
+    return target ? `${fmtDateLong(todayKey(target))} ${fmtTime(targetAt)}` : `${config.time}（次の指定時刻）`;
+  }
+  function getAutoStopReviewSession() {
+    return data.sessions.filter(session => session.status === 'done' && session.autoStopReview === true)
+      .sort((a,b) => (b.endedAt || 0) - (a.endedAt || 0))[0] || null;
+  }
+  function toLocalDateTimeInput(timestamp) {
+    const date = new Date(timestamp);
+    const pad = value => String(value).padStart(2,'0');
+    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+  function processAutoStopExpiry(now = Date.now()) {
+    const active = getActive();
+    if (!active || !Number.isFinite(active.autoStopAt) || active.autoStopAt == null || active.autoStopAt > now) return false;
+    const stopAt = Math.min(now, Math.max(active.createdAt, active.autoStopAt));
+    let reviewSegmentIndex = -1;
+    for (let i = active.segments.length - 1; i >= 0; i--) {
+      const segment = active.segments[i];
+      if (segment.endAt == null) {
+        segment.endAt = Math.max(segment.startAt, stopAt);
+        reviewSegmentIndex = i;
+        break;
+      }
+    }
+    active.status = 'done';
+    active.endedAt = stopAt;
+    active.autoStopAt = null;
+    active.autoStopRemainingMs = null;
+    active.autoStopReview = true;
+    active.autoStopReviewSegmentIndex = reviewSegmentIndex;
+    save();
+    clearAutoStopTimeout();
+    return true;
+  }
+  function clearAutoStopTimeout() {
+    if (autoStopTimeoutId) clearTimeout(autoStopTimeoutId);
+    autoStopTimeoutId = 0;
+  }
+  function scheduleAutoStop() {
+    clearAutoStopTimeout();
+    const active = getActive();
+    if (!active || !Number.isFinite(active.autoStopAt) || active.autoStopAt == null) return;
+    const delay = Math.max(0, active.autoStopAt - Date.now());
+    autoStopTimeoutId = setTimeout(() => {
+      if (processAutoStopExpiry()) {
+        renderAll();
+        showToast('設定した時刻に自動終了しました');
+      } else scheduleAutoStop();
+    }, Math.min(delay, 2147483000));
+  }
   const getElapsedMs = (session, now = Date.now()) => session.segments.reduce((sum,p) => sum + Math.max(0,(p.endAt ?? (session.status === 'running' ? now : p.startAt)) - p.startAt), 0);
   const fmtClock = (ms) => { let s = Math.max(0,Math.floor(ms/1000)); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60; return [h,m,sec].map(v=>String(v).padStart(2,'0')).join(':'); };
   const fmtDuration = (ms, compact = false) => {
@@ -652,6 +828,8 @@
     timerCard.classList.toggle('is-paused', mode === 'paused');
 
     renderElapsedReadout(active);
+    renderAutoStopControls(active);
+    renderAutoStopReview();
     const pill = $('statusPill');
     pill.classList.toggle('active', !!active && active.status === 'running');
     $('statusText').textContent = !active ? '待機中' : active.status === 'running' ? '計測中' : '一時停止';
@@ -675,6 +853,69 @@
     }
   }
 
+  function renderAutoStopControls(active = getActive()) {
+    const panel = $('autoStopPanel');
+    const scope = $('autoStopScope'), mode = $('autoStopMode');
+    const durationWrap = $('autoStopDurationWrap'), timeWrap = $('autoStopTimeWrap');
+    const duration = $('autoStopDuration'), time = $('autoStopTime');
+    const hint = $('autoStopHint'), badge = $('autoStopBadge'), note = $('autoStopActiveNote');
+    const selectedLabel = findLabel(selectedLabelId);
+    const config = active ? normalizeAutoStop(active.autoStop) : getEffectiveAutoStop();
+    panel.classList.toggle('is-active', !!active);
+    if (active) {
+      scope.value = 'default';
+      scope.disabled = true;
+      mode.value = config.mode;
+      mode.disabled = true;
+      duration.value = String(config.durationMinutes);
+      duration.disabled = true;
+      time.value = config.time;
+      time.disabled = true;
+      syncCustomSelect(scope); syncCustomSelect(mode);
+      durationWrap.hidden = config.mode !== 'duration';
+      timeWrap.hidden = config.mode !== 'time';
+      badge.textContent = '計測中の設定';
+      hint.textContent = `${active.labelName}｜${describeAutoStop(config, active.autoStopAt)}`;
+      const pauseBehavior = config.mode === 'duration' ? '一時停止中は残り時間のカウントも止まります。' : config.mode === 'time' ? '一時停止中でも指定時刻に終了します。' : '';
+      note.textContent = config.mode === 'off' ? 'この計測は手動で終了します。' : `自動終了予定：${describeAutoStop(config, active.autoStopAt)}。${pauseBehavior}アプリを閉じていても、次に開いたときに予定時刻で記録を確定します。`;
+      return;
+    }
+    scope.disabled = false;
+    mode.disabled = autoStopScope !== 'custom';
+    duration.disabled = autoStopScope !== 'custom';
+    time.disabled = autoStopScope !== 'custom';
+    scope.value = autoStopScope;
+    mode.value = config.mode;
+    duration.value = String(config.durationMinutes);
+    time.value = config.time;
+    syncCustomSelect(scope); syncCustomSelect(mode);
+    durationWrap.hidden = config.mode !== 'duration';
+    timeWrap.hidden = config.mode !== 'time';
+    badge.textContent = autoStopScope === 'custom' ? '今回だけ' : 'ラベル設定';
+    if (autoStopScope === 'custom') {
+      hint.textContent = `今回だけ：${describeAutoStop(config)}`;
+      const pauseBehavior = config.mode === 'duration' ? '一時停止中はカウントを止めます。' : config.mode === 'time' ? '一時停止中でも終了します。' : '';
+      note.textContent = config.mode === 'off' ? 'この回は自動終了しません。' : `この回は ${describeAutoStop(config)} に自動終了します。${pauseBehavior}`;
+    } else {
+      const labelName = selectedLabel?.name || '選択中のラベル';
+      hint.textContent = `${labelName}｜デフォルト：${describeAutoStop(config)}`;
+      const pauseBehavior = config.mode === 'duration' ? '一時停止中はカウントを止めます。' : config.mode === 'time' ? '一時停止中でも終了します。' : '';
+      note.textContent = config.mode === 'off' ? 'このラベルは自動終了なしに設定されています。設定画面でラベルごとに変更できます。' : `このラベルのデフォルト：${describeAutoStop(config)}。${pauseBehavior}今回だけ変える場合は「今回だけ変更」を選択してください。`;
+    }
+  }
+  function renderAutoStopReview() {
+    const panel = $('autoStopReview');
+    const session = getAutoStopReviewSession();
+    if (!session) { panel.hidden = true; return; }
+    panel.hidden = false;
+    $('autoStopReviewText').textContent = `「${session.labelName}」は ${fmtTime(session.endedAt)} に自動終了しました。終了時刻が実際と違う場合は修正できます。`;
+    const input = $('autoStopReviewTime');
+    if (document.activeElement !== input) input.value = toLocalDateTimeInput(session.endedAt || Date.now());
+    input.max = toLocalDateTimeInput(Date.now());
+  }
+  function updateAutoStopOverrideFromControls() {
+    autoStopOverride = normalizeAutoStop({ mode:$('autoStopMode').value, durationMinutes:$('autoStopDuration').value, time:$('autoStopTime').value });
+  }
   function stopTimerFrames() {
     if (timerFrameId) cancelAnimationFrame(timerFrameId);
     timerFrameId = 0;
@@ -697,31 +938,217 @@
     }
   }
   function startSession() {
+    if(processAutoStopExpiry()) renderAll();
     if(getActive()) return;
     const label=findLabel(selectedLabelId) || data.labels[0];
     if(!label){showToast('先にラベルを追加してください');return;}
     const now=Date.now();
-    data.sessions.push({id:makeId(),labelId:label.id,labelName:label.name,labelColor:label.color,createdAt:now,endedAt:null,status:'running',segments:[{startAt:now,endAt:null}]});
+    const autoStop = normalizeAutoStop(getEffectiveAutoStop());
+    // A one-time override applies to this single session only; reset the next run to the label default.
+    autoStopScope = 'default';
+    autoStopOverride = clone(getLabelAutoStop(label.id));
+    let autoStopAt = null;
+    let autoStopRemainingMs = null;
+    if (autoStop.mode === 'duration') {
+      autoStopRemainingMs = autoStop.durationMinutes * 60000;
+      autoStopAt = now + autoStopRemainingMs;
+    } else if (autoStop.mode === 'time') {
+      autoStopAt = nextLocalTimeStamp(now, autoStop.time);
+    }
+    data.sessions.push({id:makeId(),labelId:label.id,labelName:label.name,labelColor:label.color,createdAt:now,endedAt:null,status:'running',segments:[{startAt:now,endAt:null}],autoStop,autoStopAt,autoStopRemainingMs,autoStopReview:false,autoStopReviewSegmentIndex:-1});
     save(); renderAll(); showToast(`${label.name}の計測を開始しました`);
   }
   function pauseSession() {
+    if (processAutoStopExpiry()) { renderAll(); showToast('設定した時刻に自動終了しました'); return; }
     const active=getActive(); if(!active || active.status!=='running') return;
+    const now=Date.now();
     const current=active.segments[active.segments.length-1];
-    if(current && current.endAt==null) current.endAt=Date.now();
+    if(current && current.endAt==null) current.endAt=now;
+    if (active.autoStop?.mode === 'duration') {
+      active.autoStopRemainingMs = Math.max(0, active.autoStop.durationMinutes * 60000 - getElapsedMs(active, now));
+      active.autoStopAt = null;
+    }
     active.status='paused'; save(); renderAll(); showToast('一時停止しました');
   }
   function resumeSession() {
+    if (processAutoStopExpiry()) { renderAll(); showToast('設定した時刻に自動終了しました'); return; }
     const active=getActive(); if(!active || active.status!=='paused') return;
-    active.segments.push({startAt:Date.now(),endAt:null}); active.status='running'; save(); renderAll(); showToast('計測を再開しました');
+    const now=Date.now();
+    active.segments.push({startAt:now,endAt:null}); active.status='running';
+    if (active.autoStop?.mode === 'duration') {
+      const remaining = Math.max(0, Number(active.autoStopRemainingMs ?? active.autoStop.durationMinutes * 60000 - getElapsedMs(active, now)));
+      if (remaining <= 0) {
+        active.segments[active.segments.length-1].endAt=now;
+        active.status='done'; active.endedAt=now; active.autoStopReview=true; active.autoStopReviewSegmentIndex=active.segments.length-1; active.autoStopAt=null; active.autoStopRemainingMs=null;
+        save(); renderAll(); showToast('設定した時間に自動終了しました'); return;
+      }
+      active.autoStopRemainingMs=remaining;
+      active.autoStopAt=now+remaining;
+    }
+    save(); renderAll(); showToast('計測を再開しました');
   }
   function stopSession() {
+    if (processAutoStopExpiry()) { renderAll(); showToast('設定した時刻に自動終了しました'); return; }
     const active=getActive(); if(!active) return;
+    const now=Date.now();
     const current=active.segments[active.segments.length-1];
-    if(current && current.endAt==null) current.endAt=Date.now();
-    active.status='done'; active.endedAt=Date.now();
+    if(current && current.endAt==null) current.endAt=now;
+    active.status='done'; active.endedAt=now; active.autoStopAt=null; active.autoStopRemainingMs=null;
     if(getElapsedMs(active) < 1000) data.sessions=data.sessions.filter(s=>s.id!==active.id);
     save(); renderAll(); showToast('記録を保存しました');
   }
+  function getCustomSelectMenu(control) {
+    return control?._selectMenu || control?.querySelector('.select-menu') || null;
+  }
+  function syncCustomSelect(select) {
+    const control = select?.closest('.select-control');
+    if (!control) return;
+    const trigger = control.querySelector('.select-trigger');
+    const text = control.querySelector('.select-trigger-label');
+    const menu = getCustomSelectMenu(control);
+    if (!trigger || !text || !menu) return;
+    const selected = [...select.options].find(option => option.value === select.value) || select.options[0];
+    text.textContent = selected?.textContent?.trim() || '選択してください';
+    trigger.disabled = select.disabled || select.options.length === 0;
+    const contextLabel = select.closest('.auto-stop-source,.auto-stop-field')?.querySelector(':scope > span')?.textContent?.trim()
+      || select.closest('.label-auto-stop')?.querySelector('.label-auto-stop-title')?.textContent?.trim()
+      || select.labels?.[0]?.textContent?.trim();
+    const accessibleLabel = select.getAttribute('aria-label') || contextLabel;
+    trigger.setAttribute('aria-label', accessibleLabel ? `${accessibleLabel}：${text.textContent}` : text.textContent);
+    menu.replaceChildren();
+    [...select.options].forEach((nativeOption, index) => {
+      const option = document.createElement('button');
+      option.type = 'button'; option.className = 'select-option'; option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', String(nativeOption.value === select.value));
+      option.disabled = nativeOption.disabled;
+      option.dataset.optionIndex = String(index);
+      option.append(document.createTextNode(nativeOption.textContent.trim()));
+      const check = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      check.setAttribute('viewBox','0 0 24 24'); check.setAttribute('fill','none'); check.setAttribute('stroke','currentColor'); check.setAttribute('stroke-width','2'); check.setAttribute('class','select-option-check'); check.setAttribute('aria-hidden','true');
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m5 12 4 4L19 6'); check.appendChild(path); option.appendChild(check);
+      option.addEventListener('click', () => {
+        if (nativeOption.disabled || select.disabled) return;
+        select.value = nativeOption.value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        syncCustomSelect(select);
+        closeCustomSelect(control);
+        trigger.focus({ preventScroll: true });
+      });
+      menu.appendChild(option);
+    });
+  }
+  function closeCustomSelect(control, restoreFocus = false) {
+    if (!control) return;
+    control.classList.remove('open');
+    const trigger = control.querySelector('.select-trigger');
+    const menu = getCustomSelectMenu(control);
+    if (trigger) trigger.setAttribute('aria-expanded','false');
+    if (menu) {
+      menu.hidden = true;
+      menu.classList.remove('select-menu-portal');
+      menu.removeAttribute('style');
+      if (menu.parentNode !== control) control.insertBefore(menu, control.querySelector('select'));
+    }
+    if (restoreFocus) trigger?.focus({ preventScroll: true });
+  }
+  function placeCustomSelectMenu(control) {
+    const trigger = control.querySelector('.select-trigger');
+    const menu = getCustomSelectMenu(control);
+    if (!trigger || !menu) return;
+    const rect = trigger.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const maxWidth = Math.max(120, Math.min(280, viewportWidth - 24));
+    const width = Math.min(maxWidth, Math.max(rect.width, 190));
+    const left = Math.max(12, Math.min(rect.left, viewportWidth - width - 12));
+    menu.style.width = `${width}px`;
+    menu.style.maxWidth = `${maxWidth}px`;
+    menu.style.left = `${left}px`;
+    menu.style.maxHeight = `${Math.max(100, Math.min(250, viewportHeight * .42))}px`;
+    menu.style.top = `${Math.max(8, Math.min(viewportHeight - 40, rect.bottom + 6))}px`;
+    menu.style.visibility = 'hidden';
+    menu.hidden = false;
+    menu.classList.add('select-menu-portal');
+    if (menu.parentNode !== document.body) document.body.append(menu);
+    const menuHeight = menu.getBoundingClientRect().height;
+    const below = viewportHeight - rect.bottom - 8;
+    const above = rect.top - 8;
+    if (menuHeight > below && above > below) {
+      menu.style.top = `${Math.max(8, rect.top - Math.min(menuHeight, above) - 6)}px`;
+      menu.style.maxHeight = `${Math.max(100, Math.min(250, above))}px`;
+    } else {
+      menu.style.top = `${Math.max(8, rect.bottom + 6)}px`;
+      menu.style.maxHeight = `${Math.max(100, Math.min(250, below))}px`;
+    }
+    menu.style.visibility = '';
+  }
+  function openCustomSelect(control, focusIndex = null) {
+    if (!control) return;
+    const select = control.querySelector('select');
+    const trigger = control.querySelector('.select-trigger');
+    const menu = getCustomSelectMenu(control);
+    if (!select || select.disabled || !trigger || !menu) return;
+    document.querySelectorAll('.select-control.open').forEach(other => { if (other !== control) closeCustomSelect(other); });
+    syncCustomSelect(select);
+    control.classList.add('open'); trigger.setAttribute('aria-expanded','true');
+    placeCustomSelectMenu(control);
+    const options = [...menu.querySelectorAll('[role="option"]:not(:disabled)')];
+    const selectedIndex = options.findIndex(option => option.getAttribute('aria-selected') === 'true');
+    const targetIndex = focusIndex == null ? Math.max(0, selectedIndex) : Math.max(0, Math.min(options.length - 1, focusIndex));
+    requestAnimationFrame(() => options[targetIndex]?.focus({ preventScroll: true }));
+  }
+  function decorateSelect(select) {
+    if (!select || select.dataset.customized === 'true') return;
+    select.dataset.customized = 'true';
+    const control = document.createElement('span'); control.className = 'select-control';
+    const trigger = document.createElement('button'); trigger.type = 'button'; trigger.className = 'select-trigger';
+    trigger.setAttribute('aria-haspopup','listbox'); trigger.setAttribute('aria-expanded','false');
+    const label = document.createElement('span'); label.className = 'select-trigger-label';
+    const chevron = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    chevron.setAttribute('viewBox','0 0 24 24'); chevron.setAttribute('fill','none'); chevron.setAttribute('stroke','currentColor'); chevron.setAttribute('stroke-width','1.8'); chevron.setAttribute('class','picker-chevron'); chevron.setAttribute('aria-hidden','true');
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m7 10 5 5 5-5'); chevron.appendChild(path);
+    trigger.append(label, chevron);
+    const menu = document.createElement('div'); menu.className = 'select-menu'; menu.setAttribute('role','listbox'); menu.hidden = true;
+    control._selectMenu = menu;
+    const nativeParent = select.parentNode;
+    nativeParent.insertBefore(control, select);
+    select.classList.add('select-native'); select.tabIndex = -1; select.setAttribute('aria-hidden','true');
+    control.append(trigger, menu, select);
+    trigger.addEventListener('click', () => control.classList.contains('open') ? closeCustomSelect(control) : openCustomSelect(control));
+    trigger.addEventListener('keydown', event => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openCustomSelect(control); }
+      else if (event.key === 'Escape') closeCustomSelect(control);
+    });
+    menu.addEventListener('keydown', event => {
+      const options = [...menu.querySelectorAll('[role="option"]:not(:disabled)')];
+      const index = options.indexOf(document.activeElement);
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault(); options[Math.max(0, Math.min(options.length - 1, index + (event.key === 'ArrowDown' ? 1 : -1)))]?.focus({preventScroll:true});
+      } else if (event.key === 'Home') { event.preventDefault(); options[0]?.focus({preventScroll:true}); }
+      else if (event.key === 'End') { event.preventDefault(); options.at(-1)?.focus({preventScroll:true}); }
+      else if (event.key === 'Escape') { event.preventDefault(); closeCustomSelect(control, true); }
+      else if (event.key === 'Tab') closeCustomSelect(control);
+    });
+    select.addEventListener('change', () => syncCustomSelect(select));
+    syncCustomSelect(select);
+  }
+  document.addEventListener('pointerdown', event => {
+    document.querySelectorAll('.select-control.open').forEach(control => {
+      const menu = getCustomSelectMenu(control);
+      if (!control.contains(event.target) && !menu?.contains(event.target)) closeCustomSelect(control);
+    });
+  });
+  // スクロールや画面回転でアンカー位置が変わる前に閉じ、メニューのずれを防ぐ。
+  document.addEventListener('scroll', event => {
+    document.querySelectorAll('.select-control.open').forEach(control => {
+      const menu = getCustomSelectMenu(control);
+      if (!menu?.contains(event.target)) closeCustomSelect(control);
+    });
+  }, true);
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.select-control.open').forEach(control => closeCustomSelect(control));
+  });
+
   function renderLabels() {
     const active=getActive();
     const editor=$('labelEditor'); editor.innerHTML='';
@@ -747,6 +1174,33 @@
       remove.disabled=active?.labelId===label.id; remove.style.opacity=remove.disabled?'.25':'1';
       remove.addEventListener('click',()=>{if(data.labels.length<=1){showToast('ラベルは最低1つ必要です');return;}if(!confirm(`「${label.name}」をラベル一覧から削除しますか？\n過去の記録は残ります。`))return;data.labels=data.labels.filter(l=>l.id!==label.id);if(selectedLabelId===label.id)selectedLabelId=data.labels[0].id;save();renderAll();});
       row.appendChild(palette);
+      label.autoStopDefault = normalizeAutoStop(label.autoStopDefault);
+      const autoBox = document.createElement('div'); autoBox.className = 'label-auto-stop';
+      autoBox.innerHTML = `<span class="label-auto-stop-title">${escapeHtml(label.name)}｜自動終了のデフォルト</span><select class="label-auto-mode" aria-label="${escapeHtml(label.name)}の自動終了方法"><option value="off">自動終了しない</option><option value="duration">指定した時間後</option><option value="time">指定時刻</option></select><div class="label-auto-values"><label class="label-auto-duration-wrap">経過時間（分）<input class="label-auto-duration" type="number" min="1" max="10080" step="1" inputmode="numeric"></label><label class="label-auto-time-wrap">終了時刻<input class="label-auto-time" type="time"></label></div><p class="setting-note">このラベルで計測を始めるときの初期設定です。タイマー下で、その回だけ変更できます。</p>`;
+      const autoMode = autoBox.querySelector('.label-auto-mode');
+      const autoDuration = autoBox.querySelector('.label-auto-duration');
+      decorateSelect(autoMode);
+      const autoTime = autoBox.querySelector('.label-auto-time');
+      const autoValues = autoBox.querySelector('.label-auto-values');
+      autoMode.value = label.autoStopDefault.mode;
+      syncCustomSelect(autoMode);
+      autoDuration.value = String(label.autoStopDefault.durationMinutes);
+      autoTime.value = label.autoStopDefault.time;
+      const refreshAutoFields = () => {
+        autoValues.hidden = autoMode.value === 'off';
+        autoBox.querySelector('.label-auto-duration-wrap').hidden = autoMode.value !== 'duration';
+        autoBox.querySelector('.label-auto-time-wrap').hidden = autoMode.value !== 'time';
+      };
+      const saveAutoDefault = () => {
+        label.autoStopDefault = normalizeAutoStop({mode:autoMode.value,durationMinutes:autoDuration.value,time:autoTime.value});
+        save();
+        if (selectedLabelId === label.id && autoStopScope === 'default') renderAutoStopControls();
+      };
+      autoMode.addEventListener('change', () => { refreshAutoFields(); saveAutoDefault(); });
+      autoDuration.addEventListener('change', saveAutoDefault);
+      autoTime.addEventListener('change', saveAutoDefault);
+      refreshAutoFields();
+      row.appendChild(autoBox);
       editor.appendChild(row);
     });
     $('addLabelBtn').disabled=data.labels.length>=12;
@@ -803,8 +1257,9 @@
   }
   function renderOverview() {
     const stats=getDayStats(selectedDay), total=stats.total;
-    $('overviewTitle').textContent=selectedDay===todayKey()?'今日の記録':'選択日の記録';
-    $('overviewDate').textContent=fmtDateLong(selectedDay);
+    const selectedDate=parseDay(selectedDay);
+    $('overviewTitle').textContent=`${selectedDate.getFullYear()}年${selectedDate.getMonth()+1}月${selectedDate.getDate()}日の記録`;
+    $('nextDayBtn').disabled = selectedDay >= todayKey();
     $('dailyTotal').textContent=fmtDuration(total);
     $('sessionCount').textContent=String(new Set(stats.slices.map(s=>s.sessionId)).size);
     $('breakdownTotal').textContent=`合計 ${fmtDuration(total)}`;
@@ -854,8 +1309,6 @@
       }
       column.appendChild(track); hourChart.appendChild(column);
     }
-    $('nextDay').disabled=selectedDay>=todayKey();
-    $('recordsDate').textContent=selectedDay;
     const recordList=$('recordList');recordList.innerHTML='';
     if(!stats.slices.length){recordList.innerHTML='<div class="empty-state">この日のセッションはありません。</div>';return;}
     stats.slices.forEach(s=>{
@@ -884,20 +1337,52 @@
       const btn=document.createElement('button');btn.type='button';btn.disabled=future;btn.className='day-cell'+(!inMonth?' outside':'')+(key===selectedDay?' selected':'')+(key===todayValue?' today':'');btn.setAttribute('aria-label',`${fmtDateLong(key)}、${fmtDuration(stats.total)}${future?'、未来の日付':''}`);btn.setAttribute('aria-pressed',String(key===selectedDay));
       const dots=[...stats.byLabel.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>{const l=findLabel(id),s=stats.slices.find(x=>x.labelId===id);return `<i style="background:${l?.color||s?.labelColor||'#879978'}"></i>`;}).join('');
       btn.innerHTML=`<span class="day-number">${date.getDate()}</span><span class="day-dots">${dots}</span><span class="day-total">${stats.total?fmtDuration(stats.total):'　'}</span>`;
-      btn.addEventListener('click',()=>{if(key>todayKey())return;selectedDay=key;renderAll();});grid.appendChild(btn);
+      btn.addEventListener('click',()=>{if(key>todayKey())return;selectDay(key,true);});grid.appendChild(btn);
     }
     $('monthRecorded').textContent=`今月の記録 ${recorded}日`;
   }
   function applyTheme() {
     const choice=data.settings.theme||'light';
     const dark=choice==='dark'||(choice==='system'&&window.matchMedia?.('(prefers-color-scheme: dark)').matches);
-    document.documentElement.dataset.theme=dark?'dark':'light';$('themeSelect').value=choice;
+    document.documentElement.dataset.theme=dark?'dark':'light';$('themeSelect').value=choice;syncCustomSelect($('themeSelect'));
     document.querySelector('meta[name="theme-color"]').content=dark?'#211f1d':'#f5f1eb';
   }
   function renderAll() {
-    formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderOverview();renderCalendar();applyTheme();drawClock();syncTimerFrames();
+    formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderOverview();renderCalendar();applyTheme();drawClock();syncTimerFrames();scheduleAutoStop();
   }
   const labelPicker=$('timerLabelPicker'), labelTrigger=$('timerLabelSelect'), labelMenu=$('timerLabelMenu');
+  $('autoStopScope').addEventListener('change', event => {
+    if (getActive()) return;
+    if (event.target.value === 'custom' && autoStopScope !== 'custom') autoStopOverride = clone(getLabelAutoStop());
+    autoStopScope = event.target.value === 'custom' ? 'custom' : 'default';
+    renderAutoStopControls();
+  });
+  $('autoStopMode').addEventListener('change', () => { if (getActive()) return; updateAutoStopOverrideFromControls(); renderAutoStopControls(); });
+  $('autoStopDuration').addEventListener('change', () => { if (getActive()) return; updateAutoStopOverrideFromControls(); renderAutoStopControls(); });
+  $('autoStopTime').addEventListener('change', () => { if (getActive()) return; updateAutoStopOverrideFromControls(); renderAutoStopControls(); });
+  $('saveAutoStopReview').addEventListener('click', () => {
+    const session = getAutoStopReviewSession();
+    const value = $('autoStopReviewTime').value;
+    const newEndAt = value ? new Date(value).getTime() : NaN;
+    if (!session || !Number.isFinite(newEndAt)) { showToast('終了時刻を入力してください'); return; }
+    if (newEndAt < session.createdAt || newEndAt > Date.now() + 60000) { showToast('終了時刻は開始時刻以降、現在までの範囲で指定してください'); return; }
+    const index = session.autoStopReviewSegmentIndex;
+    if (Number.isInteger(index) && index >= 0 && session.segments[index]) {
+      if (newEndAt < session.segments[index].startAt) { showToast('終了時刻は最後の計測開始時刻より後にしてください'); return; }
+      session.segments[index].endAt = newEndAt;
+    }
+    session.endedAt = newEndAt;
+    session.autoStopReview = false;
+    session.autoStopReviewSegmentIndex = -1;
+    save(); renderAll(); showToast('終了時刻を修正しました');
+  });
+  $('confirmAutoStopReview').addEventListener('click', () => {
+    const session = getAutoStopReviewSession();
+    if (!session) return;
+    session.autoStopReview = false;
+    session.autoStopReviewSegmentIndex = -1;
+    save(); renderAll(); showToast('終了時刻を確定しました');
+  });
   labelTrigger.addEventListener('click',()=>{if(labelMenu.hidden)openTimerLabelMenu();else closeTimerLabelMenu();});
   labelTrigger.addEventListener('animationend',event=>{if(event.animationName==='picker-selection-soft')labelTrigger.classList.remove('selection-feedback');});
   labelTrigger.addEventListener('keydown',event=>{
@@ -915,6 +1400,7 @@
     selectedLabelId=label.id;
     closeTimerLabelMenu(true);
     renderSelectFallback();
+    renderAutoStopControls();
     labelTrigger.classList.remove('selection-feedback');
     void labelTrigger.offsetWidth;
     labelTrigger.classList.add('selection-feedback');
@@ -1008,17 +1494,33 @@
   });
   settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel?.open));
   $('stopTimerBtn').addEventListener('click',stopSession);
-  $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color};data.labels.push(label);selectedLabelId=label.id;save();renderAll();showToast('ラベルを追加しました');});
+  $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color,autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}};data.labels.push(label);selectedLabelId=label.id;save();renderAll();showToast('ラベルを追加しました');});
   $('themeSelect').addEventListener('change',e=>{data.settings.theme=e.target.value;save();applyTheme();});
   window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(data.settings.theme==='system')applyTheme();});
-  function shiftSelectedDay(offset){
-    const date=parseDay(selectedDay); date.setDate(date.getDate()+offset);
-    const nextKey=todayKey(date);
-    if(nextKey>todayKey()) return;
-    selectedDay=nextKey; visibleMonth=new Date(date.getFullYear(),date.getMonth(),1); renderAll();
+  function selectDay(key, scrollToOverview = false) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || key > todayKey()) return;
+    const date = parseDay(key);
+    if (todayKey(date) !== key) return;
+    selectedDay = key;
+    visibleMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    renderAll();
+    if (scrollToOverview) {
+      requestAnimationFrame(() => {
+        const heading = $('overviewTitle');
+        heading.scrollIntoView({ behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+        heading.focus({ preventScroll: true });
+      });
+    }
   }
-  $('prevDay').addEventListener('click',()=>shiftSelectedDay(-1));
-  $('nextDay').addEventListener('click',()=>shiftSelectedDay(1));
+  function shiftSelectedDay(offset) {
+    const target = parseDay(selectedDay);
+    target.setDate(target.getDate() + offset);
+    const targetKey = todayKey(target);
+    if (targetKey > todayKey()) return;
+    selectDay(targetKey, false);
+  }
+  $('prevDayBtn').addEventListener('click', () => shiftSelectedDay(-1));
+  $('nextDayBtn').addEventListener('click', () => shiftSelectedDay(1));
   $('prevMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1);renderCalendar();});
   $('nextMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();});
   $('todayBtn').addEventListener('click',()=>{selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);renderAll();});
@@ -1034,14 +1536,16 @@
       const parsed=JSON.parse(await file.text()),incoming=parsed?.data;
       if(parsed?.app!=='DAYLOG'||!incoming||!Array.isArray(incoming.labels)||!Array.isArray(incoming.sessions))throw new Error('format');
       if(!confirm('JSONの内容で現在の記録を置き換えます。\n先に現在のデータを書き出しておくことをおすすめします。続けますか？'))return;
-      const cleaned={labels:incoming.labels.map(l=>({id:String(l.id||makeId()),name:String(l.name||'ラベル').slice(0,24),color:safeColor(l.color)})),sessions:incoming.sessions.map(s=>({id:String(s.id||makeId()),labelId:String(s.labelId||''),labelName:String(s.labelName||'その他'),labelColor:safeColor(s.labelColor),createdAt:Number(s.createdAt)||Date.now(),endedAt:s.endedAt==null?null:Number(s.endedAt),status:['running','paused','done'].includes(s.status)?s.status:'done',segments:Array.isArray(s.segments)?s.segments.filter(p=>p&&Number.isFinite(Number(p.startAt))).map(p=>({startAt:Number(p.startAt),endAt:p.endAt==null?null:Number(p.endAt)})):[]})),settings:{theme:['light','dark','system'].includes(incoming.settings?.theme)?incoming.settings.theme:'light'}};
+      const cleaned={labels:incoming.labels.map(l=>({id:String(l.id||makeId()),name:String(l.name||'ラベル').slice(0,24),color:safeColor(l.color),autoStopDefault:normalizeAutoStop(l.autoStopDefault)})),sessions:incoming.sessions.map(s=>({id:String(s.id||makeId()),labelId:String(s.labelId||''),labelName:String(s.labelName||'その他'),labelColor:safeColor(s.labelColor),createdAt:Number(s.createdAt)||Date.now(),endedAt:s.endedAt==null?null:Number(s.endedAt),status:['running','paused','done'].includes(s.status)?s.status:'done',segments:Array.isArray(s.segments)?s.segments.filter(p=>p&&Number.isFinite(Number(p.startAt))).map(p=>({startAt:Number(p.startAt),endAt:p.endAt==null?null:Number(p.endAt)})):[],autoStop:normalizeAutoStop(s.autoStop),autoStopAt:Number.isFinite(Number(s.autoStopAt))&&s.autoStopAt!=null?Number(s.autoStopAt):null,autoStopRemainingMs:Number.isFinite(Number(s.autoStopRemainingMs))&&s.autoStopRemainingMs!=null?Math.max(0,Number(s.autoStopRemainingMs)):null,autoStopReview:s.autoStopReview===true,autoStopReviewSegmentIndex:Number.isInteger(s.autoStopReviewSegmentIndex)?s.autoStopReviewSegmentIndex:-1})),settings:{theme:['light','dark','system'].includes(incoming.settings?.theme)?incoming.settings.theme:'light'}};
       if(!cleaned.labels.length)cleaned.labels=clone(DEFAULT_LABELS);
       // Keep only one active session if the imported file is malformed.
       let seenActive=false;cleaned.sessions.forEach(s=>{if(s.status!=='done'){if(seenActive)s.status='done';else seenActive=true;}});
-      data={version:3,...cleaned};selectedLabelId=data.labels[0].id;selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);save();renderAll();showToast('データを読み込みました');
+      data={version:3,...cleaned};selectedLabelId=data.labels[0].id;autoStopScope='default';autoStopOverride={mode:'off',durationMinutes:60,time:'18:00'};selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);save();renderAll();showToast('データを読み込みました');
     }catch{alert('このJSONファイルを読み込めませんでした。DAYLOGから書き出したファイルを選択してください。');}
     finally{e.target.value='';}
   });
+  document.querySelectorAll('select').forEach(decorateSelect);
+  processAutoStopExpiry();
   buildClockTicks();renderAll();
   // Paint the readout in sync with the display refresh rate. Elapsed time is
   // always derived from persisted wall-clock timestamps, so tab suspension is safe.
@@ -1049,13 +1553,21 @@
     if (document.hidden) {
       syncTimerFrames();
     } else {
+      const autoStopped = processAutoStopExpiry();
+      if (autoStopped) showToast('設定した時刻に自動終了しました');
       renderTimer();
       syncTimerFrames();
       if (getActive()?.status === 'running') { renderOverview(); renderCalendar(); }
       drawClock();
+      scheduleAutoStop();
     }
   });
-  setInterval(()=>{if(getActive()?.status==='running'){renderOverview();renderCalendar();}drawClock();},1000);
+  setInterval(()=>{
+    const autoStopped = processAutoStopExpiry();
+    if (autoStopped) { renderAll(); showToast('設定した時刻に自動終了しました'); }
+    else if(getActive()?.status==='running'){renderOverview();renderCalendar();}
+    drawClock();
+  },1000);
   if('serviceWorker' in navigator && location.protocol!=='file:') window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
 })();
 </script>
