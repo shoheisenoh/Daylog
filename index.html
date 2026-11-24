@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f1eb">
+  <meta name="description" content="時間を記録して、日々の使い方を見える化するDAYLOG。">
+  <title>DAYLOG — 時間を、見えるかたちに。</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <style>
+  :root {
+    color-scheme: light;
+    --bg: #f5f1eb;
+    --surface: #fffdfa;
+    --surface-2: #f0e9e1;
+    --surface-3: #e7ddd2;
+    --ink: #40362f;
+    --muted: #897b70;
+    --line: #e8dfd6;
+    --accent: #a86f50;
+    --accent-strong: #87543a;
+    --accent-soft: #f2e5da;
+    --timer-bg: #eee4d9;
+    --timer-ink: #493a30;
+    --timer-muted: #927f70;
+    --shadow: 0 8px 28px rgba(74, 55, 39, .045);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+  }
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #211f1d;
+    --surface: #2b2825;
+    --surface-2: #37312c;
+    --surface-3: #463b33;
+    --ink: #f3ece5;
+    --muted: #b5a79b;
+    --line: #403832;
+    --accent: #d19a79;
+    --accent-strong: #e0b08e;
+    --accent-soft: #42342c;
+    --timer-bg: #352b25;
+    --timer-ink: #f5e9df;
+    --timer-muted: #b7a393;
+    --shadow: 0 10px 28px rgba(0, 0, 0, .13);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; min-width: 320px; background: var(--bg); color: var(--ink); font-family: var(--font); letter-spacing: .005em; transition: background .2s ease, color .2s ease; }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .app-shell { width: min(100% - 36px, 760px); margin: 0 auto; padding: 28px 0 40px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--accent-soft); color: var(--accent-strong); }
+  .brand-mark svg { width: 19px; height: 19px; }
+  .brand-name { font-size: 16px; font-weight: 760; letter-spacing: .13em; line-height: 1.1; }
+  .brand-tagline { color: var(--muted); font-size: 10px; margin-top: 3px; }
+  .top-date { text-align: right; color: var(--muted); font-size: 11px; line-height: 1.6; }
+  .top-date strong { display: block; color: var(--ink); font-size: 13px; font-weight: 650; }
+  .timer-card { position: relative; z-index: 2; isolation: isolate; overflow: visible; min-height: 300px; padding: 23px 24px 22px; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--timer-bg); color: var(--timer-ink); box-shadow: var(--shadow); }
+  .timer-card::before { content: ""; position: absolute; z-index: -1; width: 260px; height: 260px; top: 40px; left: 50%; transform: translateX(-50%); border: 1px solid color-mix(in srgb, var(--timer-ink) 8%, transparent); border-radius: 50%; pointer-events: none; }
+  .timer-head { display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+  .eyebrow { color: var(--timer-muted); font-size: 10px; letter-spacing: .12em; font-weight: 650; }
+  .live-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 99px; background: color-mix(in srgb, var(--timer-ink) 6%, transparent); color: var(--timer-muted); font-size: 10px; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--timer-muted); }
+  .live-pill.active .live-dot { background: #78916a; animation: live-soft-pulse 2.6s ease-in-out infinite; }
+  @keyframes live-soft-pulse { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
+  .timer-stage { min-height: 192px; display: grid; place-items: center; position: relative; text-align: center; }
+  .clock-orbit { position: absolute; width: 248px; height: 248px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%; border: 1px solid color-mix(in srgb, var(--timer-ink) 9%, transparent); opacity: .75; }
+  .clock-orbit::before { content: ""; position: absolute; inset: 15px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--timer-ink) 5%, transparent); }
+  .clock-tick, .clock-hand, .clock-pin { display: none; }
+  .timer-content { position: relative; z-index: 1; padding-top: 5px; }
+  .timer-label-caption { color: var(--timer-muted); font-size: 11px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 7px; }
+  .timer-caption-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; }
+  .timer-label-caption:empty { display: none; }
+  .timer-value { display: flex; justify-content: center; align-items: baseline; font-size: clamp(42px, 8vw, 62px); font-weight: 570; font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1; letter-spacing: -.055em; line-height: 1.08; contain: layout paint; }
+  .timer-main { display: inline-block; font-variant-numeric: tabular-nums; }
+  .timer-decimal { display: inline-flex; align-items: baseline; margin-left: 2px; color: color-mix(in srgb, var(--timer-ink) 58%, transparent); font-size: .48em; font-weight: 520; letter-spacing: -.025em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .fraction-digit { display: inline-block; min-width: 1.12em; text-align: left; font-variant-numeric: tabular-nums; }
+  .timer-subtext { display: block; min-height: 16px; margin-top: 8px; color: var(--timer-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .timer-controls { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 9px; }
+  .timer-controls { position: relative; z-index: 4; }
+  /* 計測開始後は終了を左、操作（停止／再開）を右に配置 */
+  .timer-controls.has-active #stopTimerBtn { order: 0; }
+  .timer-controls.has-active #mainTimerBtn { order: 1; }
+  .label-picker { position: relative; z-index: 12; flex: 0 1 156px; width: 156px; min-width: 118px; }
+  .label-picker[hidden] { display: none !important; }
+  .timer-label-trigger { width: 100%; min-width: 0; height: 42px; padding: 0 11px; display: flex; align-items: center; gap: 8px; border: 1px solid color-mix(in srgb, var(--timer-ink) 16%, transparent); border-radius: 99px; background: color-mix(in srgb, var(--timer-bg) 76%, var(--surface)); color: var(--timer-ink); font-size: 11px; text-align: left; transform: translateY(0); transition: transform .18s cubic-bezier(.2,.7,.25,1), border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+  .timer-label-trigger:hover, .label-picker.open .timer-label-trigger { border-color: color-mix(in srgb, var(--accent) 62%, var(--timer-ink)); background: color-mix(in srgb, var(--timer-bg) 58%, var(--surface)); }
+  .timer-label-trigger:hover { transform: translateY(-1px); }
+  .timer-label-trigger:active { transform: scale(.985); }
+  .label-picker.open .timer-label-trigger { box-shadow: 0 3px 10px color-mix(in srgb, var(--timer-ink) 7%, transparent); }
+  .timer-label-trigger.selection-feedback { animation: picker-selection-soft .32s ease-out both; }
+  @keyframes picker-selection-soft { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); } 45% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); } 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); } }
+  .timer-label-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .picker-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--timer-ink) 7%, transparent); }
+  .picker-current { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 650; }
+  .picker-chevron { width: 14px; height: 14px; flex: 0 0 14px; color: var(--timer-muted); transition: transform .18s ease; }
+  .label-picker.open .picker-chevron { transform: rotate(180deg); }
+  .label-picker-menu { position: absolute; top: calc(100% + 8px); left: 0; z-index: 30; width: max(100%, 190px); max-width: min(240px, calc(100vw - 32px)); max-height: min(260px, 42vh); overflow: auto; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 38px rgba(58, 43, 31, .16); transform-origin: top left; animation: picker-soft-open .2s cubic-bezier(.2,.7,.25,1) both; overscroll-behavior: contain; }
+  .label-picker-menu[hidden] { display: none !important; }
+  @keyframes picker-soft-open { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .picker-option { width: 100%; min-height: 40px; padding: 0 10px; display: flex; align-items: center; gap: 10px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); text-align: left; font-size: 12px; transform: translateX(0); transition: transform .14s ease, background .16s ease; }
+  .picker-option:hover, .picker-option:focus-visible { background: var(--surface-2); outline: none; }
+  .picker-option:active { transform: scale(.99); }
+  .picker-option[aria-selected="true"] { background: var(--accent-soft); color: var(--accent-strong); font-weight: 700; }
+  .picker-option-dot { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; }
+  .picker-option-name { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .picker-option-check { width: 16px; height: 16px; flex: 0 0 16px; opacity: 0; color: var(--accent-strong); }
+  .picker-option[aria-selected="true"] .picker-option-check { opacity: 1; }
+  .btn { min-height: 42px; padding: 0 19px; border: 0; border-radius: 99px; font-size: 12px; font-weight: 680; transition: transform .18s cubic-bezier(.2,.7,.25,1), opacity .18s ease, background .22s ease, box-shadow .22s ease; }
+  .btn:active { transform: scale(.985); }
+  .btn-primary { min-width: 138px; background: var(--accent); color: #fffaf5; transform-origin: center; }
+  .btn-primary.start-feedback { animation: timer-start-soft .38s cubic-bezier(.2,.7,.25,1) both; }
+  @keyframes timer-start-soft { 0% { transform: scale(.975); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); } 48% { transform: scale(1.008); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 13%, transparent); } 100% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); } }
+  .btn-secondary { border: 1px solid color-mix(in srgb, var(--timer-ink) 16%, transparent); background: transparent; color: var(--timer-ink); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; }
+  .settings-wrap { margin: 12px 0 27px; }
+  .settings { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+  .settings summary { min-height: 52px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--ink); cursor: pointer; list-style: none; }
+  .settings summary::-webkit-details-marker { display: none; }
+  .settings-title { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 700; }
+  .settings-title svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); stroke-linecap: round; stroke-linejoin: round; transition: color .2s ease; }
+  .settings[open] .settings-title svg { color: var(--accent-strong); }
+  .settings-hint { margin-left: auto; color: var(--muted); font-size: 10px; }
+  .chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .22s cubic-bezier(.2,.7,.25,1), color .2s ease; }
+  details[open] .chevron { transform: rotate(180deg); color: var(--accent-strong); }
+  .settings-body { padding: 17px 16px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; border-top: 1px solid var(--line); transform-origin: top center; }
+  .settings summary { transition: background-color .2s ease; }
+  .settings summary:active { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+  .settings { transition: border-color .2s ease, box-shadow .2s ease; }
+  .settings[open] { border-color: var(--line); box-shadow: none; }
+  .setting-group-title { margin: 0 0 11px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+  .label-list { display: grid; gap: 11px; }
+  .label-edit-row { display: grid; grid-template-columns: minmax(0,1fr) 30px; align-items: center; gap: 7px 8px; }
+  .label-edit-row input[type="text"] { width: 100%; min-width: 0; height: 35px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 12px; }
+  .label-palette { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 1px 2px 2px; }
+  .palette-swatch { width: 22px; height: 22px; flex: 0 0 22px; padding: 0; border: 2px solid var(--surface); border-radius: 50%; box-shadow: 0 0 0 1px var(--line); transition: box-shadow .16s ease, transform .16s ease; }
+  .palette-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--accent); transform: scale(1.04); }
+  .palette-swatch:active { transform: scale(.96); }
+  .icon-btn { width: 29px; height: 29px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--muted); }
+  .icon-btn:hover { background: var(--surface-2); color: var(--ink); }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .add-label-btn { width: 100%; min-height: 34px; margin-top: 8px; border: 1px dashed var(--line); border-radius: 9px; background: transparent; color: var(--accent-strong); font-size: 11px; font-weight: 650; }
+  .setting-select { width: 100%; height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 12px; }
+  .data-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .small-action { min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); color: var(--ink); font-size: 10px; font-weight: 650; }
+  .small-action.primary { border-color: var(--accent); background: var(--accent); color: white; }
+  .setting-note { margin: 9px 0 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
+  .overview { margin-bottom: 27px; }
+  .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
+  .section-kicker { display: none; }
+  h2 { margin: 0; font-size: 18px; font-weight: 680; letter-spacing: -.025em; }
+  .section-side-note { color: var(--muted); font-size: 10px; }
+  .day-switcher { display: flex; align-items: center; gap: 7px; }
+  .day-switcher .section-side-note { min-width: 112px; text-align: center; font-variant-numeric: tabular-nums; }
+  .day-nav-btn { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); }
+  .day-nav-btn:disabled { opacity: .28; cursor: default; }
+  .day-nav-btn svg { width: 13px; height: 13px; }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .activity-card { margin-bottom: 10px; padding: 16px 17px 13px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+  .activity-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .activity-head strong { font-size: 11px; font-weight: 700; }
+  .activity-head span { color: var(--muted); font-size: 10px; }
+  .hour-chart { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); align-items: end; gap: 3px; height: 88px; }
+  .hour-column { min-width: 0; height: 100%; display: flex; align-items: stretch; }
+  .hour-track { position: relative; width: 100%; min-width: 0; height: 100%; overflow: hidden; border-radius: 4px; background: var(--surface-2); }
+  .hour-stack { position: absolute; inset: auto 0 0; display: flex; flex-direction: column-reverse; overflow: hidden; border-radius: 4px 4px 2px 2px; }
+  .hour-stack-part { display: block; flex: 0 0 auto; width: 100%; min-height: 1px; }
+  .hour-axis { display: flex; justify-content: space-between; margin: 7px -1px 0; color: var(--muted); font-size: 9px; font-variant-numeric: tabular-nums; }
+  .summary-card { padding: 16px 17px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+  .summary-label { color: var(--muted); font-size: 10px; font-weight: 600; }
+  .summary-value { margin-top: 7px; font-size: 25px; font-weight: 680; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .summary-caption { margin-top: 3px; color: var(--muted); font-size: 10px; }
+  .breakdown-card, .records-card { padding: 16px 17px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+  .breakdown-head, .records-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 13px; }
+  .breakdown-head strong, .records-head strong { font-size: 11px; font-weight: 700; }
+  .breakdown-head span, .records-head span { color: var(--muted); font-size: 10px; }
+  .stacked-track { height: 8px; display: flex; overflow: hidden; margin-bottom: 16px; border-radius: 99px; background: var(--surface-2); }
+  .stacked-part { height: 100%; min-width: 2px; }
+  .breakdown-list { display: grid; gap: 11px; }
+  .breakdown-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px 12px; align-items: center; }
+  .breakdown-name { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 11px; font-weight: 600; }
+  .breakdown-name span:last-child { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .color-dot { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; }
+  .breakdown-time { font-size: 11px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .breakdown-meter { grid-column: 1 / -1; height: 3px; overflow: hidden; border-radius: 99px; background: var(--surface-2); }
+  .breakdown-meter > span { display: block; height: 100%; border-radius: inherit; }
+  .empty-state { padding: 18px 10px; color: var(--muted); font-size: 11px; line-height: 1.8; text-align: center; }
+  .empty-state strong { display: block; margin-bottom: 3px; color: var(--ink); font-size: 12px; }
+  .records-card { margin-top: 10px; }
+  .records-disclosure { padding-top: 0; padding-bottom: 0; overflow: hidden; }
+  .records-disclosure > summary { list-style: none; cursor: pointer; min-height: 52px; margin: 0; user-select: none; }
+  .records-disclosure > summary::-webkit-details-marker { display: none; }
+  .records-summary-title { display: inline-flex; align-items: center; gap: 9px; }
+  .records-chevron { display: inline-block; color: var(--muted); font-size: 17px; line-height: 1; transform: rotate(0deg); transition: transform .22s ease; }
+  .records-disclosure[open] > summary { margin-bottom: 13px; }
+  .records-disclosure[open] .records-chevron { transform: rotate(180deg); }
+  .records-disclosure .record-list { padding-bottom: 14px; }
+  @media (prefers-reduced-motion: reduce) { .records-chevron { transition: none; } }
+  .record-list { display: grid; }
+  .record-row { display: grid; grid-template-columns: 8px minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .record-row:first-child { border-top: 0; }
+  .record-marker { width: 6px; height: 25px; border-radius: 99px; }
+  .record-main { min-width: 0; }
+  .record-name { overflow: hidden; color: var(--ink); font-size: 11px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+  .record-time { margin-top: 3px; color: var(--muted); font-size: 10px; }
+  .record-duration { font-size: 11px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .calendar-section { margin-top: 30px; }
+  .calendar-card { padding: 17px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+  .calendar-nav { display: flex; align-items: center; gap: 8px; }
+  .month-label { min-width: 105px; color: var(--ink); font-size: 12px; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums; }
+  .month-btn { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--ink); }
+  .month-btn svg { width: 13px; height: 13px; }
+  .month-btn:disabled, .day-cell:disabled { opacity: .28; cursor: default; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 5px; }
+  .weekday { padding: 7px 0 5px; color: var(--muted); font-size: 9px; font-weight: 700; text-align: center; }
+  .day-cell { min-height: 64px; padding: 7px 4px 5px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 1px solid transparent; border-radius: 9px; background: var(--bg); color: var(--ink); text-align: center; }
+  .day-cell:hover { border-color: var(--line); }
+  .day-cell.outside { opacity: .35; }
+  .day-cell.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .day-cell.today .day-number { color: var(--accent-strong); font-weight: 850; }
+  .day-number { font-size: 11px; font-weight: 570; }
+  .day-total { color: var(--muted); font-size: 8px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .day-dots { min-height: 4px; display: flex; gap: 3px; }
+  .day-dots i { width: 4px; height: 4px; display: block; border-radius: 50%; }
+  .calendar-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+  .calendar-legend { display: flex; align-items: center; gap: 6px; }
+  .calendar-legend i { width: 6px; height: 6px; display: block; border-radius: 50%; background: var(--accent); }
+  .footer { padding-top: 22px; color: var(--muted); font-size: 9px; letter-spacing: .1em; text-align: center; }
+  .toast { position: fixed; z-index: 20; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); padding: 10px 16px; border-radius: 99px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); font-size: 11px; opacity: 0; pointer-events: none; transform: translate(-50%,14px); transition: .2s ease; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translate(-50%,0); }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  @media (max-width: 650px) {
+    .app-shell { width: min(100% - 24px, 520px); padding-top: 18px; }
+    .topbar { margin-bottom: 17px; }
+    .timer-card { min-height: 285px; padding: 20px 16px; border-radius: 21px; }
+    .timer-stage { min-height: 184px; }
+    .clock-orbit { width: 230px; height: 230px; }
+    .timer-value { font-size: clamp(40px, 10vw, 54px); }
+    .btn { min-height: 41px; padding: 0 16px; }
+    .btn-primary { min-width: 128px; }
+    .label-picker { flex-basis: 126px; width: 126px; }
+    .timer-label-trigger { height: 41px; padding: 0 10px; }
+    .settings-body { grid-template-columns: 1fr; gap: 18px; }
+    .summary-card { padding: 14px; }
+    .activity-card { padding: 14px 12px 11px; }
+    .hour-chart { gap: 2px; height: 78px; }
+    .day-switcher { gap: 4px; }
+    .day-switcher .section-side-note { min-width: 100px; font-size: 9px; }
+    .day-nav-btn { width: 26px; height: 26px; }
+    .summary-value { font-size: 23px; }
+    .calendar-card { padding: 14px 10px; }
+    .calendar-grid { gap: 3px; }
+    .day-cell { min-height: 57px; padding-top: 6px; gap: 3px; }
+    .weekday, .day-total { font-size: 8px; }
+    .section-side-note { font-size: 9px; }
+  }
+  @media (max-width: 360px) {
+    .top-date { display: none; }
+    .timer-controls { gap: 7px; }
+    .btn { padding: 0 13px; font-size: 11px; }
+    .day-cell { min-height: 53px; }
+  }
+
+  /* Soft Motion: quiet feedback, stable digits, no bouncing or sliding. */
+  .topbar, .timer-card, .settings-wrap, .overview, .calendar-section, .footer {
+    animation: soft-fade-in .32s ease-out both;
+  }
+  .timer-card { animation-delay: .025s; }
+  .settings-wrap { animation-delay: .05s; }
+  .overview { animation-delay: .075s; }
+  .calendar-section { animation-delay: .1s; }
+  .footer { animation-delay: .125s; }
+  @keyframes soft-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .timer-card::before { transition: opacity .7s ease; }
+  .timer-card.is-running::before {
+    opacity: .68;
+    animation: warm-halo 12s ease-in-out infinite;
+  }
+  .timer-card.is-paused::before { opacity: .46; animation: none; }
+  @keyframes warm-halo {
+    0%, 100% { opacity: .52; }
+    50% { opacity: .68; }
+  }
+  .timer-value, .timer-main, .timer-decimal, .fraction-digit, .fraction-digit span {
+    transform: none !important;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .timer-decimal { opacity: .96; }
+  .timer-decimal.soft-tick { animation: fraction-soft-fade .1s ease-out both; }
+  @keyframes fraction-soft-fade {
+    from { opacity: .86; }
+    to { opacity: .96; }
+  }
+  .btn, .small-action, .month-btn, .day-cell, .add-label-btn, .icon-btn, .timer-label-trigger {
+    transition: background-color .2s ease, border-color .2s ease,
+      color .2s ease, box-shadow .2s ease, opacity .16s ease;
+  }
+  .btn:active, .small-action:active, .month-btn:active, .day-cell:active, .add-label-btn:active {
+    transform: none !important;
+    opacity: .84;
+  }
+  .summary-card, .breakdown-card, .records-card, .calendar-card {
+    transition: border-color .22s ease, box-shadow .22s ease;
+  }
+  .stacked-part { transition: width .5s ease-out; }
+  .breakdown-meter > span { transition: width .5s ease-out; }
+  .day-cell.selected { animation: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .summary-card:hover, .breakdown-card:hover, .records-card:hover, .calendar-card:hover {
+      border-color: color-mix(in srgb, var(--accent) 24%, var(--line));
+      box-shadow: 0 5px 16px rgba(65, 48, 34, .035);
+    }
+    .month-btn:hover, .icon-btn:hover, .day-cell:hover { transform: none; }
+    .btn-primary:hover { filter: brightness(1.025); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      scroll-behavior: auto !important;
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 16.8 12 4l7 12.8H5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.1 16.8 12 9.6l3.9 7.2" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 9.7v7.1" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <div><div class="brand-name">DAYLOG</div><div class="brand-tagline">時間を、見えるかたちに。</div></div>
+      </div>
+      <div class="top-date" id="topDate"><strong>—</strong>—</div>
+    </header>
+
+    <section class="timer-card" id="timerCard" aria-label="タイマー">
+      <div class="timer-head">
+        <div class="live-pill" id="statusPill"><i class="live-dot"></i><span id="statusText">待機中</span></div>
+      </div>
+      <div class="timer-stage">
+        <div class="clock-orbit" aria-hidden="true" id="clockOrbit">
+          <div class="clock-hand hour" id="hourHand"></div><div class="clock-hand minute" id="minuteHand"></div><div class="clock-pin"></div>
+        </div>
+        <div class="timer-content">
+          <div class="timer-label-caption" id="timerCaption"></div>
+          <div class="timer-value" id="timerValue" role="timer" aria-live="off" aria-label="00:00:00.00 経過時間"><span class="timer-main" id="timerMain">00:00:00</span><span class="timer-decimal" id="timerDecimal" aria-hidden="true">.<span class="fraction-digit"><span id="timerTens">0</span><span id="timerUnits">0</span></span></span></div>
+          <div class="timer-subtext" id="timerSubtext">ラベルを選んで計測を始めましょう</div>
+        </div>
+      </div>
+      <div class="timer-controls">
+        <div class="label-picker" id="timerLabelPicker">
+          <button class="timer-label-trigger" id="timerLabelSelect" type="button" aria-label="計測するラベル" aria-haspopup="listbox" aria-expanded="false" aria-controls="timerLabelMenu">
+            <span class="picker-dot" aria-hidden="true"></span>
+            <span class="picker-current">ラベルを選択</span>
+            <svg class="picker-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+          </button>
+          <div class="label-picker-menu" id="timerLabelMenu" role="listbox" aria-label="計測するラベル" hidden></div>
+        </div>
+        <button class="btn btn-primary" id="mainTimerBtn" type="button">計測を開始</button>
+        <button class="btn btn-secondary" id="stopTimerBtn" type="button" disabled hidden>終了</button>
+      </div>
+    </section>
+
+    <div class="settings-wrap">
+      <details class="settings" id="settingsPanel">
+        <summary>
+          <span class="settings-title"><svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>設定</span>
+          <span class="settings-hint">ラベル・テーマ・データ</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="settings-body">
+          <section>
+            <h3 class="setting-group-title">ラベルをカスタム</h3>
+            <div class="label-list" id="labelEditor"></div>
+            <button class="add-label-btn" id="addLabelBtn" type="button">＋ ラベルを追加</button>
+            <p class="setting-note">色は用意されたテンプレートから選べます。ラベル名と色の変更は過去の記録にも反映されます。</p>
+          </section>
+          <section>
+            <h3 class="setting-group-title">表示テーマ</h3>
+            <label class="visually-hidden" for="themeSelect">テーマ</label>
+            <select class="setting-select" id="themeSelect">
+              <option value="light">ライト — オートミール</option>
+              <option value="dark">ダーク — フォレスト</option>
+              <option value="system">システム設定に合わせる</option>
+            </select>
+            <h3 class="setting-group-title" style="margin-top:20px">データのバックアップ</h3>
+            <div class="data-actions">
+              <button class="small-action primary" id="exportBtn" type="button">JSONを書き出す</button>
+              <button class="small-action" id="importBtn" type="button">JSONを読み込む</button>
+              <input class="visually-hidden" id="importFile" type="file" accept=".json,application/json">
+            </div>
+            <p class="setting-note">端末間の移行は、書き出したJSONファイルを新しい端末で読み込んでください。読み込み時は現在のデータが置き換わります。</p>
+          </section>
+        </div>
+      </details>
+    </div>
+
+    <section class="overview" aria-labelledby="overviewTitle">
+      <div class="section-heading">
+        <div><div class="section-kicker">DAY</div><h2 id="overviewTitle">今日の記録</h2></div>
+        <div class="day-switcher" aria-label="表示する日付">
+          <button class="day-nav-btn" id="prevDay" type="button" aria-label="前の日"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+          <div class="section-side-note" id="overviewDate">—</div>
+          <button class="day-nav-btn" id="nextDay" type="button" aria-label="次の日"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+      </div>
+      <div class="summary-grid">
+        <article class="summary-card"><div class="summary-label">合計記録時間</div><div class="summary-value" id="dailyTotal">0分</div><div class="summary-caption">選択した日の合計</div></article>
+        <article class="summary-card"><div class="summary-label">セッション数</div><div class="summary-value" id="sessionCount">0</div><div class="summary-caption">計測した回数</div></article>
+      </div>
+      <article class="activity-card" aria-labelledby="activityTitle">
+        <div class="activity-head"><strong id="activityTitle">時間帯別の記録</strong><span>0:00 — 24:00</span></div>
+        <div class="hour-chart" id="hourChart" role="group" aria-label="1時間ごとの記録時間"></div>
+        <div class="hour-axis" aria-hidden="true"><span>0時</span><span>6時</span><span>12時</span><span>18時</span><span>24時</span></div>
+      </article>
+      <article class="breakdown-card">
+        <div class="breakdown-head"><strong>カテゴリ別の時間</strong><span id="breakdownTotal">合計 0分</span></div>
+        <div class="stacked-track" id="stackedTrack" aria-label="カテゴリ別時間の割合"></div>
+        <div class="breakdown-list" id="breakdownList"><div class="empty-state"><strong>まだ記録がありません</strong>タイマーを使うと、ここに内訳が表示されます。</div></div>
+      </article>
+      <details class="records-card records-disclosure" id="sessionHistoryDetails">
+        <summary class="records-head"><span class="records-summary-title"><strong>セッション履歴</strong><span class="records-chevron" aria-hidden="true">⌄</span></span><span id="recordsDate">—</span></summary>
+        <div class="record-list" id="recordList"><div class="empty-state">この日のセッションはありません。</div></div>
+      </details>
+    </section>
+
+    <section class="calendar-section" aria-labelledby="calendarTitle">
+      <div class="section-heading">
+        <div><div class="section-kicker">HISTORY</div><h2 id="calendarTitle">カレンダー</h2></div>
+        <button class="small-action" id="todayBtn" type="button">今日に戻る</button>
+      </div>
+      <div class="calendar-card">
+        <div class="section-heading" style="margin-bottom:12px">
+          <div class="calendar-nav">
+            <button class="month-btn" id="prevMonth" type="button" aria-label="前の月"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div class="month-label" id="monthLabel">—</div>
+            <button class="month-btn" id="nextMonth" type="button" aria-label="次の月"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="section-side-note">日付を選択して詳細を表示</div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-footer"><span class="calendar-legend"><i></i>記録あり</span><span id="monthRecorded">今月の記録 0日</span></div>
+      </div>
+    </section>
+    <footer class="footer">DAYLOG</footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  'use strict';
+  const STORAGE_KEY = 'daylog.data.v3';
+  const LABEL_COLOR_TEMPLATES = [
+    { name: 'セージ', color: '#879978' },
+    { name: 'テラコッタ', color: '#c18f6c' },
+    { name: 'ブルーグレー', color: '#8e9eaa' },
+    { name: 'ラベンダー', color: '#b6a5bd' },
+    { name: 'ハニー', color: '#d2ad70' },
+    { name: 'ダスティローズ', color: '#c98f83' },
+    { name: 'モカ', color: '#9d8979' },
+    { name: 'ミストグリーン', color: '#7f968d' }
+  ];
+  const DEFAULT_LABELS = [
+    { id: 'focus', name: '学習', color: '#879978' },
+    { id: 'creative', name: '制作', color: '#c18f6c' },
+    { id: 'reading', name: '読書', color: '#8e9eaa' },
+    { id: 'rest', name: '休憩', color: '#b6a5bd' }
+  ];
+  const $ = (id) => document.getElementById(id);
+  const todayKey = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  const parseDay = (key) => { const [y,m,d] = key.split('-').map(Number); return new Date(y,m-1,d,0,0,0,0); };
+  const makeId = () => (crypto && crypto.randomUUID) ? crypto.randomUUID() : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2,9)}`;
+  const safeColor = (c) => {
+    const raw = /^#[0-9a-f]{6}$/i.test(c || '') ? c.toLowerCase() : '#879978';
+    if (LABEL_COLOR_TEMPLATES.some(preset => preset.color === raw)) return raw;
+    const rgb = raw.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
+    let nearest = LABEL_COLOR_TEMPLATES[0], nearestDistance = Infinity;
+    for (const preset of LABEL_COLOR_TEMPLATES) {
+      const channels = preset.color.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
+      const distance = channels.reduce((sum, value, index) => sum + (value - rgb[index]) ** 2, 0);
+      if (distance < nearestDistance) { nearest = preset; nearestDistance = distance; }
+    }
+    return nearest.color;
+  };
+  const clone = (v) => JSON.parse(JSON.stringify(v));
+  const initialData = () => ({ version: 3, labels: clone(DEFAULT_LABELS), sessions: [], settings: { theme: 'light' } });
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return initialData();
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.labels) || !Array.isArray(parsed.sessions)) return initialData();
+      return {
+        version: 3,
+        labels: parsed.labels.filter(x => x && typeof x.id === 'string').map(x => ({ id:x.id, name:String(x.name || 'ラベル').slice(0,24), color:safeColor(x.color) })),
+        sessions: parsed.sessions.filter(x => x && typeof x.id === 'string' && Array.isArray(x.segments)).map(s => ({
+          id:s.id, labelId:String(s.labelId || ''), labelName:String(s.labelName || 'その他'), labelColor:safeColor(s.labelColor),
+          createdAt:Number(s.createdAt) || Date.now(), endedAt:s.endedAt == null ? null : Number(s.endedAt),
+          status:['running','paused','done'].includes(s.status) ? s.status : 'done',
+          segments:s.segments.filter(p => p && Number.isFinite(Number(p.startAt))).map(p => ({ startAt:Number(p.startAt), endAt:p.endAt == null ? null : Number(p.endAt) }))
+        })),
+        settings: { theme: ['light','dark','system'].includes(parsed.settings?.theme) ? parsed.settings.theme : 'light' }
+      };
+    } catch { return initialData(); }
+  }
+  let data = loadData();
+  let selectedLabelId = data.labels[0]?.id || '';
+  let selectedDay = todayKey();
+  let visibleMonth = new Date();
+  visibleMonth.setDate(1);
+  let toastTimer = null;
+  let timerFrameId = 0;
+  let lastWholeReadout = null;
+  let lastFractionTens = null;
+  let lastFractionUnits = null;
+  const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch { showToast('保存できませんでした。端末の空き容量を確認してください。'); } };
+  const getActive = () => data.sessions.find(s => s.status === 'running' || s.status === 'paused') || null;
+  const findLabel = (id) => data.labels.find(l => l.id === id);
+  const getElapsedMs = (session, now = Date.now()) => session.segments.reduce((sum,p) => sum + Math.max(0,(p.endAt ?? (session.status === 'running' ? now : p.startAt)) - p.startAt), 0);
+  const fmtClock = (ms) => { let s = Math.max(0,Math.floor(ms/1000)); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60; return [h,m,sec].map(v=>String(v).padStart(2,'0')).join(':'); };
+  const fmtDuration = (ms, compact = false) => {
+    const safeMs = Math.max(0, Number(ms) || 0);
+    const min = Math.floor(safeMs/60000), h=Math.floor(min/60), m=min%60;
+    if (min === 0) return safeMs > 0 ? '1分未満' : '0分';
+    if (h === 0) return `${m}分`;
+    return `${h}時間${m ? `${m}分` : ''}`;
+  };
+  const fmtTime = (stamp) => new Intl.DateTimeFormat('ja-JP',{hour:'2-digit',minute:'2-digit'}).format(new Date(stamp));
+  const fmtDateLong = (key) => new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'short'}).format(parseDay(key));
+  const escapeHtml = (str) => String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  function showToast(message) {
+    const node=$('toast'); node.textContent=message; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),2300);
+  }
+  function getLocalDayBounds(key) {
+    const startDate = parseDay(key);
+    const nextDate = new Date(startDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+    return { start: startDate.getTime(), end: nextDate.getTime() };
+  }
+  function getSegmentsForDay(key) {
+    const { start: dayStart, end: dayEnd } = getLocalDayBounds(key);
+    const now=Date.now(), out=[];
+    for (const session of data.sessions) {
+      for (const part of session.segments) {
+        const end = part.endAt ?? (session.status === 'running' ? now : part.startAt);
+        const start = Math.max(part.startAt,dayStart), finish=Math.min(end,dayEnd);
+        if (finish > start) out.push({ sessionId:session.id,labelId:session.labelId,labelName:session.labelName,labelColor:session.labelColor,startAt:start,endAt:finish,status:session.status });
+      }
+    }
+    return out.sort((a,b)=>a.startAt-b.startAt);
+  }
+  // Build actual local-clock hour windows. This also handles 23/25-hour days
+  // when the device timezone observes daylight-saving transitions.
+  function getLocalHourWindows(key) {
+    const { start, end } = getLocalDayBounds(key);
+    const windows = Array.from({ length: 24 }, () => []);
+    let cursor = start;
+    while (cursor < end) {
+      const hour = new Date(cursor).getHours();
+      let probe = Math.min(cursor + 60000, end);
+      while (probe < end && new Date(probe).getHours() === hour) {
+        probe = Math.min(probe + 60000, end);
+      }
+      let boundary = end;
+      if (probe < end) {
+        let low = Math.max(cursor, probe - 60000);
+        let high = probe;
+        while (high - low > 1) {
+          const mid = low + Math.floor((high - low) / 2);
+          if (new Date(mid).getHours() === hour) low = mid;
+          else high = mid;
+        }
+        boundary = high;
+      }
+      if (boundary <= cursor) break;
+      windows[hour].push({ start: cursor, end: boundary });
+      cursor = boundary;
+    }
+    return windows;
+  }
+  function getDayStats(key) {
+    const slices=getSegmentsForDay(key), byLabel=new Map();
+    for (const s of slices) byLabel.set(s.labelId,(byLabel.get(s.labelId)||0)+(s.endAt-s.startAt));
+    return { slices, total:[...byLabel.values()].reduce((a,b)=>a+b,0), byLabel };
+  }
+  function formatTopDate() {
+    const now=new Date();
+    $('topDate').innerHTML=`<strong>${new Intl.DateTimeFormat('ja-JP',{month:'long',day:'numeric'}).format(now)}</strong>${new Intl.DateTimeFormat('ja-JP',{weekday:'long'}).format(now)}`;
+  }
+  function drawClock() {
+    const now=new Date(), h=now.getHours()%12, m=now.getMinutes(), s=now.getSeconds();
+    $('hourHand').style.transform=`translateX(-50%) rotate(${(h+m/60)*30}deg)`;
+    $('minuteHand').style.transform=`translateX(-50%) rotate(${(m+s/60)*6}deg)`;
+  }
+  function buildClockTicks() {
+    const orbit=$('clockOrbit');
+    for(let i=0;i<60;i++){const tick=document.createElement('i');tick.className=`clock-tick${i%5===0?' major':''}`;tick.style.transform=`translateX(-50%) rotate(${i*6}deg)`;orbit.insertBefore(tick,orbit.firstChild);}
+  }
+  function renderElapsedReadout(active, now = Date.now()) {
+    const elapsedMs = active ? getElapsedMs(active, now) : 0;
+    const whole = fmtClock(elapsedMs);
+    const hundredths = String(Math.floor(elapsedMs / 10) % 100).padStart(2, '0');
+    const tens = hundredths[0];
+    const units = hundredths[1];
+    const decimal = $('timerDecimal');
+    let changed = false;
+
+    // Update only changed digits. The hundredths column stays still; the tenths
+    // column gets a very small opacity cue at most 10 times per second.
+    if (whole !== lastWholeReadout) {
+      $('timerMain').textContent = whole;
+      lastWholeReadout = whole;
+      changed = true;
+    }
+    if (tens !== lastFractionTens) {
+      $('timerTens').textContent = tens;
+      if (lastFractionTens !== null && active?.status === 'running' &&
+          !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+        decimal.classList.remove('soft-tick');
+        void decimal.offsetWidth;
+        decimal.classList.add('soft-tick');
+      }
+      lastFractionTens = tens;
+      changed = true;
+    }
+    if (units !== lastFractionUnits) {
+      $('timerUnits').textContent = units;
+      lastFractionUnits = units;
+      changed = true;
+    }
+    if (!active || active.status !== 'running') decimal.classList.remove('soft-tick');
+    if (changed) $('timerValue').setAttribute('aria-label', `${whole}.${hundredths} 経過時間`);
+  }
+
+  function renderTimer() {
+    const active = getActive();
+    const mode = !active ? 'idle' : active.status;
+    const timerCard = $('timerCard');
+    const timerValue = $('timerValue');
+    $('timerLabelPicker').parentElement.classList.toggle('has-active', !!active);
+    timerCard.classList.toggle('is-running', mode === 'running');
+    timerCard.classList.toggle('is-paused', mode === 'paused');
+
+    renderElapsedReadout(active);
+    const pill = $('statusPill');
+    pill.classList.toggle('active', !!active && active.status === 'running');
+    $('statusText').textContent = !active ? '待機中' : active.status === 'running' ? '計測中' : '一時停止';
+
+    if (!active) {
+      $('timerCaption').textContent = '';
+      $('timerSubtext').textContent = ''; 
+      $('mainTimerBtn').textContent = '計測を開始';
+      $('stopTimerBtn').disabled = true;
+      $('stopTimerBtn').hidden = true;
+    } else {
+      const caption = $('timerCaption');
+      caption.replaceChildren();
+      const labelDot = document.createElement('span'); labelDot.className = 'timer-caption-dot'; labelDot.style.backgroundColor = safeColor(findLabel(active.labelId)?.color || active.labelColor); labelDot.setAttribute('aria-hidden', 'true');
+      const labelText = document.createElement('span'); labelText.textContent = active.labelName;
+      caption.append(labelDot, labelText);
+      $('timerSubtext').textContent = `開始時刻 ${fmtTime(active.createdAt)}`;
+      $('mainTimerBtn').textContent = active.status === 'running' ? '一時停止' : '再開';
+      $('stopTimerBtn').disabled = false;
+      $('stopTimerBtn').hidden = false;
+    }
+  }
+
+  function stopTimerFrames() {
+    if (timerFrameId) cancelAnimationFrame(timerFrameId);
+    timerFrameId = 0;
+  }
+
+  function timerFrame() {
+    timerFrameId = 0;
+    const active = getActive();
+    if (!active || active.status !== 'running' || document.hidden) return;
+    renderElapsedReadout(active, Date.now());
+    timerFrameId = requestAnimationFrame(timerFrame);
+  }
+
+  function syncTimerFrames() {
+    const shouldAnimate = !document.hidden && getActive()?.status === 'running';
+    if (shouldAnimate && !timerFrameId) {
+      timerFrameId = requestAnimationFrame(timerFrame);
+    } else if (!shouldAnimate) {
+      stopTimerFrames();
+    }
+  }
+  function startSession() {
+    if(getActive()) return;
+    const label=findLabel(selectedLabelId) || data.labels[0];
+    if(!label){showToast('先にラベルを追加してください');return;}
+    const now=Date.now();
+    data.sessions.push({id:makeId(),labelId:label.id,labelName:label.name,labelColor:label.color,createdAt:now,endedAt:null,status:'running',segments:[{startAt:now,endAt:null}]});
+    save(); renderAll(); showToast(`${label.name}の計測を開始しました`);
+  }
+  function pauseSession() {
+    const active=getActive(); if(!active || active.status!=='running') return;
+    const current=active.segments[active.segments.length-1];
+    if(current && current.endAt==null) current.endAt=Date.now();
+    active.status='paused'; save(); renderAll(); showToast('一時停止しました');
+  }
+  function resumeSession() {
+    const active=getActive(); if(!active || active.status!=='paused') return;
+    active.segments.push({startAt:Date.now(),endAt:null}); active.status='running'; save(); renderAll(); showToast('計測を再開しました');
+  }
+  function stopSession() {
+    const active=getActive(); if(!active) return;
+    const current=active.segments[active.segments.length-1];
+    if(current && current.endAt==null) current.endAt=Date.now();
+    active.status='done'; active.endedAt=Date.now();
+    if(getElapsedMs(active) < 1000) data.sessions=data.sessions.filter(s=>s.id!==active.id);
+    save(); renderAll(); showToast('記録を保存しました');
+  }
+  function renderLabels() {
+    const active=getActive();
+    const editor=$('labelEditor'); editor.innerHTML='';
+    data.labels.forEach(label=>{
+      const row=document.createElement('div'); row.className='label-edit-row';
+      row.innerHTML=`<input type="text" maxlength="24" aria-label="ラベル名" value="${escapeHtml(label.name)}"><button class="icon-btn" type="button" aria-label="ラベルを削除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></button>`;
+      const nameInput=row.querySelector('input[type=text]'), remove=row.querySelector('button');
+      const palette=document.createElement('div'); palette.className='label-palette'; palette.setAttribute('role','group'); palette.setAttribute('aria-label',`${label.name}の色テンプレート`);
+      LABEL_COLOR_TEMPLATES.forEach(preset=>{
+        const swatch=document.createElement('button');
+        swatch.type='button'; swatch.className='palette-swatch'; swatch.style.backgroundColor=preset.color;
+        swatch.title=preset.name; swatch.setAttribute('aria-label',`${preset.name}を選択`);
+        swatch.setAttribute('aria-pressed',String(label.color===preset.color));
+        swatch.addEventListener('click',()=>{
+          if(label.color===preset.color) return;
+          label.color=preset.color;
+          data.sessions.filter(s=>s.labelId===label.id).forEach(s=>s.labelColor=label.color);
+          save(); renderAll(); showToast(`${preset.name}に変更しました`);
+        });
+        palette.appendChild(swatch);
+      });
+      nameInput.addEventListener('change',()=>{const name=nameInput.value.trim();if(!name){nameInput.value=label.name;return;}label.name=name;data.sessions.filter(s=>s.labelId===label.id).forEach(s=>s.labelName=name);save();renderAll();});
+      remove.disabled=active?.labelId===label.id; remove.style.opacity=remove.disabled?'.25':'1';
+      remove.addEventListener('click',()=>{if(data.labels.length<=1){showToast('ラベルは最低1つ必要です');return;}if(!confirm(`「${label.name}」をラベル一覧から削除しますか？\n過去の記録は残ります。`))return;data.labels=data.labels.filter(l=>l.id!==label.id);if(selectedLabelId===label.id)selectedLabelId=data.labels[0].id;save();renderAll();});
+      row.appendChild(palette);
+      editor.appendChild(row);
+    });
+    $('addLabelBtn').disabled=data.labels.length>=12;
+    $('addLabelBtn').style.opacity=data.labels.length>=12?'.4':'1';
+  }
+  function closeTimerLabelMenu(restoreFocus=false) {
+    const picker=$('timerLabelPicker'), trigger=$('timerLabelSelect'), menu=$('timerLabelMenu');
+    if(!picker || !trigger || !menu) return;
+    picker.classList.remove('open');
+    trigger.setAttribute('aria-expanded','false');
+    menu.hidden=true;
+    if(restoreFocus) trigger.focus({preventScroll:true});
+  }
+  function openTimerLabelMenu(preferredIndex=null) {
+    const picker=$('timerLabelPicker'), trigger=$('timerLabelSelect'), menu=$('timerLabelMenu');
+    if(!picker || picker.hidden || !data.labels.length) return;
+    menu.hidden=false;
+    picker.classList.add('open');
+    trigger.setAttribute('aria-expanded','true');
+    const options=[...menu.querySelectorAll('[role="option"]')];
+    const selected=options.findIndex(option=>option.getAttribute('aria-selected')==='true');
+    const index=preferredIndex==null?Math.max(0,selected):Math.max(0,Math.min(options.length-1,preferredIndex));
+    requestAnimationFrame(()=>options[index]?.focus({preventScroll:true}));
+  }
+  function renderSelectFallback() {
+    // Branded label picker: the trigger and listbox share the label template colors.
+    const picker=$('timerLabelPicker'), trigger=$('timerLabelSelect'), menu=$('timerLabelMenu');
+    const active=getActive();
+    if(active) closeTimerLabelMenu();
+    picker.hidden=!!active;
+    trigger.replaceChildren();
+    const current=active ? (findLabel(active.labelId)||{name:active.labelName,color:active.labelColor}) : (findLabel(selectedLabelId)||data.labels[0]);
+    const dot=document.createElement('span'); dot.className='picker-dot'; dot.setAttribute('aria-hidden','true'); dot.style.backgroundColor=safeColor(current?.color);
+    const text=document.createElement('span'); text.className='picker-current'; text.textContent=current?.name||'ラベルを選択';
+    const chevron=document.createElementNS('http://www.w3.org/2000/svg','svg'); chevron.setAttribute('viewBox','0 0 24 24'); chevron.setAttribute('class','picker-chevron'); chevron.setAttribute('fill','none'); chevron.setAttribute('stroke','currentColor'); chevron.setAttribute('stroke-width','1.8'); chevron.setAttribute('aria-hidden','true');
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m7 10 5 5 5-5'); chevron.appendChild(path);
+    trigger.append(dot,text,chevron);
+    trigger.disabled=!!active;
+    trigger.setAttribute('aria-label',`計測するラベル：${current?.name||'未選択'}`);
+    menu.replaceChildren();
+    data.labels.forEach(label=>{
+      const option=document.createElement('button'); option.type='button'; option.className='picker-option'; option.setAttribute('role','option'); option.setAttribute('aria-selected',String(label.id===selectedLabelId)); option.dataset.labelId=label.id;
+      const optionDot=document.createElement('span'); optionDot.className='picker-option-dot'; optionDot.style.backgroundColor=safeColor(label.color); optionDot.setAttribute('aria-hidden','true');
+      const optionName=document.createElement('span'); optionName.className='picker-option-name'; optionName.textContent=label.name;
+      const check=document.createElementNS('http://www.w3.org/2000/svg','svg'); check.setAttribute('viewBox','0 0 24 24'); check.setAttribute('class','picker-option-check'); check.setAttribute('fill','none'); check.setAttribute('stroke','currentColor'); check.setAttribute('stroke-width','2'); check.setAttribute('aria-hidden','true');
+      const checkPath=document.createElementNS('http://www.w3.org/2000/svg','path'); checkPath.setAttribute('d','m5 12 4 4L19 6'); check.appendChild(checkPath);
+      option.append(optionDot,optionName,check); menu.appendChild(option);
+    });
+    if(!active && picker.classList.contains('open')) {
+      trigger.setAttribute('aria-expanded','true'); menu.hidden=false;
+    } else {
+      trigger.setAttribute('aria-expanded','false'); menu.hidden=true;
+    }
+  }
+  function renderOverview() {
+    const stats=getDayStats(selectedDay), total=stats.total;
+    $('overviewTitle').textContent=selectedDay===todayKey()?'今日の記録':'選択日の記録';
+    $('overviewDate').textContent=fmtDateLong(selectedDay);
+    $('dailyTotal').textContent=fmtDuration(total);
+    $('sessionCount').textContent=String(new Set(stats.slices.map(s=>s.sessionId)).size);
+    $('breakdownTotal').textContent=`合計 ${fmtDuration(total)}`;
+    const labelsUsed=[...stats.byLabel.entries()].map(([id,ms])=>{
+      const label=findLabel(id), slice=stats.slices.find(s=>s.labelId===id);
+      return {id,name:label?.name||slice?.labelName||'その他',color:label?.color||slice?.labelColor||'#879978',ms};
+    }).sort((a,b)=>b.ms-a.ms);
+    $('stackedTrack').innerHTML='';$('breakdownList').innerHTML='';
+    if(total<=0){$('stackedTrack').style.display='none';$('breakdownList').innerHTML='<div class="empty-state"><strong>まだ記録がありません</strong>タイマーを使うと、ここに内訳が表示されます。</div>';}
+    else {
+      $('stackedTrack').style.display='flex';
+      labelsUsed.forEach(item=>{const part=document.createElement('span');part.className='stacked-part';part.style.width=`${item.ms/total*100}%`;part.style.background=item.color;$('stackedTrack').appendChild(part);});
+      const max=Math.max(...labelsUsed.map(x=>x.ms));
+      labelsUsed.forEach(item=>{const row=document.createElement('div');row.className='breakdown-row';row.innerHTML=`<div class="breakdown-name"><i class="color-dot" style="background:${item.color}"></i><span>${escapeHtml(item.name)}</span></div><div class="breakdown-time">${fmtDuration(item.ms)}</div><div class="breakdown-meter"><span style="width:${item.ms/max*100}%;background:${item.color}"></span></div>`;$('breakdownList').appendChild(row);});
+    }
+    // Screen Time風の24時間チャート。各時間帯をラベル別に積み上げて表示する。
+    const hourChart=$('hourChart'); hourChart.replaceChildren();
+    const hourWindows=getLocalHourWindows(selectedDay);
+    for(let hour=0;hour<24;hour++){
+      const windows=hourWindows[hour], parts=new Map();
+      const hourCapacity=windows.reduce((sum,window)=>sum+(window.end-window.start),0);
+      for(const slice of stats.slices){
+        for(const window of windows){
+          const overlap=Math.max(0,Math.min(slice.endAt,window.end)-Math.max(slice.startAt,window.start));
+          if(overlap<=0) continue;
+          const key=slice.labelId||slice.labelName;
+          const existing=parts.get(key)||{name:slice.labelName,color:slice.labelColor,ms:0};
+          existing.ms+=overlap; parts.set(key,existing);
+        }
+      }
+      const totalHour=[...parts.values()].reduce((sum,item)=>sum+item.ms,0);
+      const column=document.createElement('div'); column.className='hour-column'; column.setAttribute('role','img');
+      const titleParts=[...parts.values()].map(item=>`${item.name} ${fmtDuration(item.ms)}`);
+      const hourText=`${String(hour).padStart(2,'0')}:00〜${String(hour+1).padStart(2,'0')}:00`;
+      const detail=totalHour?`${hourText}・合計 ${fmtDuration(totalHour)}：${titleParts.join('、')}`:windows.length?`${hourText}・記録なし`:`${hourText}・この時間帯はありません`;
+      column.title=detail; column.setAttribute('aria-label',detail);
+      const track=document.createElement('div'); track.className='hour-track';
+      if(totalHour>0){
+        const stack=document.createElement('div'); stack.className='hour-stack';
+        stack.style.height=`${Math.min(100,hourCapacity>0?totalHour/hourCapacity*100:0)}%`;
+        [...parts.values()].forEach(item=>{
+          const part=document.createElement('span'); part.className='hour-stack-part';
+          part.style.height=`${item.ms/totalHour*100}%`; part.style.backgroundColor=safeColor(item.color);
+          part.setAttribute('aria-hidden','true'); stack.appendChild(part);
+        });
+        track.appendChild(stack);
+      }
+      column.appendChild(track); hourChart.appendChild(column);
+    }
+    $('nextDay').disabled=selectedDay>=todayKey();
+    $('recordsDate').textContent=selectedDay;
+    const recordList=$('recordList');recordList.innerHTML='';
+    if(!stats.slices.length){recordList.innerHTML='<div class="empty-state">この日のセッションはありません。</div>';return;}
+    stats.slices.forEach(s=>{
+      const row=document.createElement('div');row.className='record-row';
+      const active=getActive()?.id===s.sessionId;
+      row.innerHTML=`<i class="record-marker" style="background:${s.labelColor}"></i><div class="record-main"><div class="record-name">${escapeHtml(s.labelName)}${active?' · 計測中':''}</div><div class="record-time">${fmtTime(s.startAt)} — ${active && s.endAt>=Date.now()-1000?'進行中':fmtTime(s.endAt)}</div></div><div class="record-duration">${fmtDuration(s.endAt-s.startAt,true)}</div>`;
+      recordList.appendChild(row);
+    });
+  }
+  function renderCalendar() {
+    const y=visibleMonth.getFullYear(), m=visibleMonth.getMonth();
+    $('monthLabel').textContent=new Intl.DateTimeFormat('ja-JP',{year:'numeric',month:'long'}).format(visibleMonth);
+    const today = new Date();
+    const todayValue = todayKey(today);
+    const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    $('nextMonth').disabled = visibleMonth >= currentMonth;
+    const first=new Date(y,m,1), offset=(first.getDay()+6)%7, start=new Date(y,m,1-offset);
+    const weekdays=['月','火','水','木','金','土','日'];
+    const grid=$('calendarGrid');grid.innerHTML='';
+    weekdays.forEach(w=>{const el=document.createElement('div');el.className='weekday';el.textContent=w;grid.appendChild(el);});
+    let recorded=0;
+    for(let i=0;i<42;i++){
+      const date=new Date(start);date.setDate(start.getDate()+i);const key=todayKey(date),stats=getDayStats(key),inMonth=date.getMonth()===m;
+      if(inMonth&&stats.total>0)recorded++;
+      const future = key > todayValue;
+      const btn=document.createElement('button');btn.type='button';btn.disabled=future;btn.className='day-cell'+(!inMonth?' outside':'')+(key===selectedDay?' selected':'')+(key===todayValue?' today':'');btn.setAttribute('aria-label',`${fmtDateLong(key)}、${fmtDuration(stats.total)}${future?'、未来の日付':''}`);btn.setAttribute('aria-pressed',String(key===selectedDay));
+      const dots=[...stats.byLabel.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>{const l=findLabel(id),s=stats.slices.find(x=>x.labelId===id);return `<i style="background:${l?.color||s?.labelColor||'#879978'}"></i>`;}).join('');
+      btn.innerHTML=`<span class="day-number">${date.getDate()}</span><span class="day-dots">${dots}</span><span class="day-total">${stats.total?fmtDuration(stats.total):'　'}</span>`;
+      btn.addEventListener('click',()=>{if(key>todayKey())return;selectedDay=key;renderAll();});grid.appendChild(btn);
+    }
+    $('monthRecorded').textContent=`今月の記録 ${recorded}日`;
+  }
+  function applyTheme() {
+    const choice=data.settings.theme||'light';
+    const dark=choice==='dark'||(choice==='system'&&window.matchMedia?.('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme=dark?'dark':'light';$('themeSelect').value=choice;
+    document.querySelector('meta[name="theme-color"]').content=dark?'#211f1d':'#f5f1eb';
+  }
+  function renderAll() {
+    formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderOverview();renderCalendar();applyTheme();drawClock();syncTimerFrames();
+  }
+  const labelPicker=$('timerLabelPicker'), labelTrigger=$('timerLabelSelect'), labelMenu=$('timerLabelMenu');
+  labelTrigger.addEventListener('click',()=>{if(labelMenu.hidden)openTimerLabelMenu();else closeTimerLabelMenu();});
+  labelTrigger.addEventListener('animationend',event=>{if(event.animationName==='picker-selection-soft')labelTrigger.classList.remove('selection-feedback');});
+  labelTrigger.addEventListener('keydown',event=>{
+    if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+      event.preventDefault();
+      const selected=[...labelMenu.querySelectorAll('[role="option"]')].findIndex(option=>option.getAttribute('aria-selected')==='true');
+      openTimerLabelMenu(event.key==='ArrowUp'?(selected<0?0:Math.max(0,selected-1)):selected);
+    }
+  });
+  labelMenu.addEventListener('click',event=>{
+    const option=event.target.closest('[data-label-id]');
+    if(!option || getActive()) return;
+    const label=findLabel(option.dataset.labelId);
+    if(!label) return;
+    selectedLabelId=label.id;
+    closeTimerLabelMenu(true);
+    renderSelectFallback();
+    labelTrigger.classList.remove('selection-feedback');
+    void labelTrigger.offsetWidth;
+    labelTrigger.classList.add('selection-feedback');
+  });
+  labelMenu.addEventListener('keydown',event=>{
+    const options=[...labelMenu.querySelectorAll('[role="option"]')];
+    const index=options.indexOf(document.activeElement);
+    if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+      event.preventDefault();
+      const delta=event.key==='ArrowDown'?1:-1;
+      options[Math.max(0,Math.min(options.length-1,index+delta))]?.focus({preventScroll:true});
+    } else if(event.key==='Home'){
+      event.preventDefault(); options[0]?.focus({preventScroll:true});
+    } else if(event.key==='End'){
+      event.preventDefault(); options.at(-1)?.focus({preventScroll:true});
+    } else if(event.key==='Escape'){
+      event.preventDefault(); closeTimerLabelMenu(true);
+    } else if(event.key==='Tab'){
+      closeTimerLabelMenu();
+    }
+  });
+  document.addEventListener('pointerdown',event=>{if(!labelPicker.contains(event.target))closeTimerLabelMenu();});
+  $('mainTimerBtn').addEventListener('click',()=>{
+    const active=getActive();
+    if(!active){
+      const button=$('mainTimerBtn');
+      button.classList.remove('start-feedback');
+      void button.offsetWidth;
+      button.classList.add('start-feedback');
+      startSession();
+    } else if(active.status==='running') pauseSession();
+    else resumeSession();
+  });
+  $('mainTimerBtn').addEventListener('animationend',event=>{if(event.animationName==='timer-start-soft')event.currentTarget.classList.remove('start-feedback');});
+
+  // Gentle settings panel motion. Keep the native <details>/<summary> semantics,
+  // but animate the body height and opacity on both open and close.
+  const settingsPanel = $('settingsPanel');
+  const settingsSummary = settingsPanel?.querySelector(':scope > summary');
+  const settingsBody = settingsPanel?.querySelector('.settings-body');
+  let settingsMotionBusy = false;
+  const settingsReducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const clearSettingsMotionStyles = () => {
+    if (!settingsBody) return;
+    settingsBody.style.height = '';
+    settingsBody.style.overflow = '';
+    settingsBody.style.opacity = '';
+    settingsBody.style.transform = '';
+  };
+  settingsSummary?.addEventListener('click', event => {
+    event.preventDefault();
+    if (settingsMotionBusy || !settingsPanel || !settingsBody) return;
+    if (settingsReducedMotion() || typeof settingsBody.animate !== 'function') {
+      settingsPanel.open = !settingsPanel.open;
+      settingsSummary.setAttribute('aria-expanded', String(settingsPanel.open));
+      return;
+    }
+    settingsMotionBusy = true;
+    if (!settingsPanel.open) {
+      const fullHeight = settingsBody.scrollHeight;
+      settingsPanel.open = true;
+      settingsSummary.setAttribute('aria-expanded', 'true');
+      settingsBody.style.overflow = 'hidden';
+      const animation = settingsBody.animate(
+        [
+          { height: '0px', opacity: 0, transform: 'translateY(-4px)' },
+          { height: `${fullHeight}px`, opacity: 1, transform: 'translateY(0)' }
+        ],
+        { duration: 220, easing: 'cubic-bezier(.2,.7,.25,1)' }
+      );
+      animation.onfinish = () => { clearSettingsMotionStyles(); settingsMotionBusy = false; };
+      animation.oncancel = () => { clearSettingsMotionStyles(); settingsMotionBusy = false; };
+    } else {
+      const currentHeight = settingsBody.getBoundingClientRect().height;
+      settingsBody.style.overflow = 'hidden';
+      const animation = settingsBody.animate(
+        [
+          { height: `${currentHeight}px`, opacity: 1, transform: 'translateY(0)' },
+          { height: '0px', opacity: 0, transform: 'translateY(-4px)' }
+        ],
+        { duration: 180, easing: 'cubic-bezier(.4,0,.2,1)' }
+      );
+      animation.onfinish = () => {
+        settingsPanel.open = false;
+        settingsSummary.setAttribute('aria-expanded', 'false');
+        clearSettingsMotionStyles();
+        settingsMotionBusy = false;
+      };
+      animation.oncancel = () => { clearSettingsMotionStyles(); settingsMotionBusy = false; };
+    }
+  });
+  settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel?.open));
+  $('stopTimerBtn').addEventListener('click',stopSession);
+  $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color};data.labels.push(label);selectedLabelId=label.id;save();renderAll();showToast('ラベルを追加しました');});
+  $('themeSelect').addEventListener('change',e=>{data.settings.theme=e.target.value;save();applyTheme();});
+  window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(data.settings.theme==='system')applyTheme();});
+  function shiftSelectedDay(offset){
+    const date=parseDay(selectedDay); date.setDate(date.getDate()+offset);
+    const nextKey=todayKey(date);
+    if(nextKey>todayKey()) return;
+    selectedDay=nextKey; visibleMonth=new Date(date.getFullYear(),date.getMonth(),1); renderAll();
+  }
+  $('prevDay').addEventListener('click',()=>shiftSelectedDay(-1));
+  $('nextDay').addEventListener('click',()=>shiftSelectedDay(1));
+  $('prevMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1);renderCalendar();});
+  $('nextMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();});
+  $('todayBtn').addEventListener('click',()=>{selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);renderAll();});
+  $('exportBtn').addEventListener('click',()=>{
+    const payload={app:'DAYLOG',formatVersion:3,exportedAt:new Date().toISOString(),data};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=`daylog-backup-${todayKey()}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast('JSONを書き出しました');
+  });
+  $('importBtn').addEventListener('click',()=>$('importFile').click());
+  $('importFile').addEventListener('change',async e=>{
+    const file=e.target.files?.[0];if(!file)return;
+    try{
+      const parsed=JSON.parse(await file.text()),incoming=parsed?.data;
+      if(parsed?.app!=='DAYLOG'||!incoming||!Array.isArray(incoming.labels)||!Array.isArray(incoming.sessions))throw new Error('format');
+      if(!confirm('JSONの内容で現在の記録を置き換えます。\n先に現在のデータを書き出しておくことをおすすめします。続けますか？'))return;
+      const cleaned={labels:incoming.labels.map(l=>({id:String(l.id||makeId()),name:String(l.name||'ラベル').slice(0,24),color:safeColor(l.color)})),sessions:incoming.sessions.map(s=>({id:String(s.id||makeId()),labelId:String(s.labelId||''),labelName:String(s.labelName||'その他'),labelColor:safeColor(s.labelColor),createdAt:Number(s.createdAt)||Date.now(),endedAt:s.endedAt==null?null:Number(s.endedAt),status:['running','paused','done'].includes(s.status)?s.status:'done',segments:Array.isArray(s.segments)?s.segments.filter(p=>p&&Number.isFinite(Number(p.startAt))).map(p=>({startAt:Number(p.startAt),endAt:p.endAt==null?null:Number(p.endAt)})):[]})),settings:{theme:['light','dark','system'].includes(incoming.settings?.theme)?incoming.settings.theme:'light'}};
+      if(!cleaned.labels.length)cleaned.labels=clone(DEFAULT_LABELS);
+      // Keep only one active session if the imported file is malformed.
+      let seenActive=false;cleaned.sessions.forEach(s=>{if(s.status!=='done'){if(seenActive)s.status='done';else seenActive=true;}});
+      data={version:3,...cleaned};selectedLabelId=data.labels[0].id;selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);save();renderAll();showToast('データを読み込みました');
+    }catch{alert('このJSONファイルを読み込めませんでした。DAYLOGから書き出したファイルを選択してください。');}
+    finally{e.target.value='';}
+  });
+  buildClockTicks();renderAll();
+  // Paint the readout in sync with the display refresh rate. Elapsed time is
+  // always derived from persisted wall-clock timestamps, so tab suspension is safe.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      syncTimerFrames();
+    } else {
+      renderTimer();
+      syncTimerFrames();
+      if (getActive()?.status === 'running') { renderOverview(); renderCalendar(); }
+      drawClock();
+    }
+  });
+  setInterval(()=>{if(getActive()?.status==='running'){renderOverview();renderCalendar();}drawClock();},1000);
+  if('serviceWorker' in navigator && location.protocol!=='file:') window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+})();
+</script>
+</body>
+</html>
