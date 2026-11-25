@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f5f1eb">
   <meta name="description" content="時間を記録して、日々の使い方を見える化するDAYLOG。">
+  <meta name="application-name" content="DAYLOG">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="DAYLOG">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>DAYLOG — 時間を、見えるかたちに。</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link id="app-favicon" rel="icon" href="./icon-light.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png">
   <style>
   :root {
     color-scheme: light;
@@ -57,7 +63,7 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
   .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--accent-soft); color: var(--accent-strong); }
-  .brand-mark svg { width: 21px; height: 21px; display: block; }
+  .brand-mark svg { width: 24px; height: 24px; display: block; }
   .brand-name { font-size: 16px; font-weight: 760; letter-spacing: .13em; line-height: 1.1; }
   .brand-tagline { color: var(--muted); font-size: 10px; margin-top: 3px; }
   .top-date { text-align: right; color: var(--muted); font-size: 11px; line-height: 1.6; }
@@ -114,7 +120,7 @@
   .canopy-leaf { fill:currentColor; opacity:.68; }
   .cloud-veil {
     position:absolute; inset:-22% -35%; pointer-events:none; opacity:.12;
-    background:linear-gradient(108deg, transparent 8%, rgba(92,101,97,.03) 29%, rgba(88,99,99,.23) 48%, rgba(94,99,91,.11) 62%, transparent 87%);
+    background:linear-gradient(108deg, transparent 8%, rgba(92,101,97,.025) 29%, rgba(88,99,99,.18) 48%, rgba(94,99,91,.085) 62%, transparent 87%);
     background-size:180% 100%; background-position:-20% 50%;
     filter:blur(23px); mix-blend-mode:multiply;
     animation:cloud-cover-drift 74s ease-in-out infinite alternate;
@@ -122,14 +128,24 @@
   }
   [data-theme="dark"] .dapple-sun { opacity:.13; }
   [data-theme="dark"] .dapple-spots { opacity:.12; }
-  [data-theme="dark"] .cloud-veil { opacity:.10; mix-blend-mode:screen; background:linear-gradient(108deg, transparent 8%, rgba(12,20,24,.02) 29%, rgba(9,18,24,.34) 48%, rgba(17,24,27,.16) 62%, transparent 87%); }
-  [data-theme="dark"] .canopy-shadow-svg { color:rgba(213,221,195,.58); opacity:.20; mix-blend-mode:screen; filter:blur(4.8px); }
+  [data-theme="dark"] .cloud-veil { opacity:.10; mix-blend-mode:screen; background:linear-gradient(108deg, transparent 8%, rgba(12,20,24,.015) 29%, rgba(9,18,24,.27) 48%, rgba(17,24,27,.12) 62%, transparent 87%); }
+  [data-theme="dark"] .canopy-shadow-svg { color:rgba(202,210,188,.56); opacity:.20; mix-blend-mode:screen; filter:blur(4.8px); }
+  /* Keep the leaf silhouettes a little softer in dark mode without changing their motion. */
+  [data-theme="dark"] .canopy-shadow-svg .canopy-leaf { opacity:.60; }
   .timer-card[data-ambient-strength="subtle"] .dapple-spots { opacity:.20; }
   .timer-card[data-ambient-strength="balanced"] .dapple-spots { opacity:.27; }
   .timer-card[data-ambient-strength="rich"] .dapple-spots { opacity:.34; }
-  .timer-card[data-ambient-strength="subtle"] .cloud-veil { opacity:.12; }
-  .timer-card[data-ambient-strength="balanced"] .cloud-veil { opacity:.17; }
-  .timer-card[data-ambient-strength="rich"] .cloud-veil { opacity:.22; }
+  /* Cloud brightness changes are deliberately restrained. The three richness
+     levels change the cloud-opacity swing, not just the other ambient layers. */
+  .timer-card[data-ambient-strength="subtle"] .cloud-veil {
+    --cloud-opacity-low:.54; --cloud-opacity-mid:.58; --cloud-opacity-high:.64;
+  }
+  .timer-card[data-ambient-strength="balanced"] .cloud-veil {
+    --cloud-opacity-low:.57; --cloud-opacity-mid:.65; --cloud-opacity-high:.72;
+  }
+  .timer-card[data-ambient-strength="rich"] .cloud-veil {
+    --cloud-opacity-low:.60; --cloud-opacity-mid:.70; --cloud-opacity-high:.82;
+  }
   .timer-card[data-ambient-strength="subtle"] .canopy-shadow-svg { opacity:.34; }
   .timer-card[data-ambient-strength="balanced"] .canopy-shadow-svg { opacity:.43; }
   .timer-card[data-ambient-strength="rich"] .canopy-shadow-svg { opacity:.51; }
@@ -139,9 +155,15 @@
   [data-theme="dark"] .timer-card[data-ambient-strength="subtle"] .dapple-spots { opacity:.11; }
   [data-theme="dark"] .timer-card[data-ambient-strength="balanced"] .dapple-spots { opacity:.15; }
   [data-theme="dark"] .timer-card[data-ambient-strength="rich"] .dapple-spots { opacity:.20; }
-  [data-theme="dark"] .timer-card[data-ambient-strength="subtle"] .cloud-veil { opacity:.08; }
-  [data-theme="dark"] .timer-card[data-ambient-strength="balanced"] .cloud-veil { opacity:.12; }
-  [data-theme="dark"] .timer-card[data-ambient-strength="rich"] .cloud-veil { opacity:.16; }
+  [data-theme="dark"] .timer-card[data-ambient-strength="subtle"] .cloud-veil {
+    --cloud-opacity-low:.48; --cloud-opacity-mid:.52; --cloud-opacity-high:.58;
+  }
+  [data-theme="dark"] .timer-card[data-ambient-strength="balanced"] .cloud-veil {
+    --cloud-opacity-low:.51; --cloud-opacity-mid:.58; --cloud-opacity-high:.65;
+  }
+  [data-theme="dark"] .timer-card[data-ambient-strength="rich"] .cloud-veil {
+    --cloud-opacity-low:.54; --cloud-opacity-mid:.62; --cloud-opacity-high:.72;
+  }
   @keyframes dapple-spots-drift {
     0% { transform:translate3d(-3%,-2%,0) scale(.98); background-position:0% 35%,100% 0%,20% 100%,75% 45%,45% 10%; opacity:.72; }
     38% { transform:translate3d(2%,3%,0) scale(1.035); background-position:65% 80%,24% 52%,88% 25%,18% 90%,76% 34%; opacity:1; }
@@ -149,10 +171,10 @@
     100% { transform:translate3d(-2%,2%,0) scale(1.04); background-position:26% 100%,78% 20%,0% 64%,100% 62%,58% 0%; opacity:.94; }
   }
   @keyframes cloud-cover-drift {
-    0% { transform:translate3d(-8%,0,0) scale(1); background-position:-20% 50%; opacity:.55; }
-    42% { transform:translate3d(1%,1%,0) scale(1.025); background-position:46% 50%; opacity:1; }
-    74% { transform:translate3d(7%,-1%,0) scale(1.015); background-position:84% 50%; opacity:.48; }
-    100% { transform:translate3d(12%,0,0) scale(1.02); background-position:120% 50%; opacity:.82; }
+    0% { transform:translate3d(-8%,0,0) scale(1); background-position:-20% 50%; opacity:var(--cloud-opacity-low,.54); }
+    42% { transform:translate3d(1%,1%,0) scale(1.025); background-position:46% 50%; opacity:var(--cloud-opacity-high,.64); }
+    74% { transform:translate3d(7%,-1%,0) scale(1.015); background-position:84% 50%; opacity:var(--cloud-opacity-low,.54); }
+    100% { transform:translate3d(12%,0,0) scale(1.02); background-position:120% 50%; opacity:var(--cloud-opacity-mid,.58); }
   }
   @keyframes canopy-sway-d {
     0% { transform:translate3d(14px,-6px,0) rotate(1.8deg) scale(1.025); }
@@ -627,13 +649,14 @@
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true" focusable="false">
-  <rect width="128" height="128" fill="var(--accent-soft, #f2e5da)"/>
-  <rect x="59" y="20" width="10" height="24" rx="5" fill="var(--accent-strong, #87543a)"/>
-  <rect x="53" y="14" width="22" height="9" rx="4.5" fill="var(--accent-strong, #87543a)"/>
-  <circle cx="64" cy="76" r="34" fill="none" stroke="var(--accent-strong, #87543a)" stroke-width="10"/>
-  <path d="M64 76C68 63 79 50 91 46C91 61 81 72 64 76Z" fill="var(--accent, #a86f50)"/>
-  <circle cx="64" cy="76" r="6.5" fill="var(--accent-strong, #87543a)"/>
+          <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true" focusable="false">
+  <g>
+    <rect x="59" y="20" width="10" height="24" rx="5" fill="var(--accent-strong, #87543a)"/>
+    <rect x="53" y="14" width="22" height="9" rx="4.5" fill="var(--accent-strong, #87543a)"/>
+    <circle cx="64" cy="76" r="34" fill="none" stroke="var(--accent-strong, #87543a)" stroke-width="10"/>
+    <path d="M64 76C68 63 79 50 91 46C91 61 81 72 64 76Z" fill="var(--accent, #a86f50)"/>
+    <circle cx="64" cy="76" r="6.5" fill="var(--accent-strong, #87543a)"/>
+  </g>
 </svg>
         </div>
         <div><div class="brand-name">DAYLOG</div><div class="brand-tagline">時間を、見えるかたちに。</div></div>
@@ -796,10 +819,10 @@
             <h3 class="setting-group-title" style="margin-top:20px">タイマー背景</h3>
             <div class="ambient-settings">
               <label class="ambient-toggle-row" for="ambientEnabled">
-                <span class="ambient-toggle-copy"><strong>木漏れ日と揺れる枝葉</strong><small>枝葉の影・木漏れ日・雲による明暗変化を再生します。OSの視覚効果制限とは独立しています。</small></span>
+                <span class="ambient-toggle-copy"><strong>木漏れ日と揺れる枝葉</strong><small>枝葉の影・木漏れ日・穏やかな雲の明暗変化を再生します。明暗の変化量は「アニメーションの豊かさ」に連動します。</small></span>
                 <span class="ambient-switch"><input id="ambientEnabled" type="checkbox" checked><span class="ambient-switch-track" aria-hidden="true"></span></span>
               </label>
-              <div class="ambient-strength-row"><label for="ambientStrength">動きの強さ</label>
+              <div class="ambient-strength-row"><label for="ambientStrength">アニメーションの豊かさ</label>
                 <select class="setting-select" id="ambientStrength">
                   <option value="subtle">控えめ</option>
                   <option value="balanced">標準</option>
@@ -2140,6 +2163,8 @@
     const dark=choice==='dark'||(choice==='system'&&window.matchMedia?.('(prefers-color-scheme: dark)').matches);
     document.documentElement.dataset.theme=dark?'dark':'light';$('themeSelect').value=choice;syncCustomSelect($('themeSelect'));
     document.querySelector('meta[name="theme-color"]').content=dark?'#211f1d':'#f5f1eb';
+    const appFavicon=document.getElementById('app-favicon');
+    if(appFavicon) appFavicon.href=dark?'./icon-dark.svg':'./icon-light.svg';
   }
   function renderAll() {
     formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderOverview();renderCalendar();applyTheme();drawClock();syncTimerFrames();scheduleAutoStop();
