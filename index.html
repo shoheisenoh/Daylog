@@ -273,7 +273,20 @@
     54% { transform: translate3d(4px, -2px, 0); }
     100% { transform: translate3d(7px, 1px, 0); }
   }
-  .timer-head { position: relative; z-index: 2; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+  .timer-head { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 36px; }
+  /* Quiet, icon-only presentation control: visually blends into the timer chrome. */
+  .timer-immersive-toggle { position: relative; z-index: 3; display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border: 1px solid transparent; border-radius: 14px; background: transparent; color: color-mix(in srgb, var(--timer-ink) 66%, var(--timer-muted)); opacity: .82; line-height: 1; transition: background .2s ease, border-color .2s ease, color .2s ease, opacity .2s ease, transform .18s ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .timer-immersive-toggle:active { transform: scale(.94); opacity: 1; }
+  .timer-immersive-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .timer-immersive-icon { display: block; width: 16px; height: 16px; flex: 0 0 16px; }
+  .timer-immersive-exit { display: none; }
+  .timer-card.is-immersive .timer-immersive-enter { display: none; }
+  .timer-card.is-immersive .timer-immersive-exit { display: block; }
+  .timer-card.is-immersive .timer-immersive-toggle { background: color-mix(in srgb, var(--timer-bg) 20%, transparent); border-color: color-mix(in srgb, var(--timer-ink) 7%, transparent); }
+  @media (hover: hover) and (pointer: fine) {
+    .timer-immersive-toggle:hover { background: color-mix(in srgb, var(--timer-ink) 6%, transparent); border-color: color-mix(in srgb, var(--timer-ink) 8%, transparent); color: var(--timer-ink); opacity: 1; }
+    .timer-card.is-immersive .timer-immersive-toggle:hover { background: color-mix(in srgb, var(--timer-bg) 34%, var(--timer-ink) 5%); }
+  }
   .eyebrow { color: var(--timer-muted); font-size: 10px; letter-spacing: .12em; font-weight: 650; }
   .live-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 99px; background: color-mix(in srgb, var(--timer-ink) 6%, transparent); color: var(--timer-muted); font-size: 10px; }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--timer-muted); }
@@ -294,6 +307,57 @@
   .timer-subtext { display: block; min-height: 16px; margin-top: 8px; color: var(--timer-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
   .timer-controls { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 9px; }
   .timer-controls { position: relative; z-index: 4; }
+
+  /* Timer presentation mode: expand the timer card to the viewport without
+     requesting browser/device fullscreen. Keep the live timer and ambience mounted. */
+  html.timer-immersive-open, body.timer-immersive-open { overflow: hidden !important; overscroll-behavior: none; }
+  body.timer-immersive-open { touch-action: pan-y; }
+  .timer-card.is-immersive {
+    position: fixed !important; inset: 0 !important; z-index: 9999 !important;
+    width: auto !important; max-width: none !important; min-width: 0 !important;
+    height: 100vh; height: 100dvh; min-height: 0 !important; max-height: none !important;
+    margin: 0 !important; padding: calc(14px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)) !important;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+    overflow: hidden !important; border: 0 !important; border-radius: 0 !important;
+    --timer-card-radius: 0px; box-shadow: none !important; isolation: isolate;
+  }
+  .timer-card.is-immersive::before {
+    width: min(78vmin, 620px); height: min(78vmin, 620px); top: 50%; left: 50%;
+    transform: translate(-50%, -50%); opacity: .72;
+  }
+  .timer-card.is-immersive .timer-ambient {
+    inset: 0; border-radius: 0; clip-path: none; -webkit-clip-path: none;
+  }
+  .timer-card.is-immersive .timer-head { flex: 0 0 auto; min-height: 42px; }
+  .timer-card.is-immersive .timer-stage { flex: 1 1 auto; min-height: 0; width: 100%; }
+  .timer-card.is-immersive .clock-orbit { width: min(78vmin, 520px); height: min(78vmin, 520px); }
+  .timer-card.is-immersive .timer-content { width: 100%; max-width: 100%; padding: 8px 0; }
+  .timer-card.is-immersive .timer-value { font-size: clamp(50px, 11vw, 112px); letter-spacing: -.06em; }
+  .timer-card.is-immersive .timer-label-caption { font-size: clamp(12px, 1.8vw, 16px); margin-bottom: 14px; }
+  .timer-card.is-immersive .timer-subtext { font-size: clamp(11px, 1.5vw, 14px); margin-top: 12px; }
+  .timer-card.is-immersive .timer-controls { flex: 0 0 auto; width: 100%; gap: 11px; padding-bottom: 2px; }
+  .timer-card.is-immersive .label-picker { flex-basis: 190px; width: min(190px, 42vw); }
+  .timer-card.is-immersive .timer-label-trigger { height: 48px; font-size: 13px; }
+  .timer-card.is-immersive .timer-controls .btn { min-height: 48px; padding-inline: 22px; font-size: 13px; }
+  .timer-card.is-immersive .timer-controls .btn-primary { min-width: 148px; }
+  .timer-card.is-immersive .timer-controls .btn-secondary { min-width: 104px; }
+  body.timer-immersive-open .toast { z-index: 10010; }
+  @media (max-width: 420px) {
+    .timer-card.is-immersive { padding-inline: max(14px, env(safe-area-inset-left, 0px)) max(14px, env(safe-area-inset-right, 0px)); }
+    .timer-card.is-immersive .timer-value { font-size: clamp(48px, 12vw, 70px); }
+    .timer-card.is-immersive .timer-controls { gap: 8px; }
+    .timer-card.is-immersive .label-picker { flex-basis: 100%; width: min(220px, 100%); min-width: 0; }
+    .timer-card.is-immersive .timer-controls .btn-primary { min-width: 132px; }
+    .timer-card.is-immersive .timer-controls .btn { padding-inline: 16px; }
+  }
+  @media (max-height: 460px) {
+    .timer-card.is-immersive { gap: 4px; padding-top: calc(6px + env(safe-area-inset-top, 0px)) !important; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)) !important; }
+    .timer-card.is-immersive .clock-orbit { width: min(58vmin, 340px); height: min(58vmin, 340px); }
+    .timer-card.is-immersive .timer-value { font-size: clamp(40px, 8vw, 68px); }
+    .timer-card.is-immersive .timer-label-caption { margin-bottom: 5px; }
+    .timer-card.is-immersive .timer-subtext { margin-top: 5px; }
+    .timer-card.is-immersive .timer-label-trigger, .timer-card.is-immersive .timer-controls .btn { min-height: 40px; }
+  }
   /* 計測開始後は終了を左、操作（停止／再開）を右に配置 */
   .timer-controls.has-active #stopTimerBtn { order: 0; }
   .timer-controls.has-active #mainTimerBtn { order: 1; }
@@ -349,6 +413,67 @@
   .auto-stop-disclosure[open] .auto-stop-chevron { transform: rotate(180deg); color: var(--accent-strong); }
   .auto-stop-content { padding: 0 0 14px; }
   .auto-stop-disclosure[open] .auto-stop-content { animation: picker-soft-open .18s ease both; }
+  .ui-icon { display: block; width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .button-with-icon { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+  .button-with-icon .ui-icon { width: 14px; height: 14px; }
+  /* Daily routine checklist: separate from timer sessions, included in local backup data. */
+  .routine-wrap { margin: 0 0 27px; }
+  .routine-disclosure { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+  .routine-disclosure > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 58px; padding: 0 16px; cursor: pointer; list-style: none; user-select: none; }
+  .routine-disclosure > summary::-webkit-details-marker { display: none; }
+  .routine-summary-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .routine-summary-icon { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-strong); }
+  .routine-summary-icon svg { width: 17px; height: 17px; }
+  .routine-summary-copy { display: grid; gap: 3px; min-width: 0; }
+  .routine-summary-copy strong { color: var(--ink); font-size: 12px; font-weight: 750; }
+  .routine-summary-copy small { color: var(--muted); font-size: 9px; }
+  .routine-summary-side { display: flex; align-items: center; gap: 9px; flex: 0 0 auto; }
+  .routine-progress-count { color: var(--muted); font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .routine-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
+  .routine-disclosure[open] > summary { border-bottom: 1px solid var(--line); }
+  .routine-disclosure[open] .routine-chevron { transform: rotate(180deg); color: var(--accent-strong); }
+  .routine-body { padding: 13px 15px 15px; }
+  .routine-date-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+  .routine-date { color: var(--muted); font-size: 10px; font-weight: 650; }
+  .routine-progress-label { color: var(--accent-strong); font-size: 10px; font-weight: 750; }
+  .routine-progress-track { height: 5px; overflow: hidden; border-radius: 99px; background: var(--surface-3); margin-bottom: 12px; }
+  .routine-progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--accent); transition: width .22s ease; }
+  .routine-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+  .routine-item { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 44px; padding: 5px 6px 5px 9px; border: 1px solid var(--line); border-radius: 11px; background: var(--bg); }
+  .routine-item.is-done { background: color-mix(in srgb, var(--accent-soft) 45%, var(--bg)); }
+  .routine-check-label { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 0; min-height: 34px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .routine-checkbox { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .routine-checkmark { display: grid; place-items: center; width: 21px; height: 21px; flex: 0 0 21px; border: 1.5px solid var(--line); border-radius: 7px; background: var(--surface); color: #fff; transition: background .16s ease, border-color .16s ease, transform .16s ease; }
+  .routine-checkbox:checked + .routine-checkmark { border-color: var(--accent-strong); background: var(--accent-strong); }
+  .routine-checkmark svg { width: 14px; height: 14px; opacity: 0; transform: scale(.7); transition: opacity .14s ease, transform .14s ease; }
+  .routine-checkbox:checked + .routine-checkmark svg { opacity: 1; transform: scale(1); }
+  .routine-checkbox:focus-visible + .routine-checkmark { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .routine-task-text { min-width: 0; color: var(--ink); font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+  .routine-item.is-done .routine-task-text { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .routine-item-actions { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+  .routine-action { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font: inherit; font-size: 12px; }
+  .routine-action:active { background: var(--surface-2); color: var(--accent-strong); }
+  .routine-action svg { width: 15px; height: 15px; }
+  .routine-empty { padding: 15px 10px; border: 1px dashed var(--line); border-radius: 11px; color: var(--muted); text-align: center; font-size: 10px; line-height: 1.6; }
+  .routine-empty strong { display: block; margin-bottom: 3px; color: var(--ink); font-size: 11px; }
+  .routine-add-form { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 7px; margin-top: 12px; }
+  .routine-add-input { width: 100%; min-width: 0; height: 40px; padding: 0 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font-size: 11px; }
+  .routine-add-input::placeholder { color: var(--muted); opacity: .8; }
+  .routine-add-button { min-width: 64px; height: 40px; padding: 0 12px; border: 1px solid var(--accent-strong); border-radius: 10px; background: var(--accent-strong); color: #fff; font: inherit; font-size: 10px; font-weight: 750; }
+  .routine-add-button .ui-icon { width: 13px; height: 13px; }
+  .routine-limit-note { margin: 8px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
+  .routine-edit-form { display: flex; align-items: center; gap: 5px; flex: 1 1 auto; min-width: 0; }
+  .routine-edit-input { width: 100%; min-width: 0; height: 34px; padding: 0 8px; border: 1px solid var(--accent); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 11px; }
+  .routine-edit-save, .routine-edit-cancel { flex: 0 0 auto; height: 32px; padding: 0 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; font-size: 9px; font-weight: 700; }
+  .routine-edit-save { border-color: var(--accent-strong); background: var(--accent-strong); color: #fff; }
+  .routine-edit-save, .routine-edit-cancel { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .routine-edit-save .ui-icon, .routine-edit-cancel .ui-icon { width: 12px; height: 12px; }
+  @media (max-width: 360px) {
+    .routine-disclosure > summary { padding: 0 12px; }
+    .routine-body { padding: 12px; }
+    .routine-action { width: 28px; }
+    .routine-task-text { font-size: 10px; }
+  }
   .auto-stop-disclosure .auto-stop-fields { padding-top: 2px; }
   .auto-stop-head strong { display: block; font-size: 12px; font-weight: 720; }
   .auto-stop-head p { margin: 4px 0 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
@@ -438,8 +563,8 @@
   .label-options-disclosure { grid-column: 1 / -1; min-width: 0; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--bg) 75%, var(--surface)); }
   .label-options-disclosure > summary { min-height: 37px; display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 700; cursor: pointer; list-style: none; }
   .label-options-disclosure > summary::-webkit-details-marker { display: none; }
-  .label-options-disclosure > summary::after { content: '⌄'; color: var(--muted); font-size: 15px; transition: transform .18s ease; }
-  .label-options-disclosure[open] > summary::after { transform: rotate(180deg); }
+  .label-options-disclosure > summary::after { content: ''; width: 7px; height: 7px; flex: 0 0 7px; margin: -4px 2px 0 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); transition: transform .18s ease; }
+  .label-options-disclosure[open] > summary::after { transform: rotate(225deg); }
   .label-options-count { margin-left: auto; color: var(--muted); font-size: 9px; font-weight: 600; }
   .label-options-content { display: grid; gap: 11px; padding: 0 0 10px; }
   .label-options-disclosure[open] .label-options-content { animation: picker-soft-open .2s cubic-bezier(.2,.7,.25,1) both; }
@@ -513,7 +638,7 @@
   .records-disclosure > summary { list-style: none; cursor: pointer; min-height: 52px; margin: 0; user-select: none; }
   .records-disclosure > summary::-webkit-details-marker { display: none; }
   .records-summary-title { display: inline-flex; align-items: center; gap: 9px; }
-  .records-chevron { display: inline-block; color: var(--muted); font-size: 17px; line-height: 1; transform: rotate(0deg); transition: transform .22s ease; }
+  .records-chevron { display: block; width: 16px; height: 16px; color: var(--muted); transform: rotate(0deg); transition: transform .22s ease; }
   .records-disclosure[open] > summary { margin-bottom: 13px; }
   .records-disclosure[open] .records-chevron { transform: rotate(180deg); }
   .records-disclosure .record-list { padding-bottom: 14px; }
@@ -547,6 +672,143 @@
   .calendar-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
   .calendar-legend { display: flex; align-items: center; gap: 6px; }
   .calendar-legend i { width: 6px; height: 6px; display: block; border-radius: 50%; background: var(--accent); }
+
+  .trend-section { margin-top: 12px; }
+  .trend-disclosure { overflow: hidden; padding: 0 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+  .trend-disclosure > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; cursor: pointer; list-style: none; user-select: none; }
+  .trend-disclosure > summary::-webkit-details-marker { display: none; }
+  .trend-summary-copy { display: grid; gap: 3px; min-width: 0; }
+  .trend-summary-copy strong { font-size: 12px; font-weight: 750; }
+  .trend-summary-copy span { color: var(--muted); font-size: 10px; }
+  .trend-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .22s ease; }
+  .trend-disclosure[open] > summary { margin-bottom: 2px; border-bottom: 1px solid var(--line); }
+  .trend-disclosure[open] .trend-chevron { transform: rotate(180deg); }
+  .trend-body { min-width: 0; max-width: 100%; padding: 2px 0 16px; animation: picker-soft-open .22s cubic-bezier(.2,.7,.25,1) both; }
+  .analysis-chart[hidden], .analysis-legend[hidden], .analysis-empty[hidden] { display: none !important; }
+  .analysis-settings-disclosure { margin: 0 0 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--bg); overflow: hidden; }
+  .analysis-settings-disclosure > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 0 12px; cursor: pointer; list-style: none; user-select: none; }
+  .analysis-settings-disclosure > summary::-webkit-details-marker { display: none; }
+  .analysis-settings-summary-copy { display: grid; gap: 3px; min-width: 0; }
+  .analysis-settings-summary-copy strong { color: var(--ink); font-size: 10px; font-weight: 750; }
+  .analysis-settings-summary-copy small { color: var(--muted); font-size: 9px; }
+  .analysis-settings-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease; }
+  .analysis-settings-disclosure[open] > summary { border-bottom: 1px solid var(--line); }
+  .analysis-settings-disclosure[open] .analysis-settings-chevron { transform: rotate(180deg); }
+  .analysis-settings-body { padding: 0 12px 12px; }
+  .analysis-controls { padding: 14px 0 4px; border-bottom: 1px solid var(--line); }
+  .analysis-control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .analysis-period-row { display: grid; grid-template-columns: minmax(0,1fr); gap: 9px; margin-bottom: 10px; }
+  /* Custom period: fully app-rendered calendar controls (no native input[type=date]). */
+  .analysis-period-row,
+  .analysis-period-row > *,
+  .analysis-custom-range,
+  .analysis-custom-range > *,
+  .analysis-custom-range .analysis-field { box-sizing: border-box; min-width: 0 !important; max-width: 100%; }
+  .analysis-custom-range { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0,1fr) !important; gap: 10px; width: 100%; max-width: 100%; min-width: 0; align-content: start; }
+  .analysis-custom-range[hidden] { display: none !important; }
+  .analysis-custom-range > .analysis-date-picker { display: grid; width: 100%; min-width: 0; max-width: 100%; position: relative; }
+  .analysis-date-trigger { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-width: 0; max-width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit; font-size: 13px; font-weight: 650; text-align: left; box-shadow: none; }
+  .analysis-date-trigger:focus-visible, .analysis-calendar-popover button:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+  .analysis-date-trigger-icon { display: grid; place-items: center; flex: 0 0 18px; width: 18px; height: 18px; color: var(--accent-strong); }
+  .analysis-date-trigger-icon svg { width: 17px; height: 17px; }
+  .analysis-calendar-popover { display: block; width: 100%; max-width: 340px; min-width: 0; margin-top: 7px; padding: 11px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); color: var(--ink); }
+  .analysis-calendar-popover[hidden] { display: none !important; }
+  .analysis-calendar-head { display: grid; grid-template-columns: 36px minmax(0,1fr) 36px; align-items: center; gap: 7px; margin-bottom: 9px; }
+  .analysis-calendar-month { min-width: 0; color: var(--ink); font-size: 13px; font-weight: 750; text-align: center; letter-spacing: .02em; }
+  .analysis-calendar-nav { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); color: var(--ink); font: inherit; }
+  .analysis-calendar-nav svg { width: 16px; height: 16px; }
+  .analysis-calendar-nav:disabled { opacity: .32; cursor: default; }
+  .analysis-calendar-weekdays, .analysis-calendar-days { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 3px; }
+  .analysis-calendar-weekday { display: grid; place-items: center; height: 25px; color: var(--muted); font-size: 9px; font-weight: 750; }
+  .analysis-calendar-weekday:nth-child(6) { color: #8194a0; }
+  .analysis-calendar-weekday:nth-child(7) { color: #b77c70; }
+  .analysis-calendar-day { display: grid; place-items: center; width: 100%; min-width: 0; height: 36px; padding: 0; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--ink); font: inherit; font-size: 11px; font-weight: 600; -webkit-tap-highlight-color: transparent; }
+  .analysis-calendar-day:nth-child(7n+6) { color: #8194a0; }
+  .analysis-calendar-day:nth-child(7n) { color: #b77c70; }
+  .analysis-calendar-day.is-outside { color: var(--muted); opacity: .48; }
+  .analysis-calendar-day.is-in-range { background: var(--surface-2); }
+  .analysis-calendar-day.is-selected { border-color: var(--accent-strong); background: var(--accent-soft); color: var(--accent-strong); font-weight: 800; }
+  .analysis-calendar-day.is-today:not(.is-selected) { box-shadow: inset 0 0 0 1px var(--accent); }
+  .analysis-calendar-day:disabled { opacity: .2; cursor: default; background: transparent; }
+  .analysis-calendar-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .analysis-calendar-hint { color: var(--muted); font-size: 9px; line-height: 1.4; }
+  .analysis-calendar-today { flex: 0 0 auto; padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); color: var(--accent-strong); font: inherit; font-size: 10px; font-weight: 700; }
+  .analysis-period-row > .analysis-field { width: 100%; max-width: 240px; min-width: 0; }
+  @media (min-width: 560px) { .analysis-period-row { grid-template-columns: minmax(0,1fr); align-items: start; } .analysis-custom-range { max-width: 460px; } }
+
+  .analysis-field { display: grid; gap: 6px; min-width: 0; color: var(--muted); font-size: 9px; font-weight: 700; }
+  .analysis-select { width: 100%; min-width: 0; min-height: 39px; padding: 0 30px 0 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit; font-size: 11px; }
+  .analysis-label-picker { margin-top: 12px; padding: 11px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+  .analysis-label-picker[hidden] { display: none !important; }
+  .analysis-picker-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+  .analysis-picker-head > div:first-child { display: grid; gap: 3px; }
+  .analysis-picker-head strong { color: var(--ink); font-size: 10px; }
+  .analysis-picker-head span { color: var(--muted); font-size: 9px; }
+  .analysis-picker-actions { display: flex; flex: 0 0 auto; gap: 5px; }
+  .analysis-picker-actions button { padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--ink); font: inherit; font-size: 9px; }
+  .analysis-label-choices { display: grid; gap: 7px; max-height: 240px; overflow: auto; overscroll-behavior: contain; }
+  .analysis-overlay-specials { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 3px 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .analysis-overlay-specials .analysis-check-row { font-weight: 700; }
+  .analysis-overlay-note { margin: 8px 0 0; color: var(--muted); font-size: 9px; line-height: 1.55; }
+  .analysis-label-group { padding-top: 7px; border-top: 1px solid var(--line); }
+  .analysis-label-group:first-child { padding-top: 0; border-top: 0; }
+  .analysis-check-row { display: flex; align-items: center; gap: 8px; min-height: 28px; color: var(--ink); font-size: 10px; }
+  .analysis-check-row input { width: 15px; height: 15px; flex: 0 0 auto; accent-color: var(--accent-strong); }
+  .analysis-check-row small { margin-left: auto; color: var(--muted); font-size: 8px; }
+  .analysis-sublabels { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 3px 10px; padding-left: 22px; }
+  .analysis-sublabels .analysis-check-row { font-size: 9px; }
+  .analysis-definition { margin: 9px 0 0; color: var(--muted); font-size: 9px; line-height: 1.65; }
+  .trend-panel { padding: 16px 0 19px; }
+  .trend-panel + .trend-panel { border-top: 1px solid var(--line); }
+  .trend-panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .trend-panel-head strong { font-size: 12px; font-weight: 750; }
+  .trend-panel-range { color: var(--muted); font-size: 10px; text-align: right; }
+  .trend-kpis { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 7px; margin-bottom: 15px; }
+  .trend-kpi { min-width: 0; padding: 10px 9px; border: 1px solid var(--line); border-radius: 11px; background: var(--bg); }
+  .trend-kpi-label { color: var(--muted); font-size: 9px; line-height: 1.4; }
+  .trend-kpi-value { margin-top: 5px; color: var(--ink); font-size: clamp(12px,2.8vw,17px); font-weight: 720; letter-spacing: -.035em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .trend-kpi-sub { margin-top: 4px; color: var(--muted); font-size: 8px; line-height: 1.35; }
+  .analysis-chart-title { margin: 12px 0 8px; color: var(--muted); font-size: 10px; font-weight: 680; }
+  .analysis-chart-wrap { width: 100%; overflow: hidden; }
+  .analysis-chart { display: block; width: 100%; height: auto; overflow: visible; }
+  .analysis-grid-line { stroke: var(--line); stroke-width: 1; }
+  .analysis-axis-text { fill: var(--muted); font-size: 10px; text-anchor: middle; }
+  .analysis-axis-value { fill: var(--muted); font-size: 9px; text-anchor: end; }
+  .analysis-series-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .analysis-series-area { opacity: .1; }
+  .analysis-series-point { stroke: var(--surface); stroke-width: 1.5; }
+  .analysis-series-bar { rx: 2; }
+  .analysis-legend { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 7px; }
+  .analysis-legend-item { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 9px; }
+  .analysis-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .analysis-hourly-block { margin-top: 17px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .analysis-hourly { display: grid; grid-template-columns: repeat(24,minmax(0,1fr)); align-items: end; gap: 3px; height: 90px; }
+  .analysis-hour-col { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 0; height: 100%; gap: 4px; }
+  .analysis-hour-value { overflow: hidden; max-width: 100%; color: var(--muted); font-size: 7px; line-height: 1; white-space: nowrap; }
+  .analysis-hour-track { display: flex; flex-direction: column; justify-content: flex-end; width: 100%; height: 66px; overflow: hidden; border-radius: 3px; background: var(--surface-2); }
+  .analysis-hour-bar { display: block; width: 100%; min-height: 0; }
+  .analysis-hour-name { color: var(--muted); font-size: 7px; line-height: 1; }
+  .analysis-hourly-axis { display: flex; justify-content: space-between; margin-top: 6px; padding: 0 1px; color: var(--muted); font-size: 8px; }
+  .analysis-breakdown { display: grid; gap: 8px; margin-top: 15px; }
+  .analysis-breakdown[hidden] { display: none !important; }
+  .analysis-breakdown:empty { display: none; }
+  .analysis-breakdown-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 10px; align-items: center; }
+  .analysis-breakdown-name { display: flex; align-items: center; gap: 7px; min-width: 0; color: var(--ink); font-size: 9px; font-weight: 620; }
+  .analysis-breakdown-name span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .analysis-breakdown-time { color: var(--muted); font-size: 9px; font-weight: 650; white-space: nowrap; }
+  .analysis-breakdown-meter { grid-column: 1 / -1; height: 3px; overflow: hidden; border-radius: 99px; background: var(--surface-2); }
+  .analysis-breakdown-meter > span { display: block; height: 100%; border-radius: inherit; }
+  .analysis-empty { padding: 14px 8px; color: var(--muted); font-size: 10px; line-height: 1.7; text-align: center; }
+  .analysis-empty[hidden] { display: none !important; }
+  @media (max-width: 420px) {
+    .trend-disclosure { padding-right: 13px; padding-left: 13px; }
+    .trend-kpis { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+    .trend-kpi { padding: 9px 8px; }
+    .analysis-hourly { gap: 2px; }
+    .analysis-hour-value { font-size: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .trend-chevron, .analysis-settings-chevron { transition: none; } .trend-body { animation: none; } }
+
   .footer { padding-top: 22px; color: var(--muted); font-size: 9px; letter-spacing: .1em; text-align: center; }
   .toast { position: fixed; z-index: 20; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); padding: 10px 16px; border-radius: 99px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); font-size: 11px; opacity: 0; pointer-events: none; transform: translate(-50%,14px); transition: .2s ease; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translate(-50%,0); }
@@ -730,6 +992,11 @@
         <div class="cloud-veil" aria-hidden="true"></div>
       </div>
       <div class="timer-head">
+        <button class="timer-immersive-toggle" id="timerImmersiveBtn" type="button" aria-label="タイマーを画面いっぱいに表示" aria-expanded="false" aria-controls="timerCard" title="タイマーを画面いっぱいに表示">
+          <svg class="timer-immersive-icon timer-immersive-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+          <svg class="timer-immersive-icon timer-immersive-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6"/></svg>
+          <span class="visually-hidden" id="timerImmersiveLabel">画面いっぱい</span>
+        </button>
         <div class="live-pill" id="statusPill"><i class="live-dot"></i><span id="statusText">待機中</span></div>
       </div>
       <div class="timer-stage">
@@ -805,7 +1072,7 @@
           <section>
             <h3 class="setting-group-title">ラベルをカスタム</h3>
             <div class="label-list" id="labelEditor"></div>
-            <button class="add-label-btn" id="addLabelBtn" type="button">＋ ラベルを追加</button>
+            <button class="add-label-btn button-with-icon" id="addLabelBtn" type="button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>ラベルを追加</span></button>
             <p class="setting-note">色はテンプレートから選べます。ラベル左側の「↑」「↓」ボタンで順番を変更できます。自動終了とサブラベルは各ラベルの折りたたみにまとめています。</p>
           </section>
           <section>
@@ -846,6 +1113,29 @@
       </details>
     </div>
 
+    <div class="routine-wrap">
+      <details class="routine-disclosure" id="routineDetails">
+        <summary aria-controls="routineBody" aria-expanded="false">
+          <span class="routine-summary-main">
+            <span class="routine-summary-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+            <span class="routine-summary-copy"><strong>毎日の日課</strong><small id="routineSummaryHint">日々のルーティンをチェックリストで管理</small></span>
+          </span>
+          <span class="routine-summary-side"><span class="routine-progress-count" id="routineSummaryCount">0 / 0</span><svg class="routine-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+        <div class="routine-body" id="routineBody">
+          <div class="routine-date-row"><span class="routine-date" id="routineDateLabel">今日の日課</span><span class="routine-progress-label" id="routineProgressLabel">0% 完了</span></div>
+          <div class="routine-progress-track" role="progressbar" id="routineProgressTrack" aria-label="今日の日課の達成率" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="routine-progress-fill" id="routineProgressFill"></div></div>
+          <ul class="routine-list" id="routineList" aria-label="毎日の日課一覧"></ul>
+          <form class="routine-add-form" id="routineAddForm" autocomplete="off">
+            <label class="visually-hidden" for="routineAddInput">追加する日課</label>
+            <input class="routine-add-input" id="routineAddInput" type="text" maxlength="80" placeholder="日課を追加（例：朝のストレッチ）">
+            <button class="routine-add-button button-with-icon" id="routineAddButton" type="submit"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>追加</span></button>
+          </form>
+          <p class="routine-limit-note">チェック状態は日付ごとに保存され、毎日新しいチェックリストになります。日課そのものは翌日以降も引き継がれます。</p>
+        </div>
+      </details>
+    </div>
+
     <section class="overview" id="overview" aria-labelledby="overviewTitle">
       <div class="section-heading">
         <div class="overview-title-row">
@@ -875,7 +1165,7 @@
         <div class="breakdown-list" id="breakdownList"><div class="empty-state"><strong>まだ記録がありません</strong>タイマーを使うと、ここに内訳が表示されます。</div></div>
       </article>
       <details class="records-card records-disclosure" id="sessionHistoryDetails">
-        <summary class="records-head"><span class="records-summary-title"><strong>セッション履歴</strong><span class="records-chevron" aria-hidden="true">⌄</span></span></summary>
+        <summary class="records-head"><span class="records-summary-title"><strong>セッション履歴</strong><svg class="records-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>
         <div class="record-list" id="recordList"><div class="empty-state">この日のセッションはありません。</div></div>
       </details>
     </section>
@@ -898,14 +1188,98 @@
         <div class="calendar-footer"><span class="calendar-legend"><i></i>記録あり・日付をタップ</span><span id="monthRecorded">今月の記録 0日</span></div>
       </div>
     </section>
+    <section class="trend-section" aria-label="記録の推移">
+      <details class="trend-disclosure" id="trendDetails">
+        <summary>
+          <span class="trend-summary-copy"><strong>推移を見る</strong><span>ラベルの組み合わせ・未記録時間も分析</span></span>
+          <svg class="trend-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="trend-body" id="trendBody">
+          <details class="analysis-settings-disclosure" id="analysisSettingsDetails">
+            <summary>
+              <span class="analysis-settings-summary-copy"><strong>分析設定</strong><small>期間・対象・重ねて表示する系列を変更</small></span>
+              <svg class="analysis-settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="analysis-settings-body">
+          <section class="analysis-controls" aria-label="分析条件">
+            <div class="analysis-period-row">
+            <label class="analysis-field"><span>集計期間</span><select id="analysisPeriod" class="analysis-select">
+              <option value="week">週</option>
+              <option value="month">月</option>
+              <option value="quarter">3ヶ月</option>
+              <option value="all">記録のある全期間</option>
+              <option value="custom">カスタム</option>
+            </select></label>
+            <div class="analysis-custom-range" id="analysisCustomRange" hidden>
+              <div class="analysis-field analysis-date-picker" data-calendar-picker="start">
+                <span>開始日</span>
+                <button class="analysis-date-trigger" id="analysisCustomStartButton" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="analysisCustomStartCalendar">
+                  <span id="analysisCustomStartLabel">—</span><span class="analysis-date-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17M8 13h2M14 13h2M8 17h2"/></svg></span>
+                </button>
+                <div class="analysis-calendar-popover" id="analysisCustomStartCalendar" role="dialog" aria-label="開始日を選択" hidden></div>
+              </div>
+              <div class="analysis-field analysis-date-picker" data-calendar-picker="end">
+                <span>終了日</span>
+                <button class="analysis-date-trigger" id="analysisCustomEndButton" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="analysisCustomEndCalendar">
+                  <span id="analysisCustomEndLabel">—</span><span class="analysis-date-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17M8 13h2M14 13h2M8 17h2"/></svg></span>
+                </button>
+                <div class="analysis-calendar-popover" id="analysisCustomEndCalendar" role="dialog" aria-label="終了日を選択" hidden></div>
+              </div>
+            </div>
+          </div>
+          <div class="analysis-control-grid">
+            <label class="analysis-field"><span>分析対象</span><select id="analysisTargetMode" class="analysis-select">
+              <option value="all">記録済み全体</option>
+              <option value="selected">選択したラベル・サブラベル</option>
+              <option value="unrecorded">未記録時間</option>
+              <option value="compare">記録済み時間と未記録時間を比較</option>
+              <option value="multi">複数の推移を同じグラフに重ねて比較</option>
+            </select></label>
+            <label class="analysis-field"><span>グラフ表示</span><select id="analysisChartMode" class="analysis-select">
+              <option value="line">折れ線・推移</option>
+              <option value="bar">日ごとの棒グラフ</option>
+              <option value="ratio">1日の時間割合（%）</option>
+            </select></label>
+          </div>
+          <div class="analysis-label-picker" id="analysisLabelPicker" hidden>
+            <div class="analysis-picker-head"><div><strong>分析に含める項目</strong><span>選択した複数項目を合算して1本の推移にします。</span></div><div class="analysis-picker-actions"><button type="button" id="analysisSelectAll">すべて</button><button type="button" id="analysisClearAll">解除</button></div></div>
+            <div class="analysis-label-choices" id="analysisLabelChoices"></div>
+          </div>
+          <div class="analysis-label-picker" id="analysisOverlayPicker" hidden>
+            <div class="analysis-picker-head"><div><strong>グラフに重ねる系列</strong><span>各項目を別々の線で表示します。最大8系列まで選択できます。</span></div><div class="analysis-picker-actions"><button type="button" id="analysisOverlaySelectLabels">ラベル最大8本</button><button type="button" id="analysisOverlayClear">解除</button></div></div>
+            <div class="analysis-label-choices" id="analysisOverlayChoices"></div>
+            <p class="analysis-definition">各系列は独立して集計します。異なるラベルの記録時間が同時刻に重なる場合、線の値は重なって表示され、系列同士を足しても記録済み全体とは一致しないことがあります。</p>
+          </div>
+          <p class="analysis-definition" id="analysisDefinition">記録済み全体の推移を表示します。</p>
+          </section>
+            </div>
+          </details>
+
+        <section class="trend-panel" aria-labelledby="periodTrendTitle">
+          <div class="trend-panel-head"><strong id="periodTrendTitle">分析結果</strong><span class="trend-panel-range" id="periodTrendRange">—</span></div>
+          <div class="trend-kpis" id="periodTrendKpis"></div>
+          <div class="analysis-chart-title" id="periodChartTitle">日ごとの推移</div>
+          <div class="analysis-chart-wrap"><svg class="analysis-chart" id="periodTrendChart" viewBox="0 0 640 214" role="img" aria-label="選択期間の日ごとの推移"></svg></div>
+          <div class="analysis-legend" id="periodTrendLegend"></div>
+          <div class="analysis-hourly-block" id="periodHourlyBlock"><div class="analysis-chart-title">時間帯別の平均分布</div><div class="analysis-hourly" id="periodHourlyChart"></div><div class="analysis-hourly-axis"><span>0時</span><span>6時</span><span>12時</span><span>18時</span><span>24時</span></div></div>
+          <div class="analysis-breakdown" id="periodBreakdown"></div>
+          <div class="analysis-empty" id="periodTrendEmpty" hidden>この期間のデータはありません。</div>
+          <p class="analysis-definition" id="periodChartNote">長期間のグラフは見やすさのため平均化して表示します。集計値は全日分の正確な値です。</p>
+        </section>
+        </div>
+      </details>
+    </section>
     <footer class="footer">DAYLOG</footer>
   </main>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (() => {
   'use strict';
+  // Keep this origin-scoped key stable across app releases. v5 -> v6 only adds
+  // the optional routines { items, checks } object; labels, sessions and settings
+  // retain their existing shape. Do not bump DATA_VERSION for UI-only releases.
   const STORAGE_KEY = 'daylog.data.v3';
-  const DATA_VERSION = 5;
+  const DATA_VERSION = 6;
   const MAX_IMPORT_BYTES = 25 * 1024 * 1024;
   const MAX_LABELS = 12;
   const MAX_SUBLABELS = 20;
@@ -931,6 +1305,23 @@
     { id: 'rest', name: '休憩', color: '#b6a5bd' }
   ];
   const $ = (id) => document.getElementById(id);
+  const ICON_PATHS = Object.freeze({
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    pencil: '<path d="m4 16.5-.8 4.3 4.3-.8L19.7 7.8a2.1 2.1 0 0 0-3-3L4 16.5Z"/><path d="m14.8 6.7 2.9 2.9"/>',
+    trash: '<path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/>',
+    check: '<path d="m5 12 4 4L19 6"/>',
+    close: '<path d="m6 6 12 12M18 6 6 18"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/><path d="M8 13h2M14 13h2M8 17h2"/>',
+    chevronDown: '<path d="m6 9 6 6 6-6"/>',
+    chevronLeft: '<path d="m15 18-6-6 6-6"/>',
+    chevronRight: '<path d="m9 18 6-6-6-6"/>'
+  });
+  function svgIconMarkup(name, className = 'ui-icon') {
+    const path = ICON_PATHS[name];
+    if (!path) return '';
+    const safeClass = /^[a-z0-9 _-]*$/i.test(className) ? className : 'ui-icon';
+    return `<svg class="${safeClass}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${path}</svg>`;
+  }
   const todayKey = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
   const parseDay = (key) => { const [y,m,d] = key.split('-').map(Number); return new Date(y,m-1,d,0,0,0,0); };
   const makeId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2,9)}`;
@@ -1002,6 +1393,73 @@
       ambientFollowLabel: value?.ambientFollowLabel !== false
     };
   };
+  const MAX_ROUTINE_ITEMS = 60;
+  const MAX_ROUTINE_DAYS = 730;
+  function normalizeRoutineData(value, strict = false) {
+    if (value == null) return { items:[], checks:{} };
+    if (!isPlainObject(value)) {
+      if (strict) throw new Error('日課データの形式が正しくありません。');
+      return { items:[], checks:{} };
+    }
+    const rawItems = Array.isArray(value.items) ? value.items : [];
+    if (strict && !Array.isArray(value.items)) throw new Error('日課一覧が配列ではありません。');
+    if (rawItems.length > MAX_ROUTINE_ITEMS) throw new Error(`日課は${MAX_ROUTINE_ITEMS}件まで登録できます。`);
+    const seen = new Set();
+    const items = [];
+    for (const raw of rawItems) {
+      if (!isPlainObject(raw)) {
+        if (strict) throw new Error('日課に不正な項目があります。');
+        continue;
+      }
+      let id = typeof raw.id === 'string' ? raw.id.trim().slice(0,128) : '';
+      if (!id) id = makeId();
+      if (seen.has(id)) {
+        if (strict) throw new Error('日課IDが重複しています。');
+        id = makeId();
+      }
+      const text = String(typeof raw.text === 'string' ? raw.text : '').trim().slice(0,80);
+      if (!text) {
+        if (strict) throw new Error('日課の内容が空です。');
+        continue;
+      }
+      seen.add(id);
+      items.push({ id, text });
+    }
+    const checks = {};
+    const rawChecks = isPlainObject(value.checks) ? value.checks : {};
+    if (strict && value.checks != null && !isPlainObject(value.checks)) throw new Error('日課のチェック履歴が正しくありません。');
+    const validCheckDays = [];
+    for (const [day, dayChecks] of Object.entries(rawChecks)) {
+      const parts = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.exec(day);
+      const validDay = parts && (() => {
+        const y=Number(parts[1]),m=Number(parts[2]),d=Number(parts[3]);
+        const date=new Date(y,m-1,d);
+        return date.getFullYear()===y && date.getMonth()===m-1 && date.getDate()===d;
+      })();
+      if (!validDay || !isPlainObject(dayChecks)) {
+        if (strict) throw new Error('日課のチェック日付が正しくありません。');
+        continue;
+      }
+      validCheckDays.push([day, dayChecks]);
+    }
+    if (validCheckDays.length > MAX_ROUTINE_DAYS && strict) {
+      throw new Error('日課の履歴が上限を超えています。');
+    }
+    // ISO date keys sort chronologically. Keep the newest history regardless
+    // of the order in which a backup or old browser wrote its object keys.
+    validCheckDays.sort(([a],[b]) => a.localeCompare(b));
+    const retainedCheckDays = validCheckDays.slice(-MAX_ROUTINE_DAYS);
+    const validIds = new Set(items.map(item => item.id));
+    for (const [day, dayChecks] of retainedCheckDays) {
+      const normalizedDay = {};
+      for (const [id, checked] of Object.entries(dayChecks)) {
+        if (checked === true && validIds.has(id)) normalizedDay[id] = true;
+      }
+      if (Object.keys(normalizedDay).length) checks[day] = normalizedDay;
+    }
+    return { items, checks };
+  }
+
   function normalizeData(input, { strict = false } = {}) {
     if (!isPlainObject(input) || !Array.isArray(input.labels) || !Array.isArray(input.sessions)) {
       throw new Error('データの基本構造が正しくありません。');
@@ -1149,7 +1607,8 @@
       version: DATA_VERSION,
       labels,
       sessions,
-      settings: normalizeSettings(input.settings, labels)
+      settings: normalizeSettings(input.settings, labels),
+      routines: normalizeRoutineData(input.routines, strict)
     };
   }
   function parseBackupPayload(parsed) {
@@ -1195,7 +1654,8 @@
       }
       try {
         const normalized = normalizeData(parsed);
-        startupMigrationPending = parsed.version !== DATA_VERSION || !isPlainObject(parsed.settings) ||
+        const routineDataNeedsNormalization = JSON.stringify(parsed.routines ?? null) !== JSON.stringify(normalized.routines);
+        startupMigrationPending = parsed.version !== DATA_VERSION || !isPlainObject(parsed.settings) || !isPlainObject(parsed.routines) || routineDataNeedsNormalization ||
           ['selectedLabelId','selectedSubLabelId','autoStopScope','autoStopOverride','ambientEnabled','ambientStrength','ambientFollowLabel'].some(key => !Object.prototype.hasOwnProperty.call(parsed.settings, key));
         return normalized;
       } catch (error) {
@@ -1256,6 +1716,10 @@
       data.version = DATA_VERSION;
       syncRuntimeSettings();
       persistDataSnapshot(data);
+      // A migration is complete only after localStorage confirms the write.
+      // If quota or storage access fails, keep the pending flag so the next
+      // successful save retries the same normalized snapshot.
+      startupMigrationPending = false;
       return true;
     } catch (error) {
       showToast('保存できませんでした。端末の空き容量またはブラウザの保存設定を確認してください。');
@@ -1901,7 +2365,7 @@
       const subSection=document.createElement('section'); subSection.className='label-options-section';
       const subHeading=document.createElement('div'); subHeading.className='label-options-heading'; subHeading.textContent='サブラベル';
       const subList=document.createElement('div'); subList.className='sublabel-editor';
-      const addSub=document.createElement('button'); addSub.type='button'; addSub.className='sublabel-add-btn'; addSub.textContent='＋ サブラベルを追加';
+      const addSub=document.createElement('button'); addSub.type='button'; addSub.className='sublabel-add-btn button-with-icon'; addSub.innerHTML=svgIconMarkup('plus','ui-icon')+'<span>サブラベルを追加</span>';
       const refreshSubLabels=()=>{
         const count=label.subLabels.length;
         optionsSummary.querySelector('.label-options-count').textContent=count ? `サブ ${count}` : '追加なし';
@@ -2158,6 +2622,684 @@
     }
     $('monthRecorded').textContent=`今月の記録 ${recorded}日`;
   }
+
+  // Build the heavier weekly/monthly summaries only when their disclosure is opened.
+  function trendDateLabel(key, withWeekday = false) {
+    const date=parseDay(key);
+    return new Intl.DateTimeFormat('ja-JP',withWeekday?{month:'numeric',day:'numeric',weekday:'short'}:{month:'numeric',day:'numeric'}).format(date);
+  }
+  function createTrendSvgElement(name, attrs = {}) {
+    const node=document.createElementNS('http://www.w3.org/2000/svg',name);
+    Object.entries(attrs).forEach(([key,value])=>node.setAttribute(key,String(value)));
+    return node;
+  }
+  const ANALYSIS_PREF_KEY = 'daylog.analysis.v1';
+  const analysisPrefs = (() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(ANALYSIS_PREF_KEY) || '{}');
+      return {
+        mode: ['all','selected','unrecorded','compare','multi'].includes(saved.mode) ? saved.mode : 'all',
+        chart: ['line','bar','ratio'].includes(saved.chart) ? saved.chart : 'line',
+        period: ['week','month','quarter','all','custom'].includes(saved.period) ? saved.period : 'week',
+        customStart: typeof saved.customStart === 'string' ? saved.customStart : '',
+        customEnd: typeof saved.customEnd === 'string' ? saved.customEnd : '',
+        tokens: Array.isArray(saved.tokens) ? saved.tokens.filter(x => typeof x === 'string').slice(0,300) : [],
+        overlayTokens: Array.isArray(saved.overlayTokens) ? saved.overlayTokens.filter(x => typeof x === 'string').slice(0,8) : []
+      };
+    } catch { return { mode:'all', chart:'line', period:'week', customStart:'', customEnd:'', tokens:[], overlayTokens:[] }; }
+  })();
+  let analysisLabelsSignature = '';
+  function saveAnalysisPrefs() {
+    try { localStorage.setItem(ANALYSIS_PREF_KEY, JSON.stringify(analysisPrefs)); } catch { /* Optional preference only. */ }
+  }
+  function analysisDayKeys(startDate, count, stopAtToday = true) {
+    const today = todayKey();
+    const keys = [];
+    for (let i=0;i<count;i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate()+i);
+      const key = todayKey(date);
+      if (stopAtToday && key > today) break;
+      keys.push(key);
+    }
+    return keys;
+  }
+  function mergeTimeIntervals(items) {
+    if (!items.length) return [];
+    const sorted = items.map(item => ({ start:item.start, end:item.end })).filter(item => item.end > item.start).sort((a,b)=>a.start-b.start);
+    const merged=[];
+    for (const item of sorted) {
+      const last=merged[merged.length-1];
+      if (last && item.start <= last.end) last.end=Math.max(last.end,item.end);
+      else merged.push({ ...item });
+    }
+    return merged;
+  }
+  function intervalTotal(items) { return items.reduce((sum,item)=>sum+Math.max(0,item.end-item.start),0); }
+  function intervalOverlapTotal(windows, intervals) {
+    let total=0;
+    for (const window of windows) for (const interval of intervals) {
+      const start=Math.max(window.start,interval.start), end=Math.min(window.end,interval.end);
+      if(end>start) total+=end-start;
+    }
+    return total;
+  }
+  function getAnalysisLabelCatalog() {
+    const catalog=new Map();
+    for(const label of data.labels) catalog.set(label.id,{id:label.id,name:label.name,color:safeColor(label.color),subLabels:new Map()});
+    for(const session of data.sessions) {
+      const id=session.labelId || session.labelName || 'other';
+      let item=catalog.get(id);
+      if(!item){item={id,name:session.labelName||'その他',color:safeColor(session.labelColor),subLabels:new Map()};catalog.set(id,item);}
+      if(session.subLabelId || session.subLabelName) {
+        const subId=session.subLabelId || session.subLabelName;
+        if(!item.subLabels.has(subId)) item.subLabels.set(subId,{id:subId,name:session.subLabelName||'サブラベル'});
+      }
+    }
+    for(const label of data.labels) {
+      const item=catalog.get(label.id);
+      for(const sub of label.subLabels||[]) item.subLabels.set(sub.id,{id:sub.id,name:sub.name});
+    }
+    return [...catalog.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'));
+  }
+  function renderAnalysisLabelChoices() {
+    const host=$('analysisLabelChoices');
+    if(!host) return;
+    const catalog=getAnalysisLabelCatalog();
+    const signature=JSON.stringify(catalog.map(label=>[label.id,label.name,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
+    analysisLabelsSignature=signature;
+    host.replaceChildren();
+    if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);return;}
+    for(const label of catalog) {
+      const group=document.createElement('div');group.className='analysis-label-group';
+      const parent=document.createElement('label');parent.className='analysis-check-row';
+      const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.dataset.analysisToken=`L:${label.id}`;checkbox.checked=analysisPrefs.tokens.includes(`L:${label.id}`);
+      const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=label.color;
+      const name=document.createElement('span');name.textContent=label.name;
+      const scope=document.createElement('small');scope.textContent='ラベル全体';
+      parent.append(checkbox,dot,name,scope);group.appendChild(parent);
+      if(label.subLabels.size) {
+        const children=document.createElement('div');children.className='analysis-sublabels';
+        for(const sub of [...label.subLabels.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'))) {
+          const row=document.createElement('label');row.className='analysis-check-row';
+          const child=document.createElement('input');child.type='checkbox';child.dataset.analysisToken=`S:${label.id}::${sub.id}`;child.dataset.parentToken=`L:${label.id}`;child.checked=analysisPrefs.tokens.includes(child.dataset.analysisToken);
+          const text=document.createElement('span');text.textContent=sub.name;row.append(child,text);children.appendChild(row);
+        }
+        group.appendChild(children);
+      }
+      host.appendChild(group);
+    }
+  }
+  function renderAnalysisOverlayChoices() {
+    const host=$('analysisOverlayChoices');
+    if(!host) return;
+    const catalog=getAnalysisLabelCatalog();
+    host.replaceChildren();
+    const specials=document.createElement('div');specials.className='analysis-overlay-specials';
+    [
+      {token:'@tracked',name:'記録済み全体',note:'重複を除いた合計'},
+      {token:'@unrecorded',name:'未記録時間',note:'記録のない時間'}
+    ].forEach(item=>{
+      const row=document.createElement('label');row.className='analysis-check-row';
+      const input=document.createElement('input');input.type='checkbox';input.dataset.overlayToken=item.token;input.checked=analysisPrefs.overlayTokens.includes(item.token);
+      const name=document.createElement('span');name.textContent=item.name;
+      const note=document.createElement('small');note.textContent=item.note;
+      row.append(input,name,note);specials.appendChild(row);
+    });
+    host.appendChild(specials);
+    if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);return;}
+    for(const label of catalog) {
+      const group=document.createElement('div');group.className='analysis-label-group';
+      const parent=document.createElement('label');parent.className='analysis-check-row';
+      const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.dataset.overlayToken=`L:${label.id}`;checkbox.checked=analysisPrefs.overlayTokens.includes(checkbox.dataset.overlayToken);
+      const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=label.color;
+      const name=document.createElement('span');name.textContent=label.name;
+      const scope=document.createElement('small');scope.textContent='ラベル全体';
+      parent.append(checkbox,dot,name,scope);group.appendChild(parent);
+      if(label.subLabels.size) {
+        const children=document.createElement('div');children.className='analysis-sublabels';
+        for(const sub of [...label.subLabels.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'))) {
+          const row=document.createElement('label');row.className='analysis-check-row';
+          const child=document.createElement('input');child.type='checkbox';child.dataset.overlayToken=`S:${label.id}::${sub.id}`;child.dataset.overlayParent=`L:${label.id}`;child.checked=analysisPrefs.overlayTokens.includes(child.dataset.overlayToken);
+          const text=document.createElement('span');text.textContent=sub.name;row.append(child,text);children.appendChild(row);
+        }
+        group.appendChild(children);
+      }
+      host.appendChild(group);
+    }
+  }
+  function readAnalysisOverlayTokensFromUi() {
+    return [...$('analysisOverlayChoices').querySelectorAll('input[data-overlay-token]:checked')].map(input=>input.dataset.overlayToken);
+  }
+  function readAnalysisTokensFromUi() {
+    return [...$('analysisLabelChoices').querySelectorAll('input[data-analysis-token]:checked')].map(input=>input.dataset.analysisToken);
+  }
+  function sessionMatchesAnalysis(session, tokens) {
+    const labelId=session.labelId || session.labelName || 'other';
+    if(tokens.includes(`L:${labelId}`)) return true;
+    const subId=session.subLabelId || session.subLabelName || '';
+    return !!subId && tokens.includes(`S:${labelId}::${subId}`);
+  }
+  function collectAdvancedPeriod(dayKeys, mode, tokens, comparisonElapsedMs = null) {
+    const now=Date.now();
+    const days=dayKeys.map((key,index)=>{
+      const bounds=getLocalDayBounds(key);
+      let dayEnd=bounds.end;
+      if(key===todayKey()) dayEnd=Math.min(dayEnd,now);
+      if(index===dayKeys.length-1 && comparisonElapsedMs!==null) dayEnd=Math.min(dayEnd,bounds.start+Math.max(0,comparisonElapsedMs));
+      return {key,dayMs:Math.max(0,dayEnd-bounds.start),dayStart:bounds.start,dayEnd,intervals:[],sessions:new Set(),selectedSessions:new Set(),byActivity:new Map()};
+    });
+    const dayIndex=new Map(days.map((day,index)=>[day.key,index]));
+    if(!days.length) return {days,total:0,trackedTotal:0,unrecordedTotal:0,availableTotal:0,sessions:new Set(),activeDays:0,byActivity:new Map(),hourly:Array(24).fill(0),hourlyTracked:Array(24).fill(0),hourlyUnrecorded:Array(24).fill(0),hourlyAvailable:Array(24).fill(0)};
+    const rangeStart=getLocalDayBounds(days[0].key).start;
+    const rangeEnd=days[days.length-1].dayEnd;
+    for(const session of data.sessions) {
+      const selected=sessionMatchesAnalysis(session,tokens);
+      let included=false;
+      for(const part of session.segments||[]) {
+        const rawEnd=part.endAt ?? (session.status==='running'?now:part.startAt);
+        let cursor=Math.max(part.startAt,rangeStart);
+        const finish=Math.min(rawEnd,rangeEnd,now);
+        if(!(finish>cursor)) continue;
+        while(cursor<finish) {
+          const key=todayKey(new Date(cursor));
+          const idx=dayIndex.get(key);
+          const bounds=idx===undefined?null:getLocalDayBounds(key);
+          const overlapEnd=Math.min(finish,bounds?days[idx].dayEnd:finish);
+          if(idx!==undefined&&overlapEnd>cursor) {
+            const day=days[idx];
+            const interval={start:cursor,end:overlapEnd,labelId:session.labelId||session.labelName||'other',labelName:session.labelName||'その他',labelColor:safeColor(session.labelColor),subLabelId:session.subLabelId||'',subLabelName:session.subLabelName||'',sessionId:session.id,selected};
+            day.intervals.push(interval);
+            day.sessions.add(session.id);
+            if(selected) day.selectedSessions.add(session.id);
+            const activityId=`${interval.labelId}::${interval.subLabelId}`;
+            const activity=day.byActivity.get(activityId)||{id:activityId,labelId:interval.labelId,subLabelId:interval.subLabelId,name:interval.subLabelName?`${interval.labelName} · ${interval.subLabelName}`:interval.labelName,color:interval.labelColor,ms:0};
+            activity.ms+=overlapEnd-cursor;day.byActivity.set(activityId,activity);
+            included=true;
+          }
+          if(overlapEnd<=cursor) break;
+          cursor=overlapEnd;
+        }
+      }
+      // Session identity is counted per-day by unique id; the period-level set is assembled below.
+      void included;
+    }
+    const allSessions=new Set(), selectedSessions=new Set(), byActivity=new Map();
+    const hourly=Array(24).fill(0), hourlyTracked=Array(24).fill(0), hourlyUnrecorded=Array(24).fill(0), hourlyAvailable=Array(24).fill(0);
+    let periodTracked=0, periodUnrecorded=0, periodAvailable=0, total=0, activeDays=0;
+    for(const day of days) {
+      const rawIntervals=day.intervals.map(x=>({start:x.start,end:x.end}));
+      const merged=mergeTimeIntervals(rawIntervals);
+      const tracked=intervalTotal(merged);
+      const unrecorded=Math.max(0,day.dayMs-tracked);
+      const selectedIntervals=mergeTimeIntervals(day.intervals.filter(x=>x.selected).map(x=>({start:x.start,end:x.end})));
+      const selectedMs=intervalTotal(selectedIntervals);
+      const selectedSet=new Set(day.intervals.filter(x=>x.selected).map(x=>x.sessionId));
+      const dayTotal=mode==='unrecorded'?unrecorded:(mode==='selected'?selectedMs:tracked);
+      day.trackedMs=tracked;day.unrecordedMs=unrecorded;day.selectedMs=selectedMs;day.primaryMs=mode==='unrecorded'?unrecorded:(mode==='selected'?selectedMs:tracked);
+      day.availableMs=day.dayMs;day.primarySessions=mode==='selected'?selectedSet:day.sessions;
+      for(const id of day.sessions) allSessions.add(id);
+      for(const id of selectedSet) selectedSessions.add(id);
+      if(dayTotal>0) activeDays++;
+      periodTracked+=tracked;periodUnrecorded+=unrecorded;periodAvailable+=day.dayMs;total+=dayTotal;
+      for(const item of day.byActivity.values()) {
+        const old=byActivity.get(item.id)||{...item,ms:0};old.ms+=item.ms;byActivity.set(item.id,old);
+      }
+      const windows=getLocalHourWindows(day.key);
+      for(let hour=0;hour<24;hour++) {
+        const visibleWindows=windows[hour].map(window=>({start:window.start,end:Math.min(window.end,day.dayEnd)})).filter(window=>window.end>window.start);
+        const available=intervalTotal(visibleWindows);
+        const trackedHour=intervalOverlapTotal(visibleWindows,merged);
+        const selectedHour=intervalOverlapTotal(visibleWindows,selectedIntervals);
+        const unrecordedHour=Math.max(0,available-trackedHour);
+        hourlyTracked[hour]+=trackedHour;
+        hourlyUnrecorded[hour]+=unrecordedHour;
+        hourlyAvailable[hour]+=available;
+        hourly[hour]+=mode==='unrecorded'?unrecordedHour:(mode==='selected'?selectedHour:trackedHour);
+      }
+      day.series=mode==='compare'?[tracked,unrecorded]:[dayTotal];
+    }
+    const sessions=mode==='selected'?selectedSessions:allSessions;
+    if(mode==='compare') total=periodTracked;
+    return {days,total,trackedTotal:periodTracked,unrecordedTotal:periodUnrecorded,availableTotal:periodAvailable,sessions,activeDays,byActivity,hourly,hourlyTracked,hourlyUnrecorded,hourlyAvailable};
+  }
+  function buildOverlaySeries(stats, tokens) {
+    const catalog=getAnalysisLabelCatalog();
+    const colors=['#879978','#c18f6c','#8e9eaa','#b6a5bd','#d2ad70','#c98f83','#9d8979','#7f968d'];
+    return tokens.map((token,index)=>{
+      if(token==='@tracked') return {token,name:'記録済み全体',color:'#526b72',values:stats.days.map(day=>day.trackedMs||0)};
+      if(token==='@unrecorded') return {token,name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.unrecordedMs||0)};
+      if(token.startsWith('L:')) {
+        const labelId=token.slice(2), label=catalog.find(item=>item.id===labelId);
+        return {token,name:label?.name||'ラベル',color:label?.color||colors[index%colors.length],values:stats.days.map(day=>intervalTotal(mergeTimeIntervals(day.intervals.filter(item=>item.labelId===labelId).map(item=>({start:item.start,end:item.end})))))};
+      }
+      if(token.startsWith('S:')) {
+        const raw=token.slice(2), split=raw.indexOf('::'), labelId=raw.slice(0,split), subId=raw.slice(split+2);
+        const label=catalog.find(item=>item.id===labelId), sub=label?.subLabels.get(subId);
+        const subIndex=label?[...label.subLabels.keys()].indexOf(subId):index;
+        return {token,name:label&&sub?`${label.name} · ${sub.name}`:(sub?.name||'サブラベル'),color:colors[(Math.max(0,catalog.indexOf(label))+Math.max(0,subIndex)+2)%colors.length],values:stats.days.map(day=>intervalTotal(mergeTimeIntervals(day.intervals.filter(item=>item.labelId===labelId&&item.subLabelId===subId).map(item=>({start:item.start,end:item.end})))))};
+      }
+      return null;
+    }).filter(Boolean);
+  }
+  function renderMultiSeriesKpis(targetId, series, previousSeries, dayCount) {
+    const target=$(targetId);target.replaceChildren();
+    const previousMap=new Map((previousSeries||[]).map(item=>[item.token,item.values.reduce((sum,value)=>sum+value,0)]));
+    series.forEach(item=>{
+      const total=item.values.reduce((sum,value)=>sum+value,0), previous=previousMap.has(item.token)?previousMap.get(item.token):null;
+      const delta=previous===null?null:total-previous;
+      const deltaText=delta===null?'比較なし':`${delta>0?'+':delta<0?'−':''}${fmtDuration(Math.abs(delta))}`;
+      const card=document.createElement('div');card.className='trend-kpi';
+      const label=document.createElement('div');label.className='trend-kpi-label';
+      const dot=document.createElement('i');dot.className='analysis-legend-dot';dot.style.display='inline-block';dot.style.backgroundColor=item.color;dot.style.marginRight='5px';
+      label.append(dot,document.createTextNode(item.name));
+      const value=document.createElement('div');value.className='trend-kpi-value';value.textContent=fmtDuration(total);
+      const small=document.createElement('div');small.className='trend-kpi-sub';small.textContent=`1日平均 ${fmtDuration(dayCount?total/dayCount:0)} · ${deltaText}`;
+      card.append(label,value,small);target.appendChild(card);
+    });
+  }
+  function renderMultiSeriesLegend(targetId, series) {
+    const host=$(targetId);host.replaceChildren();
+    series.forEach(item=>{
+      const row=document.createElement('span');row.className='analysis-legend-item';
+      const line=document.createElement('i');line.className='analysis-legend-dot';line.style.backgroundColor=item.color;
+      const name=document.createElement('span');name.textContent=item.name;
+      row.append(line,name);host.appendChild(row);
+    });
+  }
+  function analysisTargetSeries(stats, mode) {
+    if(mode==='compare') return [
+      {name:'記録済み時間',color:'var(--accent-strong)',values:stats.days.map(day=>day.trackedMs)},
+      {name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.unrecordedMs)}
+    ];
+    const name=mode==='unrecorded'?'未記録時間':mode==='selected'?'選択した項目':'記録済み時間';
+    const color=mode==='unrecorded'?'#9d8979':'var(--accent-strong)';
+    return [{name,color,values:stats.days.map(day=>day.primaryMs)}];
+  }
+  function analysisFormatValue(ms, chartMode) {
+    if(chartMode==='ratio') return `${(ms*100).toFixed(0)}%`;
+    return fmtDuration(ms);
+  }
+  function drawAnalysisChart(targetId, stats, mode, chartMode, prefix, seriesOverride = null) {
+    const svg=$(targetId);svg.replaceChildren();
+    const width=640,height=214,left=43,right=626,top=17,bottom=168,plotH=bottom-top;
+    if(!stats.days.length) return false;
+    const bucketRanges = stats.days.length <= 120
+      ? stats.days.map((_,index)=>[index,index+1])
+      : Array.from({length:120},(_,bucketIndex)=>[Math.floor(bucketIndex*stats.days.length/120),Math.max(Math.floor(bucketIndex*stats.days.length/120)+1,Math.floor((bucketIndex+1)*stats.days.length/120))]);
+    const chartDays=bucketRanges.map(([start,end])=>{
+      const slice=stats.days.slice(start,end);
+      const average=key=>slice.reduce((sum,day)=>sum+(day[key]||0),0)/slice.length;
+      return {key:slice[0].key,endKey:slice[slice.length-1].key,dayMs:average('dayMs'),primaryMs:average('primaryMs'),trackedMs:average('trackedMs'),unrecordedMs:average('unrecordedMs')};
+    });
+    const chartStats={...stats,days:chartDays};
+    const series=seriesOverride ? seriesOverride.map(item=>({...item,values:bucketRanges.map(([start,end])=>item.values.slice(start,end).reduce((sum,value)=>sum+value,0)/Math.max(1,end-start))})) : analysisTargetSeries(chartStats,mode);
+    const values=series.flatMap(item=>item.values.map((v,i)=>chartMode==='ratio'?v/Math.max(1,chartStats.days[i].dayMs)*100:v));
+    const maxRaw=Math.max(1,...values);
+    const maxValue=chartMode==='ratio'?100:(Math.ceil(maxRaw/(60*60*1000))*60*60*1000||60*60*1000);
+    const yValue=(v)=>bottom-(Math.max(0,Math.min(maxValue,v))/maxValue)*plotH;
+    [0,.25,.5,.75,1].forEach(fraction=>{
+      const y=bottom-plotH*fraction;
+      svg.appendChild(createTrendSvgElement('line',{x1:left,y1:y,x2:right,y2:y,class:'analysis-grid-line'}));
+      const label=createTrendSvgElement('text',{x:left-7,y:y+3,class:'analysis-axis-value'});
+      const val=maxValue*fraction;
+      label.textContent=chartMode==='ratio'?`${Math.round(val)}%`:val===0?'0':val<3600000?`${Math.round(val/60000)}分`:`${(val/3600000).toFixed(val%3600000?1:0)}h`;
+      svg.appendChild(label);
+    });
+    const xAt=i=>chartStats.days.length===1?(left+right)/2:left+i/(chartStats.days.length-1)*(right-left);
+    series.forEach((item,seriesIndex)=>{
+      const plotted=item.values.map((v,i)=>chartMode==='ratio'?v/Math.max(1,chartStats.days[i].dayMs)*100:v);
+      const color=item.color;
+      if(chartMode==='bar') {
+        const clusterWidth=Math.min(18,Math.max(5,(right-left)/Math.max(1,chartStats.days.length)*.62));
+        const barWidth=clusterWidth/series.length;
+        plotted.forEach((v,i)=>{
+          const x=xAt(i)-clusterWidth/2+seriesIndex*barWidth;
+          const y=yValue(v);
+          const rect=createTrendSvgElement('rect',{x:x.toFixed(2),y:y.toFixed(2),width:Math.max(1,barWidth-1),height:Math.max(0,bottom-y).toFixed(2),fill:color,class:'analysis-series-bar'});
+          const title=createTrendSvgElement('title');title.textContent=`${chartStats.days[i].endKey?`${trendDateLabel(chartStats.days[i].key,true)}〜${trendDateLabel(chartStats.days[i].endKey,true)}`:trendDateLabel(chartStats.days[i].key,true)} · ${item.name}：${analysisFormatValue(item.values[i],chartMode)}`;rect.appendChild(title);svg.appendChild(rect);
+        });
+      } else {
+        const points=plotted.map((v,i)=>({x:xAt(i),y:yValue(v),value:item.values[i],day:chartStats.days[i]}));
+        if(series.length===1&&chartMode!=='ratio') {
+          const path=points.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+          const area=`${path} L${points[points.length-1].x.toFixed(2)},${bottom} L${points[0].x.toFixed(2)},${bottom} Z`;
+          svg.appendChild(createTrendSvgElement('path',{d:area,fill:color,class:'analysis-series-area'}));
+        }
+        const path=points.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+        svg.appendChild(createTrendSvgElement('path',{d:path,stroke:color,class:'analysis-series-line'}));
+        points.forEach(p=>{
+          const circle=createTrendSvgElement('circle',{cx:p.x,cy:p.y,r:3.1,fill:color,class:'analysis-series-point'});
+          const title=createTrendSvgElement('title');title.textContent=`${p.day.endKey?`${trendDateLabel(p.day.key,true)}〜${trendDateLabel(p.day.endKey,true)}`:trendDateLabel(p.day.key,true)} · ${item.name}：${analysisFormatValue(p.value,chartMode)}`;circle.appendChild(title);svg.appendChild(circle);
+        });
+      }
+    });
+    const ticks=new Set([0,Math.floor((chartStats.days.length-1)/2),chartStats.days.length-1]);
+    [...ticks].filter(i=>i>=0).forEach(i=>{
+      const point=chartStats.days[i];
+      const label=createTrendSvgElement('text',{x:xAt(i),y:194,class:'analysis-axis-text'});
+      const date=parseDay(point.key);const endDate=parseDay(point.endKey||point.key);label.textContent=point.endKey&&point.endKey!==point.key?`${date.getMonth()+1}/${date.getDate()}–${endDate.getMonth()+1}/${endDate.getDate()}`:`${date.getMonth()+1}/${date.getDate()}`;svg.appendChild(label);
+    });
+    return true;
+  }
+  function renderAnalysisLegend(targetId, mode, tokens = []) {
+    const host=$(targetId);host.replaceChildren();
+    let selectedName='選択した項目';
+    if(mode==='selected'&&tokens.length) {
+      const catalog=getAnalysisLabelCatalog();
+      const names=tokens.map(token=>{
+        if(token.startsWith('L:')) return catalog.find(item=>item.id===token.slice(2))?.name || 'ラベル';
+        if(token.startsWith('S:')) {
+          const raw=token.slice(2), split=raw.indexOf('::'), labelId=raw.slice(0,split), subId=raw.slice(split+2);
+          const label=catalog.find(item=>item.id===labelId), sub=label?.subLabels.get(subId);
+          return label&&sub?`${label.name} · ${sub.name}`:(sub?.name||label?.name||'サブラベル');
+        }
+        return '項目';
+      });
+      selectedName=names.length<=2?names.join(' ＋ '):`${names.length}項目の合算`;
+    }
+    const items=mode==='compare'?[['記録済み時間','var(--accent-strong)'],['未記録時間','#9d8979']]:[[mode==='unrecorded'?'未記録時間':mode==='selected'?selectedName:'記録済み時間',mode==='unrecorded'?'#9d8979':'var(--accent-strong)']];
+    items.forEach(([name,color])=>{const item=document.createElement('span');item.className='analysis-legend-item';const dot=document.createElement('i');dot.className='analysis-legend-dot';dot.style.backgroundColor=color;const label=document.createElement('span');label.textContent=name;item.append(dot,label);host.appendChild(item);});
+  }
+  function renderAnalysisKpis(targetId, current, previous, mode, comparisonName) {
+    const target=$(targetId);target.replaceChildren();
+    const value=mode==='unrecorded'?current.unrecordedTotal:(mode==='selected'?current.total:current.trackedTotal);
+    const prevValue=previous?(mode==='unrecorded'?previous.unrecordedTotal:(mode==='selected'?previous.total:previous.trackedTotal)):null;
+    const delta=prevValue===null?null:value-prevValue;
+    const pct=prevValue>0?delta/prevValue*100:null;
+    const deltaText=prevValue===null?'—':prevValue===0?(value>0?'新規':'±0'): `${delta>0?'+':delta<0?'−':''}${fmtDuration(Math.abs(delta))}`;
+    const rate=current.availableTotal>0?current.trackedTotal/current.availableTotal*100:0;
+    const values=mode==='compare' ? [
+      ['記録済み時間',fmtDuration(current.trackedTotal),'重複を除いた記録区間'],
+      ['未記録時間',fmtDuration(current.unrecordedTotal),'記録が存在しない時間'],
+      ['記録率',`${rate.toFixed(1)}%`,'記録済み時間 ÷ 期間の実時間'],
+      [`${comparisonName}（記録済み）`,deltaText,prevValue===null?'全期間のため比較なし':pct===null?'比較対象の記録なし':`${pct>=0?'+':''}${pct.toFixed(1)}%`]
+    ] : [
+      ['期間合計',fmtDuration(value),mode==='unrecorded'?'記録のない時間':mode==='selected'?'選択項目の合算':'重複を除いた記録時間'],
+      ['1日平均',fmtDuration(current.days.length?value/current.days.length:0),'期間内の全日数で平均'],
+      [comparisonName,deltaText,prevValue===null?'全期間のため比較なし':pct===null?'比較対象の記録なし':`${pct>=0?'+':''}${pct.toFixed(1)}%`],
+      [mode==='unrecorded'?'記録率':'セッション数',mode==='unrecorded'?`${rate.toFixed(1)}%`:`${current.sessions.size}回`,mode==='unrecorded'?'記録済み時間 ÷ 1日の総時間':'対象に含まれる計測回数']
+    ];
+    values.forEach(([label,valueText,sub])=>{const card=document.createElement('div');card.className='trend-kpi';const l=document.createElement('div');l.className='trend-kpi-label';l.textContent=label;const v=document.createElement('div');v.className='trend-kpi-value';v.textContent=valueText;const small=document.createElement('div');small.className='trend-kpi-sub';small.textContent=sub;card.append(l,v,small);target.appendChild(card);});
+  }
+  function renderAnalysisHourly(targetId, stats, mode) {
+    const host=$(targetId);host.replaceChildren();
+    const main=stats.hourly.map(value=>value/Math.max(1,stats.days.length));
+    const tracked=stats.hourlyTracked.map(value=>value/Math.max(1,stats.days.length));
+    const unrecorded=stats.hourlyUnrecorded.map(value=>value/Math.max(1,stats.days.length));
+    const available=stats.hourlyAvailable.map(value=>value/Math.max(1,stats.days.length));
+    const maximum=Math.max(1,...(mode==='compare'?tracked.map((value,index)=>value+unrecorded[index]):main));
+    for(let hour=0;hour<24;hour++) {
+      const col=document.createElement('div');col.className='analysis-hour-col';
+      const value=document.createElement('div');value.className='analysis-hour-value';const labelValue=mode==='compare'?available[hour]:main[hour];value.textContent=labelValue>=3600000?`${(labelValue/3600000).toFixed(1)}h`:labelValue>=60000?`${Math.round(labelValue/60000)}m`:'';
+      const track=document.createElement('div');track.className='analysis-hour-track';
+      if(mode==='compare') {
+        const trackedBar=document.createElement('i');trackedBar.className='analysis-hour-bar';trackedBar.style.height=`${tracked[hour]/maximum*100}%`;trackedBar.style.backgroundColor='var(--accent-strong)';
+        const unrecordedBar=document.createElement('i');unrecordedBar.className='analysis-hour-bar';unrecordedBar.style.height=`${unrecorded[hour]/maximum*100}%`;unrecordedBar.style.backgroundColor='#9d8979';track.append(trackedBar,unrecordedBar);
+      } else {
+        const bar=document.createElement('i');bar.className='analysis-hour-bar';bar.style.height=`${main[hour]/maximum*100}%`;bar.style.backgroundColor=mode==='unrecorded'?'#9d8979':'var(--accent-strong)';track.appendChild(bar);
+      }
+      const name=document.createElement('div');name.className='analysis-hour-name';name.textContent=hour%3===0?String(hour):'';
+      const title=document.createElement('title');title.textContent=`${hour}時：${fmtDuration(mode==='compare'?available[hour]:main[hour])}`;col.append(value,track,name);col.title=title.textContent;host.appendChild(col);
+    }
+  }
+  function renderAnalysisBreakdown(targetId, stats, mode, tokens) {
+    const host=$(targetId);host.replaceChildren();
+    if(mode==='unrecorded'||mode==='compare') return;
+    const items=[...stats.byActivity.values()].filter(item=>mode!=='selected'||tokens.length===0||sessionMatchesAnalysis({labelId:item.labelId,labelName:'',subLabelId:item.subLabelId,subLabelName:''},tokens)).sort((a,b)=>b.ms-a.ms).slice(0,8);
+    if(!items.length) return;
+    const max=Math.max(1,...items.map(x=>x.ms));
+    const title=document.createElement('div');title.className='analysis-chart-title';title.textContent='ラベル・サブラベル内訳';host.appendChild(title);
+    items.forEach(item=>{const row=document.createElement('div');row.className='analysis-breakdown-row';const name=document.createElement('div');name.className='analysis-breakdown-name';const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=item.color;const text=document.createElement('span');text.textContent=item.name;name.append(dot,text);const time=document.createElement('div');time.className='analysis-breakdown-time';time.textContent=fmtDuration(item.ms);const meter=document.createElement('div');meter.className='analysis-breakdown-meter';const fill=document.createElement('span');fill.style.width=`${item.ms/max*100}%`;fill.style.backgroundColor=item.color;meter.appendChild(fill);row.append(name,time,meter);host.appendChild(row);});
+  }
+  function addDaysToKey(key, offset) {
+    const date=parseDay(key);date.setDate(date.getDate()+offset);return todayKey(date);
+  }
+  function firstRecordedDayKey() {
+    let earliest=Infinity;
+    for(const session of data.sessions) for(const part of session.segments||[]) {
+      const value=Number(part.startAt);
+      if(Number.isFinite(value)&&value>0&&value<earliest) earliest=value;
+    }
+    return earliest===Infinity?todayKey():todayKey(new Date(earliest));
+  }
+  const analysisCalendarState = { active: '', year: 0, month: 0 };
+  const ANALYSIS_CALENDAR_WEEKDAYS = ['月','火','水','木','金','土','日'];
+  function formatAnalysisDate(key) {
+    const date=parseDay(key);
+    return `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`;
+  }
+  function getCalendarLimit(which) {
+    return which==='start' ? analysisPrefs.customEnd : todayKey();
+  }
+  function closeAnalysisCalendar(returnFocus=false) {
+    const previous=analysisCalendarState.active;
+    analysisCalendarState.active='';
+    for(const which of ['start','end']) {
+      const panel=$(`analysisCustom${which==='start'?'Start':'End'}Calendar`);
+      const trigger=$(`analysisCustom${which==='start'?'Start':'End'}Button`);
+      if(panel) panel.hidden=true;
+      if(trigger) trigger.setAttribute('aria-expanded','false');
+    }
+    if(returnFocus && previous) $(`analysisCustom${previous==='start'?'Start':'End'}Button`)?.focus();
+  }
+  function renderAnalysisCalendar(which) {
+    const isStart=which==='start';
+    const panel=$(isStart?'analysisCustomStartCalendar':'analysisCustomEndCalendar');
+    if(!panel) return;
+    const year=analysisCalendarState.year, month=analysisCalendarState.month;
+    const selected=isStart?analysisPrefs.customStart:analysisPrefs.customEnd;
+    const limit=getCalendarLimit(which);
+    const limitDate=parseDay(limit);
+    const limitMonth=new Date(limitDate.getFullYear(),limitDate.getMonth(),1);
+    const viewMonth=new Date(year,month,1);
+    const monthTitle=`${year}年${month+1}月`;
+    panel.replaceChildren();
+
+    const head=document.createElement('div');head.className='analysis-calendar-head';
+    const prev=document.createElement('button');prev.type='button';prev.className='analysis-calendar-nav';prev.dataset.calendarAction='prev';prev.setAttribute('aria-label','前の月');prev.innerHTML=svgIconMarkup('chevronLeft','ui-icon');
+    const title=document.createElement('div');title.className='analysis-calendar-month';title.textContent=monthTitle;
+    const next=document.createElement('button');next.type='button';next.className='analysis-calendar-nav';next.dataset.calendarAction='next';next.setAttribute('aria-label','次の月');next.innerHTML=svgIconMarkup('chevronRight','ui-icon');
+    next.disabled=viewMonth.getTime()>=limitMonth.getTime();
+    head.append(prev,title,next);panel.appendChild(head);
+
+    const weekdays=document.createElement('div');weekdays.className='analysis-calendar-weekdays';
+    ANALYSIS_CALENDAR_WEEKDAYS.forEach(name=>{const cell=document.createElement('div');cell.className='analysis-calendar-weekday';cell.textContent=name;weekdays.appendChild(cell);});
+    panel.appendChild(weekdays);
+
+    const days=document.createElement('div');days.className='analysis-calendar-days';
+    const first=new Date(year,month,1);
+    const gridStart=new Date(year,month,1-((first.getDay()+6)%7));
+    const today=todayKey();
+    const endKey=analysisPrefs.customEnd, startKey=analysisPrefs.customStart;
+    for(let index=0;index<42;index++) {
+      const date=new Date(gridStart);date.setDate(gridStart.getDate()+index);
+      const key=todayKey(date), outside=date.getMonth()!==month;
+      const tooLate=key>today || (isStart && key>endKey);
+      const tooEarly=!isStart && key<startKey;
+      const button=document.createElement('button');button.type='button';button.className='analysis-calendar-day';button.textContent=String(date.getDate());
+      button.dataset.calendarDay=key;button.setAttribute('aria-label',`${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`);
+      if(outside) button.classList.add('is-outside');
+      if(key>=startKey && key<=endKey) button.classList.add('is-in-range');
+      if(key===selected) {button.classList.add('is-selected');button.setAttribute('aria-pressed','true');}
+      if(key===today) {button.classList.add('is-today');button.setAttribute('aria-current','date');}
+      if(tooLate||tooEarly) button.disabled=true;
+      days.appendChild(button);
+    }
+    panel.appendChild(days);
+
+    const footer=document.createElement('div');footer.className='analysis-calendar-footer';
+    const hint=document.createElement('span');hint.className='analysis-calendar-hint';hint.textContent=isStart?'終了日以前の日付を選べます。':'開始日以降〜今日まで選べます。';
+    const todayButton=document.createElement('button');todayButton.type='button';todayButton.className='analysis-calendar-today';todayButton.dataset.calendarAction='limit-month';todayButton.textContent=isStart?'終了日に移動':'今月へ';
+    footer.append(hint,todayButton);panel.appendChild(footer);
+    panel.hidden=false;
+  }
+  function openAnalysisCalendar(which) {
+    if(analysisPrefs.period!=='custom') return;
+    normalizeCustomRange();
+    if(analysisCalendarState.active===which) {closeAnalysisCalendar();return;}
+    closeAnalysisCalendar();
+    const key=which==='start'?analysisPrefs.customStart:analysisPrefs.customEnd;
+    const date=parseDay(key);
+    analysisCalendarState.active=which;analysisCalendarState.year=date.getFullYear();analysisCalendarState.month=date.getMonth();
+    const trigger=$(which==='start'?'analysisCustomStartButton':'analysisCustomEndButton');
+    trigger.setAttribute('aria-expanded','true');
+    renderAnalysisCalendar(which);
+  }
+  function chooseAnalysisCalendarDate(key) {
+    const which=analysisCalendarState.active;
+    if(!which) return;
+    if(key>todayKey()) return;
+    if(which==='start') {
+      if(key>analysisPrefs.customEnd) return;
+      analysisPrefs.customStart=key;
+    } else {
+      if(key<analysisPrefs.customStart) return;
+      analysisPrefs.customEnd=key;
+    }
+    closeAnalysisCalendar();
+    normalizeCustomRange();saveAnalysisPrefs();renderAdvancedAnalytics();
+  }
+  function normalizeCustomRange() {
+    const today=todayKey();
+    if(!analysisPrefs.customEnd) analysisPrefs.customEnd=today;
+    if(!analysisPrefs.customStart) analysisPrefs.customStart=addDaysToKey(analysisPrefs.customEnd,-29);
+    if(analysisPrefs.customEnd>today) analysisPrefs.customEnd=today;
+    if(analysisPrefs.customStart>analysisPrefs.customEnd) analysisPrefs.customStart=analysisPrefs.customEnd;
+    $('analysisCustomStartLabel').textContent=formatAnalysisDate(analysisPrefs.customStart);
+    $('analysisCustomEndLabel').textContent=formatAnalysisDate(analysisPrefs.customEnd);
+    $('analysisCustomStartButton').setAttribute('aria-label',`開始日 ${formatAnalysisDate(analysisPrefs.customStart)}。カレンダーを開く`);
+    $('analysisCustomEndButton').setAttribute('aria-label',`終了日 ${formatAnalysisDate(analysisPrefs.customEnd)}。カレンダーを開く`);
+    $('analysisCustomRange').hidden=analysisPrefs.period!=='custom';
+    if(analysisPrefs.period!=='custom' && analysisCalendarState.active) closeAnalysisCalendar();
+  }
+  function getSelectedAnalysisRange() {
+    const today=todayKey();
+    let startKey='', endKey=today, title='', comparisonLabel='', compare=true, previousStartKey='';
+    const anchor=parseDay(selectedDay);
+    if(analysisPrefs.period==='week') {
+      const start=new Date(anchor);start.setDate(start.getDate()-((start.getDay()+6)%7));
+      startKey=todayKey(start);endKey=addDaysToKey(startKey,6);
+      title='週';comparisonLabel='前週比';previousStartKey=addDaysToKey(startKey,-7);
+    } else if(analysisPrefs.period==='month') {
+      const start=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth(),1);
+      const end=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,0);
+      startKey=todayKey(start);endKey=todayKey(end);title='月';comparisonLabel='前月比';previousStartKey=todayKey(new Date(start.getFullYear(),start.getMonth()-1,1));
+    } else if(analysisPrefs.period==='quarter') {
+      const endMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,0);
+      const start=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-2,1);
+      startKey=todayKey(start);endKey=todayKey(endMonth);title='3ヶ月';comparisonLabel='前3ヶ月比';previousStartKey=todayKey(new Date(start.getFullYear(),start.getMonth()-3,1));
+    } else if(analysisPrefs.period==='all') {
+      startKey=firstRecordedDayKey();endKey=today;title='記録のある全期間';comparisonLabel='全期間';compare=false;
+    } else {
+      normalizeCustomRange();startKey=analysisPrefs.customStart;endKey=analysisPrefs.customEnd;title='カスタム';comparisonLabel='前期間比';
+    }
+    if(endKey>today) endKey=today;
+    if(startKey>endKey) startKey=endKey;
+    const start=parseDay(startKey), end=parseDay(endKey);
+    const count=Math.max(1,Math.round((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(start.getFullYear(),start.getMonth(),start.getDate()))/86400000)+1);
+    const keys=analysisDayKeys(start,count,true);
+    let previousKeys=[];
+    if(compare&&keys.length) {
+      const fallbackPrevStart=addDaysToKey(keys[0],-keys.length);
+      const prevStartKey=previousStartKey||fallbackPrevStart;
+      let previousCount=keys.length;
+      if(analysisPrefs.period==='month') previousCount=Math.min(keys.length,new Date(parseDay(prevStartKey).getFullYear(),parseDay(prevStartKey).getMonth()+1,0).getDate());
+      previousKeys=analysisDayKeys(parseDay(prevStartKey),previousCount,false);
+    }
+    const now=todayKey(), todayStart=getLocalDayBounds(now).start;
+    const elapsedTodayMs=Math.max(0,Date.now()-todayStart);
+    const comparisonElapsedMs=keys.length&&keys[keys.length-1]===now?elapsedTodayMs:null;
+    const startLabel=trendDateLabel(startKey),endLabel=trendDateLabel(endKey);
+    const rangeText=`${startLabel}〜${endLabel} · ${keys.length.toLocaleString('ja-JP')}日`;
+    return {keys,previousKeys,comparisonElapsedMs,title,comparisonLabel,compare,rangeText,startKey,endKey};
+  }
+  function renderMultiSeriesPeriod(range, tokens, chartMode) {
+    const stats=collectAdvancedPeriod(range.keys,'all',[]);
+    const series=buildOverlaySeries(stats,tokens);
+    const previousStats=range.compare?collectAdvancedPeriod(range.previousKeys,'all',[],range.comparisonElapsedMs):null;
+    const previousSeries=previousStats?buildOverlaySeries(previousStats,tokens):null;
+    $('periodTrendTitle').textContent='推移の重ね合わせ';
+    $('periodTrendRange').textContent=range.rangeText;
+    $('periodHourlyBlock').hidden=true;
+    $('periodBreakdown').hidden=true;
+    $('periodTrendEmpty').hidden=!!(stats.days.length&&series.length);
+    $('periodTrendEmpty').textContent=!series.length?'設定を開き、「グラフに重ねる系列」から2つ以上の項目を選択してください。':'この期間に表示できるデータはありません。';
+    $('periodTrendChart').hidden=!(stats.days.length&&series.length);
+    $('periodTrendLegend').hidden=!(stats.days.length&&series.length);
+    if(!series.length) {
+      $('periodTrendChart').replaceChildren();$('periodTrendLegend').replaceChildren();$('periodTrendKpis').replaceChildren();
+      $('periodChartNote').textContent='分析設定を開いて、比較したい系列を選択してください。';
+      $('periodChartTitle').textContent='複数系列の推移';
+      return;
+    }
+    renderMultiSeriesKpis('periodTrendKpis',series,previousSeries,stats.days.length);
+    const hasChart=drawAnalysisChart('periodTrendChart',stats,'multi',chartMode,'period',series);
+    renderMultiSeriesLegend('periodTrendLegend',series);
+    $('periodTrendChart').hidden=!hasChart;
+    $('periodTrendLegend').hidden=!hasChart;
+    $('periodChartTitle').textContent=chartMode==='ratio'?'各系列が1日のうちに占める割合':chartMode==='bar'?'系列別・日ごとの時間':'日ごとの推移（系列を重ねて比較）';
+    $('periodChartNote').textContent=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは最大120区分に圧縮しています。各系列の合計・平均は全日分の正確な値です。異なるラベルの時間が重なる場合、系列同士は独立した値として表示します。`:'各系列は同じ時間軸・縦軸で表示しています。異なるラベルの記録時間が同時刻に重なる場合、線は重なりますが、系列同士を足した値は記録済み全体と一致しないことがあります。';
+  }
+  function renderSelectedAnalysisPeriod(range, mode, tokens, chartMode) {
+    $('periodHourlyBlock').hidden=false;$('periodBreakdown').hidden=false;
+    const stats=collectAdvancedPeriod(range.keys,mode,tokens);
+    const previous=range.compare?collectAdvancedPeriod(range.previousKeys,mode,tokens,range.comparisonElapsedMs):null;
+    $('periodTrendTitle').textContent=range.title+'の分析';
+    $('periodTrendRange').textContent=range.rangeText;
+    renderAnalysisKpis('periodTrendKpis',stats,previous,mode,range.compare?range.comparisonLabel:'全期間比較');
+    const hasChart=drawAnalysisChart('periodTrendChart',stats,mode,chartMode,'period');
+    renderAnalysisLegend('periodTrendLegend',mode,tokens);
+    renderAnalysisHourly('periodHourlyChart',stats,mode);
+    renderAnalysisBreakdown('periodBreakdown',stats,mode,tokens);
+    const hasData=stats.days.length>0&&(stats.total>0||mode==='compare'||mode==='unrecorded');
+    $('periodTrendEmpty').hidden=hasData;
+    $('periodTrendChart').hidden=!hasChart||(!hasData&&mode!=='unrecorded'&&mode!=='compare');
+    $('periodTrendLegend').hidden=$('periodTrendChart').hidden;
+    $('periodChartTitle').textContent=chartMode==='ratio'?'1日のうち分析対象が占める割合':chartMode==='bar'?'日ごとの時間（棒グラフ）':'日ごとの時間推移';
+    $('periodChartNote').textContent=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは見やすさのため最大120区分の1日平均に圧縮しています。合計・平均・内訳は全日分の正確な値です。`:'グラフは日ごとの推移です。時間帯別分布は期間内の1日平均を表示します。';
+    $('periodTrendEmpty').textContent=mode==='selected'&&!tokens.length?'ラベルまたはサブラベルを選択すると分析を表示します。':'この期間に該当する記録はありません。';
+  }
+  function renderAdvancedAnalytics() {
+    if(!$('trendDetails')?.open) return;
+    $('analysisPeriod').value=analysisPrefs.period;
+    $('analysisTargetMode').value=analysisPrefs.mode;
+    const barOption=$('analysisChartMode').querySelector('option[value="bar"]');
+    if(analysisPrefs.mode==='multi' && analysisPrefs.chart==='bar') { analysisPrefs.chart='line'; saveAnalysisPrefs(); }
+    if(barOption) barOption.disabled=analysisPrefs.mode==='multi';
+    $('analysisChartMode').value=analysisPrefs.chart;
+    syncCustomSelect($('analysisPeriod'));
+    syncCustomSelect($('analysisTargetMode'));
+    syncCustomSelect($('analysisChartMode'));
+    normalizeCustomRange();
+    $('analysisLabelPicker').hidden=analysisPrefs.mode!=='selected';
+    $('analysisOverlayPicker').hidden=analysisPrefs.mode!=='multi';
+    const signature=JSON.stringify(getAnalysisLabelCatalog().map(label=>[label.id,label.name,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
+    if(signature!==analysisLabelsSignature) { renderAnalysisLabelChoices(); renderAnalysisOverlayChoices(); }
+    const selectedCount=analysisPrefs.tokens.length;
+    const definition={
+      all:'記録済み全体を集計します。重なった記録区間は1回分として扱い、当日分は現在時刻までを対象にします。',
+      selected:selectedCount?`選択した${selectedCount}項目を合算します。ラベル全体とそのサブラベルを同時に重複計上せず、当日分は現在時刻までを対象にします。`:'分析対象が未選択です。上の一覧からラベルまたはサブラベルを選んでください。',
+      unrecorded:'未記録時間は、各日の実際の長さから記録区間の重なりを除いて算出します。当日分は現在時刻までです。睡眠や自由時間などの内容を自動推定するものではありません。',
+      compare:'記録済み時間と未記録時間を同じ日ごとに比較します。両者を足すと、その日の実時間になります。当日分は現在時刻までです。',
+      multi:'選択した各ラベル・サブラベル・未記録時間を、それぞれ別の系列として同じグラフに重ねます。'
+    };
+    $('analysisDefinition').textContent=definition[analysisPrefs.mode];
+    const mode=analysisPrefs.mode==='selected'&&selectedCount===0?'selected':analysisPrefs.mode;
+    const range=getSelectedAnalysisRange();
+    if(mode==='multi') { renderMultiSeriesPeriod(range,analysisPrefs.overlayTokens,analysisPrefs.chart); return; }
+    if(mode==='selected'&&selectedCount===0) {
+      $('periodTrendChart').replaceChildren();$('periodTrendChart').hidden=true;
+      $('periodTrendLegend').hidden=true;$('periodTrendLegend').replaceChildren();
+      $('periodTrendEmpty').hidden=false;$('periodTrendEmpty').textContent='ラベルまたはサブラベルを選択すると分析を表示します。';
+      $('periodTrendRange').textContent=range.rangeText;
+      $('periodTrendKpis').replaceChildren();$('periodHourlyChart').replaceChildren();$('periodBreakdown').replaceChildren();
+      $('periodChartNote').textContent='分析対象を選択してください。';
+      $('periodTrendTitle').textContent=range.title+'の分析';
+      return;
+    }
+    renderSelectedAnalysisPeriod(range,mode,analysisPrefs.tokens,analysisPrefs.chart);
+  }
   function applyTheme() {
     const choice=data.settings.theme||'light';
     const dark=choice==='dark'||(choice==='system'&&window.matchMedia?.('(prefers-color-scheme: dark)').matches);
@@ -2168,6 +3310,8 @@
   }
   function renderAll() {
     formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderOverview();renderCalendar();applyTheme();drawClock();syncTimerFrames();scheduleAutoStop();
+    renderRoutineChecklist();
+    if ($('trendDetails')?.open) renderAdvancedAnalytics();
   }
   const labelPicker=$('timerLabelPicker'), labelTrigger=$('timerLabelSelect'), labelMenu=$('timerLabelMenu');
   const labelSubMenu=document.createElement('div'); labelSubMenu.className='label-picker-submenu'; labelSubMenu.setAttribute('role','listbox'); labelSubMenu.setAttribute('aria-label','サブラベルを選択'); labelSubMenu.hidden=true;
@@ -2247,6 +3391,252 @@
     }
   });
   document.addEventListener('pointerdown',event=>{if(!labelPicker.contains(event.target)&&!labelMenu.contains(event.target)&&!labelSubMenu.contains(event.target))closeTimerLabelMenu();});
+  // Daily routines are part of the existing DAYLOG data object, so they are saved
+  // and included in normal JSON backups without changing timer session records.
+  let editingRoutineId = '';
+  let routineRenderedDayKey = '';
+  let routineMidnightTimeout = 0;
+  const normalizeRoutineName = value => String(value || '').normalize('NFKC').trim().slice(0,80);
+  const routineNameKey = value => normalizeRoutineName(value).toLocaleLowerCase('ja-JP');
+  function getTodayRoutineChecks(dayKey = todayKey()) {
+    return data.routines.checks[dayKey] || {};
+  }
+  function pruneRoutineCheckHistory() {
+    const checks = data.routines.checks;
+    Object.keys(checks).forEach(day => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !isPlainObject(checks[day]) || !Object.keys(checks[day]).length) delete checks[day];
+    });
+    const days = Object.keys(checks).sort((a,b) => a.localeCompare(b));
+    days.slice(0, Math.max(0, days.length - MAX_ROUTINE_DAYS)).forEach(day => delete checks[day]);
+  }
+  function commitRoutineMutation(mutator) {
+    const previous = clone(data.routines);
+    try {
+      mutator();
+      data.routines = normalizeRoutineData(data.routines);
+      pruneRoutineCheckHistory();
+      if (!save()) {
+        data.routines = previous;
+        return false;
+      }
+      return true;
+    } catch (error) {
+      data.routines = previous;
+      showToast('日課を更新できませんでした。入力内容と保存領域を確認してください。');
+      return false;
+    }
+  }
+  function saveRoutineChecks(checks, dayKey = todayKey()) {
+    const validIds = new Set(data.routines.items.map(item => item.id));
+    const safeChecks = {};
+    Object.entries(isPlainObject(checks) ? checks : {}).forEach(([id, checked]) => {
+      if (checked === true && validIds.has(id)) safeChecks[id] = true;
+    });
+    return commitRoutineMutation(() => {
+      if (Object.keys(safeChecks).length) data.routines.checks[dayKey] = safeChecks;
+      else delete data.routines.checks[dayKey];
+    });
+  }
+  function renderRoutineChecklist(focusEdit = false) {
+    const list = $('routineList');
+    if (!list) return;
+    const dayKey = todayKey();
+    routineRenderedDayKey = dayKey;
+    const items = data.routines.items;
+    const checks = getTodayRoutineChecks(dayKey);
+    const done = items.reduce((count, item) => count + (checks[item.id] === true ? 1 : 0), 0);
+    const total = items.length;
+    const percent = total ? Math.round(done / total * 100) : 0;
+    $('routineSummaryCount').textContent = `${done} / ${total}`;
+    $('routineSummaryHint').textContent = total ? `${percent}% 完了 · 今日のルーティン` : '日々のルーティンをチェックリストで管理';
+    $('routineDateLabel').textContent = `今日 · ${fmtDateLong(dayKey)}`;
+    $('routineProgressLabel').textContent = `${percent}% 完了`;
+    $('routineProgressFill').style.width = `${percent}%`;
+    $('routineProgressTrack').setAttribute('aria-valuenow', String(percent));
+    $('routineProgressTrack').setAttribute('aria-valuetext', `${done}件完了、${total}件中`);
+    list.replaceChildren();
+    if (!total) {
+      const empty = document.createElement('li');
+      empty.className = 'routine-empty';
+      empty.innerHTML = '<strong>日課はまだありません</strong>下の入力欄から、毎日続けたいことを追加できます。';
+      list.appendChild(empty);
+    } else {
+      const fragment = document.createDocumentFragment();
+      items.forEach(item => {
+        const checked = checks[item.id] === true;
+        const row = document.createElement('li');
+        row.className = `routine-item${checked ? ' is-done' : ''}`;
+        row.dataset.routineId = item.id;
+        if (editingRoutineId === item.id) {
+          row.innerHTML = `<form class="routine-edit-form" data-routine-edit-form="${escapeHtml(item.id)}"><label class="visually-hidden" for="routineEditInput">日課の名前を編集</label><input class="routine-edit-input" id="routineEditInput" type="text" maxlength="80" value="${escapeHtml(item.text)}"><button class="routine-edit-save" type="submit">${svgIconMarkup('check','ui-icon')}<span>保存</span></button><button class="routine-edit-cancel" type="button" data-routine-cancel="${escapeHtml(item.id)}">${svgIconMarkup('close','ui-icon')}<span>戻す</span></button></form>`;
+        } else {
+          row.innerHTML = `<label class="routine-check-label"><input class="routine-checkbox" type="checkbox" data-routine-check="${escapeHtml(item.id)}" ${checked ? 'checked' : ''}><span class="routine-checkmark" aria-hidden="true">${svgIconMarkup('check','ui-icon')}</span><span class="routine-task-text">${escapeHtml(item.text)}</span></label><span class="routine-item-actions"><button class="routine-action" type="button" data-routine-edit="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を編集" title="編集">${svgIconMarkup('pencil','ui-icon')}</button><button class="routine-action" type="button" data-routine-delete="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を削除" title="削除">${svgIconMarkup('trash','ui-icon')}</button></span>`;
+        }
+        fragment.appendChild(row);
+      });
+      list.appendChild(fragment);
+    }
+    const addInput = $('routineAddInput');
+    const addButton = $('routineAddButton');
+    const atLimit = total >= MAX_ROUTINE_ITEMS;
+    if (addInput) addInput.disabled = atLimit;
+    if (addButton) addButton.disabled = atLimit;
+    if (focusEdit) {
+      const editInput = $('routineEditInput');
+      if (editInput) { editInput.focus(); editInput.select(); }
+    }
+  }
+  function addRoutineItem(text) {
+    const value = normalizeRoutineName(text);
+    if (!value) { $('routineAddInput')?.focus(); return; }
+    if (data.routines.items.length >= MAX_ROUTINE_ITEMS) { showToast(`日課は${MAX_ROUTINE_ITEMS}件まで登録できます`); return; }
+    if (data.routines.items.some(item => routineNameKey(item.text) === routineNameKey(value))) {
+      showToast('同じ日課はすでに登録されています'); $('routineAddInput')?.focus(); return;
+    }
+    const saved = commitRoutineMutation(() => { data.routines.items.push({ id:makeId(), text:value }); });
+    if (!saved) { renderRoutineChecklist(); return; }
+    $('routineAddInput').value = '';
+    editingRoutineId = '';
+    renderRoutineChecklist();
+    $('routineAddInput').focus();
+  }
+  function commitRoutineEdit(id, text) {
+    const item = data.routines.items.find(entry => entry.id === id);
+    const value = normalizeRoutineName(text);
+    if (!item) { editingRoutineId=''; renderRoutineChecklist(); return; }
+    if (!value) { showToast('日課の内容を入力してください'); $('routineEditInput')?.focus(); return; }
+    if (data.routines.items.some(entry => entry.id !== id && routineNameKey(entry.text) === routineNameKey(value))) {
+      showToast('同じ日課はすでに登録されています'); $('routineEditInput')?.focus(); return;
+    }
+    const saved = commitRoutineMutation(() => {
+      const target = data.routines.items.find(entry => entry.id === id);
+      if (!target) throw new Error('編集対象の日課が見つかりません。');
+      target.text = value;
+    });
+    if (saved) editingRoutineId = '';
+    renderRoutineChecklist(!saved);
+  }
+  function refreshRoutineForNewDay() {
+    if (todayKey() === routineRenderedDayKey) return false;
+    renderRoutineChecklist();
+    return true;
+  }
+  function scheduleRoutineMidnightRefresh() {
+    if (routineMidnightTimeout) clearTimeout(routineMidnightTimeout);
+    const now = new Date();
+    const nextDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2, 0);
+    routineMidnightTimeout = window.setTimeout(() => {
+      refreshRoutineForNewDay();
+      scheduleRoutineMidnightRefresh();
+    }, Math.max(1000, nextDay.getTime() - now.getTime()));
+  }
+  $('routineAddForm')?.addEventListener('submit', event => {
+    event.preventDefault();
+    addRoutineItem($('routineAddInput').value);
+  });
+  $('routineList')?.addEventListener('change', event => {
+    const input = event.target instanceof Element ? event.target.closest('[data-routine-check]') : null;
+    if (!input) return;
+    // If midnight passed while the page was open, refresh instead of applying
+    // a stale visual checkbox to the newly-started day.
+    if (refreshRoutineForNewDay()) return;
+    const id = input.dataset.routineCheck;
+    if (!data.routines.items.some(item => item.id === id)) { renderRoutineChecklist(); return; }
+    const checks = { ...getTodayRoutineChecks() };
+    if (input.checked) checks[id] = true; else delete checks[id];
+    saveRoutineChecks(checks, routineRenderedDayKey);
+    renderRoutineChecklist();
+  });
+  $('routineList')?.addEventListener('click', event => {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+    const edit = target.closest('[data-routine-edit]');
+    const cancel = target.closest('[data-routine-cancel]');
+    const remove = target.closest('[data-routine-delete]');
+    if (edit) { editingRoutineId = edit.dataset.routineEdit; renderRoutineChecklist(true); }
+    if (cancel) { editingRoutineId = ''; renderRoutineChecklist(); }
+    if (remove) {
+      const id = remove.dataset.routineDelete;
+      const item = data.routines.items.find(entry => entry.id === id);
+      if (!item) return;
+      if (!window.confirm(`「${item.text}」を日課から削除しますか？過去のチェック履歴も削除されます。`)) return;
+      const saved = commitRoutineMutation(() => {
+        data.routines.items = data.routines.items.filter(entry => entry.id !== id);
+        Object.keys(data.routines.checks).forEach(day => {
+          delete data.routines.checks[day][id];
+          if (!Object.keys(data.routines.checks[day]).length) delete data.routines.checks[day];
+        });
+      });
+      if (saved) { if (editingRoutineId === id) editingRoutineId = ''; showToast('日課を削除しました'); }
+      renderRoutineChecklist();
+    }
+  });
+  $('routineList')?.addEventListener('submit', event => {
+    const form = event.target.closest('[data-routine-edit-form]');
+    if (!form) return;
+    event.preventDefault();
+    commitRoutineEdit(form.dataset.routineEditForm, form.querySelector('input')?.value);
+  });
+  $('routineList')?.addEventListener('keydown', event => {
+    if (event.target.matches('.routine-edit-input') && event.key === 'Escape') {
+      editingRoutineId=''; renderRoutineChecklist();
+    }
+  });
+  $('routineDetails')?.addEventListener('toggle', () => {
+    $('routineDetails')?.querySelector(':scope > summary')?.setAttribute('aria-expanded', String($('routineDetails').open));
+    if ($('routineDetails')?.open) renderRoutineChecklist();
+  });
+  $('routineDetails')?.querySelector(':scope > summary')?.setAttribute('aria-expanded', 'false');
+  renderRoutineChecklist();
+  scheduleRoutineMidnightRefresh();
+  window.addEventListener('focus', refreshRoutineForNewDay);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshRoutineForNewDay(); });
+
+  const timerImmersiveBtn = $('timerImmersiveBtn');
+  const timerImmersiveLabel = $('timerImmersiveLabel');
+  let timerImmersiveReturnFocus = null;
+  function setTimerImmersive(open, {restoreFocus = true} = {}) {
+    const card = $('timerCard');
+    const next = !!open;
+    const wasOpen = card.classList.contains('is-immersive');
+    if (wasOpen === next) return;
+    if (next) {
+      timerImmersiveReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : timerImmersiveBtn;
+      card.classList.add('is-immersive');
+      document.documentElement.classList.add('timer-immersive-open');
+      document.body.classList.add('timer-immersive-open');
+      timerImmersiveBtn.setAttribute('aria-expanded', 'true');
+      timerImmersiveBtn.setAttribute('aria-label', '通常表示に戻す');
+      timerImmersiveBtn.title = '通常表示に戻す';
+      timerImmersiveLabel.textContent = '通常表示に戻す';
+      requestAnimationFrame(() => timerImmersiveBtn.focus({preventScroll:true}));
+    } else {
+      card.classList.remove('is-immersive');
+      document.documentElement.classList.remove('timer-immersive-open');
+      document.body.classList.remove('timer-immersive-open');
+      timerImmersiveBtn.setAttribute('aria-expanded', 'false');
+      timerImmersiveBtn.setAttribute('aria-label', 'タイマーを画面いっぱいに表示');
+      timerImmersiveBtn.title = 'タイマーを画面いっぱいに表示';
+      timerImmersiveLabel.textContent = '画面いっぱい';
+      closeTimerLabelMenu();
+      if (restoreFocus) requestAnimationFrame(() => (timerImmersiveReturnFocus?.isConnected ? timerImmersiveReturnFocus : timerImmersiveBtn).focus({preventScroll:true}));
+      timerImmersiveReturnFocus = null;
+    }
+    // Keep the app clock and elapsed-time engine running; this is layout-only.
+    renderTimer();
+  }
+  timerImmersiveBtn?.addEventListener('click', () => setTimerImmersive(!$('timerCard').classList.contains('is-immersive')));
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !$('timerCard')?.classList.contains('is-immersive')) return;
+    if (event.defaultPrevented) return;
+    if (labelMenu && !labelMenu.hidden) { closeTimerLabelMenu(true); event.preventDefault(); return; }
+    event.preventDefault();
+    setTimerImmersive(false);
+  });
+  window.addEventListener('pagehide', () => {
+    if ($('timerCard')?.classList.contains('is-immersive')) setTimerImmersive(false, {restoreFocus:false});
+  });
+
   $('mainTimerBtn').addEventListener('click',()=>{
     const active=getActive();
     if(!active){
@@ -2354,8 +3744,93 @@
   }
   $('prevDayBtn').addEventListener('click', () => shiftSelectedDay(-1));
   $('nextDayBtn').addEventListener('click', () => shiftSelectedDay(1));
-  $('prevMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1);renderCalendar();});
-  $('nextMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();});
+  $('trendDetails').addEventListener('toggle', () => {
+    if ($('trendDetails').open) requestAnimationFrame(renderAdvancedAnalytics);
+    else closeAnalysisCalendar();
+  });
+  $('analysisPeriod').addEventListener('change', () => { closeAnalysisCalendar(); analysisPrefs.period=$('analysisPeriod').value; if(analysisPrefs.period==='custom') normalizeCustomRange(); saveAnalysisPrefs(); renderAdvancedAnalytics(); });
+  $('analysisCustomStartButton').addEventListener('click', () => openAnalysisCalendar('start'));
+  $('analysisCustomEndButton').addEventListener('click', () => openAnalysisCalendar('end'));
+  $('analysisCustomRange').addEventListener('click', event => {
+    const day=event.target.closest('[data-calendar-day]');
+    if(day && !day.disabled) { chooseAnalysisCalendarDate(day.dataset.calendarDay); return; }
+    const action=event.target.closest('[data-calendar-action]')?.dataset.calendarAction;
+    if(!action || !analysisCalendarState.active) return;
+    if(action==='close') {closeAnalysisCalendar(true);return;}
+    if(action==='prev' || action==='next') {
+      const delta=action==='prev'?-1:1;
+      const view=new Date(analysisCalendarState.year,analysisCalendarState.month+delta,1);
+      const limit=parseDay(getCalendarLimit(analysisCalendarState.active));
+      if(view>new Date(limit.getFullYear(),limit.getMonth(),1)) return;
+      analysisCalendarState.year=view.getFullYear();analysisCalendarState.month=view.getMonth();
+      renderAnalysisCalendar(analysisCalendarState.active);return;
+    }
+    if(action==='limit-month') {
+      const limit=parseDay(getCalendarLimit(analysisCalendarState.active));
+      analysisCalendarState.year=limit.getFullYear();analysisCalendarState.month=limit.getMonth();
+      renderAnalysisCalendar(analysisCalendarState.active);
+    }
+  });
+  document.addEventListener('pointerdown', event => {
+    if(analysisCalendarState.active && !event.target.closest('.analysis-date-picker')) closeAnalysisCalendar();
+  });
+  document.addEventListener('keydown', event => {
+    if(event.key==='Escape' && analysisCalendarState.active) closeAnalysisCalendar(true);
+  });
+  $('analysisTargetMode').addEventListener('change', () => { analysisPrefs.mode=$('analysisTargetMode').value; saveAnalysisPrefs(); renderAdvancedAnalytics(); });
+  $('analysisChartMode').addEventListener('change', () => {
+    const requested=$('analysisChartMode').value;
+    analysisPrefs.chart=analysisPrefs.mode==='multi'&&requested==='bar'?'line':requested;
+    saveAnalysisPrefs();renderAdvancedAnalytics();
+  });
+  $('analysisOverlayChoices').addEventListener('change', event => {
+    const input=event.target.closest('input[data-overlay-token]');
+    if(!input) return;
+    if(input.checked) {
+      if(input.dataset.overlayToken.startsWith('L:')) {
+        const parentToken=input.dataset.overlayToken;
+        [...$('analysisOverlayChoices').querySelectorAll('input[data-overlay-parent]')].filter(child=>child.dataset.overlayParent===parentToken).forEach(child=>{child.checked=false;});
+      } else if(input.dataset.overlayParent) {
+        const parent=[...$('analysisOverlayChoices').querySelectorAll('input[data-overlay-token]')].find(item=>item.dataset.overlayToken===input.dataset.overlayParent);
+        if(parent) parent.checked=false;
+      }
+      const chosen=readAnalysisOverlayTokensFromUi();
+      if(chosen.length>8) { input.checked=false; showToast('同時に表示できる系列は最大8本です'); }
+    }
+    analysisPrefs.overlayTokens=readAnalysisOverlayTokensFromUi().slice(0,8);saveAnalysisPrefs();renderAdvancedAnalytics();
+  });
+  $('analysisOverlaySelectLabels').addEventListener('click', () => {
+    const values=[...$('analysisOverlayChoices').querySelectorAll('input[data-overlay-token^="L:"]')].slice(0,8).map(input=>input.dataset.overlayToken);
+    analysisPrefs.overlayTokens=values;saveAnalysisPrefs();renderAnalysisOverlayChoices();renderAdvancedAnalytics();
+  });
+  $('analysisOverlayClear').addEventListener('click', () => {
+    analysisPrefs.overlayTokens=[];saveAnalysisPrefs();renderAnalysisOverlayChoices();renderAdvancedAnalytics();
+  });
+  $('analysisLabelChoices').addEventListener('change', event => {
+    const input=event.target.closest('input[data-analysis-token]');
+    if(!input) return;
+    if(input.checked) {
+      if(input.dataset.analysisToken.startsWith('L:')) {
+        const parentId=input.dataset.analysisToken;
+        [...$('analysisLabelChoices').querySelectorAll('input[data-parent-token]')].filter(child=>child.dataset.parentToken===parentId).forEach(child=>{child.checked=false;});
+      } else if(input.dataset.parentToken) {
+        const parent=[...$('analysisLabelChoices').querySelectorAll('input[data-analysis-token]')].find(item=>item.dataset.analysisToken===input.dataset.parentToken);
+        if(parent) parent.checked=false;
+      }
+    }
+    analysisPrefs.tokens=readAnalysisTokensFromUi();saveAnalysisPrefs();renderAdvancedAnalytics();
+  });
+  $('analysisSelectAll').addEventListener('click', () => {
+    $('analysisLabelChoices').querySelectorAll('input[data-analysis-token^="L:"]').forEach(input=>input.checked=true);
+    $('analysisLabelChoices').querySelectorAll('input[data-analysis-token^="S:"]').forEach(input=>input.checked=false);
+    analysisPrefs.tokens=readAnalysisTokensFromUi();saveAnalysisPrefs();renderAdvancedAnalytics();
+  });
+  $('analysisClearAll').addEventListener('click', () => {
+    $('analysisLabelChoices').querySelectorAll('input[data-analysis-token]').forEach(input=>input.checked=false);
+    analysisPrefs.tokens=[];saveAnalysisPrefs();renderAdvancedAnalytics();
+  });
+  $('prevMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1);renderCalendar();if($('trendDetails').open)renderAdvancedAnalytics();});
+  $('nextMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();if($('trendDetails').open)renderAdvancedAnalytics();});
   $('todayBtn').addEventListener('click',()=>{selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);renderAll();});
   $('exportBtn').addEventListener('click',()=>{
     try {
@@ -2369,7 +3844,7 @@
       a.click();
       a.remove();
       window.setTimeout(()=>URL.revokeObjectURL(url),1000);
-      showToast('記録・ラベル・自動終了・背景アニメーション設定・テーマをJSONに保存しました');
+      showToast('記録・ラベル・日課と履歴・各種設定をJSONに保存しました');
     } catch (error) {
       showToast(error?.message || 'JSONを書き出せませんでした。');
     }
@@ -2389,7 +3864,8 @@
       const sessionCount = staged.sessions.length;
       const labelCount = staged.labels.length;
       const subLabelCount = staged.labels.reduce((sum,label)=>sum+label.subLabels.length,0);
-      const summary = `ラベル ${labelCount}個／サブラベル ${subLabelCount}個／記録 ${sessionCount}件`;
+      const routineCount = staged.routines.items.length;
+      const summary = `ラベル ${labelCount}個／サブラベル ${subLabelCount}個／記録 ${sessionCount}件／日課 ${routineCount}件`;
       if (!confirm(`JSONの内容で現在のデータを置き換えます。\n\n読み込む内容：${summary}\n\n現在の記録は置き換わります。先にバックアップを保存することをおすすめします。続けますか？`)) return;
 
       // Write the fully validated candidate before swapping in-memory state.
@@ -2422,7 +3898,7 @@
   document.querySelectorAll('select').forEach(decorateSelect);
   processAutoStopExpiry();
   buildClockTicks();renderAll();
-  if (startupMigrationPending) { save(); startupMigrationPending = false; }
+  if (startupMigrationPending) save();
   if (startupDataWarning) showToast(startupDataWarning);
   // Paint the readout in sync with the display refresh rate. Elapsed time is
   // always derived from persisted wall-clock timestamps, so tab suspension is safe.
