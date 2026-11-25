@@ -57,14 +57,14 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
   .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--accent-soft); color: var(--accent-strong); }
-  .brand-mark svg { width: 19px; height: 19px; }
+  .brand-mark svg { width: 21px; height: 21px; display: block; }
   .brand-name { font-size: 16px; font-weight: 760; letter-spacing: .13em; line-height: 1.1; }
   .brand-tagline { color: var(--muted); font-size: 10px; margin-top: 3px; }
   .top-date { text-align: right; color: var(--muted); font-size: 11px; line-height: 1.6; }
   .top-date strong { display: block; color: var(--ink); font-size: 13px; font-weight: 650; }
-  .timer-card { --timer-label-color: var(--accent); position: relative; z-index: 2; isolation: isolate; overflow: visible; min-height: 300px; padding: 23px 24px 22px; border: 1px solid var(--line); border-color: color-mix(in srgb, var(--line) 82%, var(--timer-label-color)); border-radius: var(--radius-xl); background: var(--timer-bg); background: color-mix(in srgb, var(--timer-bg) 88%, var(--timer-label-color)); color: var(--timer-ink); box-shadow: var(--shadow); transition: background .48s ease, border-color .48s ease, box-shadow .35s ease; }
+  .timer-card { --timer-label-color: var(--accent); --timer-card-radius: var(--radius-xl); position: relative; z-index: 2; isolation: isolate; overflow: visible; min-height: 300px; padding: 23px 24px 22px; border: 1px solid var(--line); border-color: color-mix(in srgb, var(--line) 82%, var(--timer-label-color)); border-radius: var(--timer-card-radius); background: var(--timer-bg); background: color-mix(in srgb, var(--timer-bg) 88%, var(--timer-label-color)); color: var(--timer-ink); box-shadow: var(--shadow); transition: background .48s ease, border-color .48s ease, box-shadow .35s ease; }
   .timer-card::before { content: ""; position: absolute; z-index: -1; width: 260px; height: 260px; top: 40px; left: 50%; transform: translateX(-50%); border: 1px solid color-mix(in srgb, var(--timer-ink) 8%, transparent); border-radius: 50%; pointer-events: none; }
-  .timer-ambient { position: absolute; z-index: 0; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none; opacity: 1; contain: paint; }
+  .timer-ambient { position: absolute; z-index: 0; inset: 0; overflow: hidden; border-radius: calc(var(--timer-card-radius, var(--radius-xl)) - 1px); clip-path: inset(0 round calc(var(--timer-card-radius, var(--radius-xl)) - 1px)); -webkit-clip-path: inset(0 round calc(var(--timer-card-radius, var(--radius-xl)) - 1px)); pointer-events: none; opacity: 1; contain: paint; }
   /* Only a few fine streamlines remain; there is no painted river or water-surface wash. */
   .river-current-svg {
     position: absolute; inset: 0; width: 100%; height: 100%;
@@ -100,7 +100,7 @@
   }
   .canopy-shadow-svg {
     position:absolute; inset:-5% -4%; width:108%; height:110%;
-    overflow:hidden; pointer-events:none; color:rgba(47,57,43,.72);
+    overflow:hidden; clip-path:inset(0 round calc(var(--timer-card-radius, var(--radius-xl)) - 1px)); -webkit-clip-path:inset(0 round calc(var(--timer-card-radius, var(--radius-xl)) - 1px)); pointer-events:none; color:rgba(47,57,43,.72);
     opacity:.42; mix-blend-mode:multiply; filter:blur(2.8px);
   }
   .canopy-shadow-group { transform-box:fill-box; transform-origin:center; will-change:transform; }
@@ -155,9 +155,9 @@
     100% { transform:translate3d(12%,0,0) scale(1.02); background-position:120% 50%; opacity:.82; }
   }
   @keyframes canopy-sway-d {
-    0% { transform:translate3d(9px,-4px,0) rotate(1.2deg) scale(1.02); }
-    47% { transform:translate3d(-7px,6px,0) rotate(-1.1deg) scale(1.04); }
-    100% { transform:translate3d(-15px,-2px,0) rotate(.7deg) scale(1.01); }
+    0% { transform:translate3d(14px,-6px,0) rotate(1.8deg) scale(1.025); }
+    47% { transform:translate3d(-11px,9px,0) rotate(-1.7deg) scale(1.05); }
+    100% { transform:translate3d(-22px,-4px,0) rotate(1.1deg) scale(1.015); }
   }
   @keyframes dapple-light-drift {
     0% { transform:translate3d(-2%,-1%,0) scale(1); background-position:0% 20%,100% 80%,45% 0%; }
@@ -165,19 +165,19 @@
     100% { transform:translate3d(4%,-2%,0) scale(1.02); background-position:100% 35%,0% 65%,15% 100%; }
   }
   @keyframes canopy-sway-a {
-    0% { transform:translate3d(-10px,-4px,0) rotate(-1.8deg); }
-    50% { transform:translate3d(7px,5px,0) rotate(1.2deg); }
-    100% { transform:translate3d(13px,-3px,0) rotate(-.6deg); }
+    0% { transform:translate3d(-16px,-6px,0) rotate(-2.6deg); }
+    50% { transform:translate3d(11px,7px,0) rotate(1.8deg); }
+    100% { transform:translate3d(20px,-5px,0) rotate(-1deg); }
   }
   @keyframes canopy-sway-b {
-    0% { transform:translate3d(9px,4px,0) rotate(1.3deg); }
-    48% { transform:translate3d(-8px,-5px,0) rotate(-1.6deg); }
-    100% { transform:translate3d(-14px,3px,0) rotate(.8deg); }
+    0% { transform:translate3d(15px,6px,0) rotate(1.9deg); }
+    48% { transform:translate3d(-12px,-7px,0) rotate(-2.3deg); }
+    100% { transform:translate3d(-21px,5px,0) rotate(1.2deg); }
   }
   @keyframes canopy-sway-c {
-    0% { transform:translate3d(-6px,4px,0) rotate(-1deg) scale(1); }
-    54% { transform:translate3d(8px,-5px,0) rotate(1.5deg) scale(1.02); }
-    100% { transform:translate3d(11px,3px,0) rotate(-.6deg) scale(1.01); }
+    0% { transform:translate3d(-10px,6px,0) rotate(-1.6deg) scale(1); }
+    54% { transform:translate3d(12px,-7px,0) rotate(2.2deg) scale(1.025); }
+    100% { transform:translate3d(16px,5px,0) rotate(-1deg) scale(1.015); }
   }
   .river-flow-a { animation: river-line-sway-a 34s ease-in-out infinite alternate; }
   .river-flow-b { animation: river-line-sway-b 41s ease-in-out infinite alternate; }
@@ -532,7 +532,7 @@
   @media (max-width: 650px) {
     .app-shell { width: min(100% - 24px, 520px); padding-top: 18px; }
     .topbar { margin-bottom: 17px; }
-    .timer-card { min-height: 285px; padding: 20px 16px; border-radius: 21px; }
+    .timer-card { --timer-card-radius: 21px; min-height: 285px; padding: 20px 16px; border-radius: var(--timer-card-radius); }
     .timer-stage { min-height: 184px; }
     .clock-orbit { width: 230px; height: 230px; }
     .timer-value { font-size: clamp(40px, 10vw, 54px); }
@@ -627,7 +627,14 @@
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M5 16.8 12 4l7 12.8H5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.1 16.8 12 9.6l3.9 7.2" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 9.7v7.1" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true" focusable="false">
+  <rect width="128" height="128" fill="var(--accent-soft, #f2e5da)"/>
+  <rect x="59" y="20" width="10" height="24" rx="5" fill="var(--accent-strong, #87543a)"/>
+  <rect x="53" y="14" width="22" height="9" rx="4.5" fill="var(--accent-strong, #87543a)"/>
+  <circle cx="64" cy="76" r="34" fill="none" stroke="var(--accent-strong, #87543a)" stroke-width="10"/>
+  <path d="M64 76C68 63 79 50 91 46C91 61 81 72 64 76Z" fill="var(--accent, #a86f50)"/>
+  <circle cx="64" cy="76" r="6.5" fill="var(--accent-strong, #87543a)"/>
+</svg>
         </div>
         <div><div class="brand-name">DAYLOG</div><div class="brand-tagline">時間を、見えるかたちに。</div></div>
       </div>
