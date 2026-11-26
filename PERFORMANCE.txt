@@ -1,0 +1,37 @@
+DAYLOG v75 — Performance Measurements
+
+Environment
+- Headless Chromium in the build environment.
+- localStorage was emulated in memory for comparative startup fixtures; these are not device guarantees.
+- Fixtures contain normalized v6 data and one active timer.
+- Numbers below are one captured run and can vary with CPU/cache state.
+
+Startup fixture measurements
+Sessions     Raw JSON size     v73 startup     v75 startup
+1,000        ~0.38 MiB         0.247 s          0.172 s  (~30% lower)
+10,000       ~3.83 MiB         1.544 s          0.854 s  (~45% lower)
+
+These measurements include browser startup, inline HTML parsing, JSON loading and initial rendering. They are comparative samples, not guarantees for a physical phone. Startup remains synchronous while localStorage is read and JSON.parse runs.
+
+Timer redraw measurement
+During a 3.5-second run with an active timer:
+- v73: calendar render 4 calls, overview render 4 calls (initial render + 3 one-second updates).
+- v75: calendar render 1 call, overview render 1 call during the same sample; full summaries refresh at minute precision.
+- Timer digits continued to update via requestAnimationFrame in both builds.
+
+Large JSON import/merge
+- 0.92 MiB valid JSON: Worker path confirmed for import and session merge.
+- 10 MiB valid JSON: Worker path completed without JavaScript errors.
+- 1 MiB invalid JSON: explicit error; no data replacement.
+- Worker constructor failure: fallback path successfully merged data.
+- Worker timeout: 45 seconds, then compatible fallback.
+- Canonical v6 backup: structural validation + direct reuse, avoiding an additional full normalization copy.
+
+Interpretation
+- Worker parsing improves interaction responsiveness during large file reads/parsing; it does not make JSON processing free and adds structured-clone memory overhead.
+- Canonical v6 import fast path avoids a redundant full data normalization copy.
+- Startup still has synchronous localStorage read and JSON.parse costs. For very large long-term databases, IndexedDB is the appropriate next storage architecture, but it would require a separately tested migration and rollback plan.
+
+Storage limitation
+- Import file limit is 25 MiB; localStorage quota varies by browser/device and can be much lower.
+- Quota failure is handled without replacing the existing saved snapshot.

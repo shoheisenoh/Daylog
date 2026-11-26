@@ -1,39 +1,31 @@
-DAYLOG data compatibility verification
+DAYLOG v83 — Compatibility and Stability
 Verification date: 2026-11-26
-Target build: Complete Edition v69
 
-1. Storage identity
-- Main data key: daylog.data.v3
-- Analysis preferences key: daylog.analysis.v1
-- Data schema version in v69: 6
-- PWA manifest id, start_url and scope remain './'.
-- Service Worker cache names are updated independently of localStorage.
-- The application code does not clear or remove the main data key during update.
+DATA AND STORAGE
+- DATA_VERSION: 6 (unchanged)
+- STORAGE_KEY: daylog.data.v3 (unchanged)
+- v5 and v6 backup files were tested. A v5 backup imports and normalizes to v6.
+- Labels, sessions, routines, check history, settings, analysis preferences and merge semantics retain their existing data shape and behavior.
+- No destructive migration or session rewrite is introduced.
+- Imports remain limited to 25 MiB. localStorage capacity varies by browser and device; quota errors are handled without replacing the saved snapshot.
 
-2. Historical versions inspected
-- v63: DATA_VERSION 5, STORAGE_KEY daylog.data.v3.
-- v64: DATA_VERSION 6; adds routines { items, checks }.
-- v65, v67 and v68: DATA_VERSION 6 with the same core labels/sessions/settings structure.
-- The v63-to-v64 schema change is additive: v6 adds routines; prior labels, sessions and settings retain their shape.
+JSON / WORKER COMPATIBILITY
+- Files larger than 768 KiB use a short-lived Blob Worker for FileReader input progress and JSON parsing when Worker, Blob and object URLs are available.
+- If Worker creation or execution is unavailable, import falls back to File.text() and main-thread JSON.parse(). This fallback was tested with Worker disabled.
+- JSON output uses a short-lived Blob Worker for serialization when available, with JSON.stringify() fallback. Both paths were tested.
+- Worker is an optimization, not a requirement for JSON import/export.
 
-3. Migration and backup tests
-- v5 local data -> v69: passed. Labels, sub-labels, completed sessions, an active running session, selected label and theme were retained. Missing routine data was initialized as an empty list/history.
-- v6 data with routine items and date-based checks -> v69: passed. Routine text, IDs and check history were retained.
-- v68 -> v69: passed. The stored v6 data string remained byte-for-byte unchanged at startup; no data rewrite was needed.
-- A simulated first localStorage write failure during v5-to-v6 migration left the original v5 value intact. A later successful save retried and completed the migration to v6.
-- JSON backup formatVersion 5 and 6 imports: passed.
-- Malformed JSON import: current stored data remained unchanged.
-- JavaScript page errors during these tests: none.
+ANALYSIS / MERGE
+- Analysis aggregation yields between session and day batches; progress tracks completed work. A fixture with 18,000 sessions completed and closed the loading overlay correctly.
+- Cross-device merge yields during duplicate checks, label mapping and local-session copying. Unique imports, duplicate imports and conflicting duplicate IDs were tested.
+- Import and merge save the fully validated candidate before replacing in-memory state.
 
-4. Important limits
-- Tests used synthetic records matching the inspected v63/v64/v67/v68 data schemas in Chromium. They did not read the user's actual phone storage.
-- Historical v3/v4 source data files were not available for direct verification; compatibility with those versions is not guaranteed by this report.
-- localStorage is scoped to the website origin. Changing domain, subdomain, or protocol (for example http -> https) creates a different storage area. Deploy the update to the same HTTPS origin and the same app folder/scope.
-- Before any update, export a JSON backup from the currently installed app and keep it somewhere outside the app folder.
+PWA REQUIREMENTS
+- The PWA uses a service worker and therefore must be hosted in a secure context (HTTPS; localhost is generally treated as secure by browsers).
+- Opening the standalone HTML via file:// does not install or exercise the PWA service worker.
+- The manifest, app-shell file references and icon assets were statically validated. Runtime service-worker installation and offline navigation were not exercised in this environment.
 
-5. Recommended update procedure
-1) Open the currently installed DAYLOG and export a JSON backup.
-2) Keep the existing hostname, protocol, and deployment folder unchanged.
-3) Replace the full app folder contents with the v69 PWA folder; do not replace only index.html.
-4) Reopen/reload DAYLOG and confirm that old sessions and routine history are present.
-5) Keep the backup until the updated app has been used successfully.
+BROWSER COVERAGE
+- Automated UI/logic checks: Chromium 144.0.7559.96 (headless), using Playwright. The page was loaded in an isolated browser document with a simulated localStorage implementation; this verifies application logic but is not a full HTTPS/PWA-origin test.
+- Responsive layout was checked at 390 px viewport width; no horizontal overflow was observed.
+- Safari/iOS, Firefox, WebKit and Android physical devices were not tested. Blob Worker fallback is provided for browsers that disallow or do not implement Workers.

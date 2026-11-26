@@ -275,10 +275,17 @@
   }
   .timer-head { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 36px; }
   /* Quiet, icon-only presentation control: visually blends into the timer chrome. */
-  .timer-immersive-toggle { position: relative; z-index: 3; display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border: 1px solid transparent; border-radius: 14px; background: transparent; color: color-mix(in srgb, var(--timer-ink) 66%, var(--timer-muted)); opacity: .82; line-height: 1; transition: background .2s ease, border-color .2s ease, color .2s ease, opacity .2s ease, transform .18s ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .timer-immersive-toggle { position: relative; z-index: 3; display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border: 1px solid transparent; border-radius: 14px; background: transparent; color: var(--timer-muted); opacity: .88; line-height: 1; transition: background .2s ease, border-color .2s ease, color .2s ease, opacity .2s ease, transform .18s ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  /* Slightly tuck the presentation control toward the timer card's upper-left corner.
+     Its 44px hit area is preserved; only its visual/interactive box is repositioned. */
+  .timer-immersive-toggle { left: -3px; top: -6px; }
+  .timer-immersive-icon { width: 17px; height: 17px; flex-basis: 17px; }
+  /* In immersive mode, retain the safe-area inset on notched phones. */
+  .timer-card.is-immersive .timer-immersive-toggle { left: 0; top: 0; }
+  .timer-card.is-immersive .live-pill { right: 0; top: 0; }
   .timer-immersive-toggle:active { transform: scale(.94); opacity: 1; }
   .timer-immersive-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .timer-immersive-icon { display: block; width: 16px; height: 16px; flex: 0 0 16px; }
+  .timer-immersive-icon { display: block; width: 17px; height: 17px; flex: 0 0 17px; }
   .timer-immersive-exit { display: none; }
   .timer-card.is-immersive .timer-immersive-enter { display: none; }
   .timer-card.is-immersive .timer-immersive-exit { display: block; }
@@ -289,6 +296,9 @@
   }
   .eyebrow { color: var(--timer-muted); font-size: 10px; letter-spacing: .12em; font-weight: 650; }
   .live-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 99px; background: color-mix(in srgb, var(--timer-ink) 6%, transparent); color: var(--timer-muted); font-size: 10px; }
+  /* Mirror the upper-left presentation button so the two timer-head items
+     share the same visual inset in the normal timer view. */
+  .timer-head .live-pill { position: relative; right: -3px; top: -6px; }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--timer-muted); }
   .live-pill.active .live-dot { background: #78916a; animation: live-soft-pulse 2.6s ease-in-out infinite; }
   @keyframes live-soft-pulse { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
@@ -375,17 +385,17 @@
   .picker-current { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 650; }
   .picker-chevron { width: 14px; height: 14px; flex: 0 0 14px; color: var(--timer-muted); transition: transform .18s ease; }
   .label-picker.open .picker-chevron { transform: rotate(180deg); }
-  .label-picker-menu { position: absolute; top: calc(100% + 8px); left: 0; z-index: 30; width: max(100%, 190px); max-width: min(240px, calc(100vw - 32px)); max-height: min(260px, 42vh); overflow: auto; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 38px rgba(58, 43, 31, .16); transform-origin: top left; animation: picker-soft-open .2s cubic-bezier(.2,.7,.25,1) both; overscroll-behavior: contain; }
+  .label-picker-menu { position: absolute; top: calc(100% + 8px); left: 0; z-index: 30; width: max(100%, 190px); max-width: min(240px, calc(100vw - 32px)); max-height: min(260px, 42vh); overflow: auto; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 38px rgba(58, 43, 31, .16); transform-origin: top left; animation: picker-soft-open .16s ease-out both; overscroll-behavior: contain; }
   .label-picker-menu[hidden] { display: none !important; }
   .label-picker-menu.label-picker-portal { position: fixed !important; z-index: 10001 !important; margin: 0; }
-  .label-picker-submenu { position: fixed; z-index: 10002; max-height: min(260px, 42vh); overflow: auto; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 38px rgba(58, 43, 31, .16); overscroll-behavior: contain; transform-origin: top left; animation: submenu-soft-open .18s cubic-bezier(.2,.7,.25,1) both; }
+  .label-picker-submenu { position: fixed; z-index: 10002; max-height: min(260px, 42vh); overflow: auto; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 14px 38px rgba(58, 43, 31, .16); overscroll-behavior: contain; transform-origin: top left; animation: submenu-soft-open .16s ease-out both; }
   .label-picker-submenu[hidden] { display: none !important; }
   .picker-submenu-title { padding: 9px 10px 8px; color: var(--muted); font-size: 10px; font-weight: 750; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
   .picker-option-arrow { width: 13px; height: 13px; flex: 0 0 13px; color: var(--muted); margin-left: auto; }
   .picker-option.has-sublabels .picker-option-check { margin-left: 0; }
   .picker-option.is-expanded { background: var(--accent-soft); color: var(--accent-strong); }
-  @keyframes picker-soft-open { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes submenu-soft-open { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes picker-soft-open { from { opacity: .72; } to { opacity: 1; } }
+  @keyframes submenu-soft-open { from { opacity: .72; } to { opacity: 1; } }
   .picker-option { width: 100%; min-height: 40px; padding: 0 10px; display: flex; align-items: center; gap: 10px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); text-align: left; font-size: 12px; transform: translateX(0); transition: transform .14s ease, background .16s ease; }
   .picker-option:hover, .picker-option:focus-visible { background: var(--surface-2); outline: none; }
   .picker-option:active { transform: scale(.99); }
@@ -412,7 +422,7 @@
   .auto-stop-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
   .auto-stop-disclosure[open] .auto-stop-chevron { transform: rotate(180deg); color: var(--accent-strong); }
   .auto-stop-content { padding: 0 0 14px; }
-  .auto-stop-disclosure[open] .auto-stop-content { animation: picker-soft-open .18s ease both; }
+  .auto-stop-disclosure[open] .auto-stop-content { animation: picker-soft-open .16s ease-out both; }
   .ui-icon { display: block; width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .button-with-icon { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
   .button-with-icon .ui-icon { width: 14px; height: 14px; }
@@ -431,6 +441,7 @@
   .routine-progress-count { color: var(--muted); font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .routine-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
   .routine-disclosure[open] > summary { border-bottom: 1px solid var(--line); }
+  .routine-disclosure[open] .routine-body { animation: picker-soft-open .16s ease-out both; }
   .routine-disclosure[open] .routine-chevron { transform: rotate(180deg); color: var(--accent-strong); }
   .routine-body { padding: 13px 15px 15px; }
   .routine-date-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
@@ -454,6 +465,9 @@
   .routine-action { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font: inherit; font-size: 12px; }
   .routine-action:active { background: var(--surface-2); color: var(--accent-strong); }
   .routine-action svg { width: 15px; height: 15px; }
+  .routine-action:disabled { opacity: .28; cursor: default; }
+  .routine-action:disabled:active { background: transparent; color: var(--muted); }
+  .routine-action[data-routine-move] svg { width: 14px; height: 14px; }
   .routine-empty { padding: 15px 10px; border: 1px dashed var(--line); border-radius: 11px; color: var(--muted); text-align: center; font-size: 10px; line-height: 1.6; }
   .routine-empty strong { display: block; margin-bottom: 3px; color: var(--ink); font-size: 11px; }
   .routine-add-form { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 7px; margin-top: 12px; }
@@ -532,6 +546,7 @@
   .chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .22s cubic-bezier(.2,.7,.25,1), color .2s ease; }
   details[open] .chevron { transform: rotate(180deg); color: var(--accent-strong); }
   .settings-body { padding: 17px 16px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; border-top: 1px solid var(--line); transform-origin: top center; }
+  .settings[open] > .settings-body { animation: picker-soft-open .16s ease-out both; }
   .settings summary { transition: background-color .2s ease; }
   .settings summary:active { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   .settings { transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
@@ -567,7 +582,7 @@
   .label-options-disclosure[open] > summary::after { transform: rotate(225deg); }
   .label-options-count { margin-left: auto; color: var(--muted); font-size: 9px; font-weight: 600; }
   .label-options-content { display: grid; gap: 11px; padding: 0 0 10px; }
-  .label-options-disclosure[open] .label-options-content { animation: picker-soft-open .2s cubic-bezier(.2,.7,.25,1) both; }
+  .label-options-disclosure[open] .label-options-content { animation: picker-soft-open .16s ease-out both; }
   .label-options-section { display: grid; gap: 7px; }
   .label-options-heading { color: var(--muted); font-size: 10px; font-weight: 700; }
   .sublabel-editor { display: grid; gap: 7px; }
@@ -583,12 +598,14 @@
   .add-label-btn { width: 100%; min-height: 34px; margin-top: 8px; border: 1px dashed var(--line); border-radius: 9px; background: transparent; color: var(--accent-strong); font-size: 11px; font-weight: 650; }
   .setting-select { width: 100%; height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); font-size: 12px; }
   .data-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .data-merge-action { display: flex; align-items: center; margin-top: 8px; }
+  .data-merge-action .small-action { min-height: 36px; }
   .small-action { min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); color: var(--ink); font-size: 10px; font-weight: 650; }
   .small-action.primary { border-color: var(--accent); background: var(--accent); color: white; }
   .setting-note { margin: 9px 0 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
   .overview { margin-bottom: 27px; }
-  .overview.day-change-in { animation: overview-refresh-in .24s ease-out both; }
-  @keyframes overview-refresh-in { from { opacity: .72; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+  .overview.day-change-in { animation: overview-refresh-in .18s ease-out both; }
+  @keyframes overview-refresh-in { from { opacity: .82; } to { opacity: 1; } }
   .overview-title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .overview-title-row h2 { line-height: 1.25; }
   .day-nav { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; }
@@ -642,7 +659,7 @@
   .records-disclosure[open] > summary { margin-bottom: 13px; }
   .records-disclosure[open] .records-chevron { transform: rotate(180deg); }
   .records-disclosure .record-list { padding-bottom: 14px; }
-  .records-disclosure[open] .record-list { animation: picker-soft-open .22s cubic-bezier(.2,.7,.25,1) both; }
+  .records-disclosure[open] .record-list { animation: picker-soft-open .16s ease-out both; }
   .record-list { display: grid; }
   .record-row { display: grid; grid-template-columns: 8px minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
   .record-row:first-child { border-top: 0; }
@@ -683,7 +700,7 @@
   .trend-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .22s ease; }
   .trend-disclosure[open] > summary { margin-bottom: 2px; border-bottom: 1px solid var(--line); }
   .trend-disclosure[open] .trend-chevron { transform: rotate(180deg); }
-  .trend-body { min-width: 0; max-width: 100%; padding: 2px 0 16px; animation: picker-soft-open .22s cubic-bezier(.2,.7,.25,1) both; }
+  .trend-body { min-width: 0; max-width: 100%; padding: 2px 0 16px; animation: picker-soft-open .16s ease-out both; }
   .analysis-chart[hidden], .analysis-legend[hidden], .analysis-empty[hidden] { display: none !important; }
   .analysis-settings-disclosure { margin: 0 0 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--bg); overflow: hidden; }
   .analysis-settings-disclosure > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 0 12px; cursor: pointer; list-style: none; user-select: none; }
@@ -693,6 +710,7 @@
   .analysis-settings-summary-copy small { color: var(--muted); font-size: 9px; }
   .analysis-settings-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease; }
   .analysis-settings-disclosure[open] > summary { border-bottom: 1px solid var(--line); }
+  .analysis-settings-disclosure[open] .analysis-settings-body { animation: picker-soft-open .16s ease-out both; }
   .analysis-settings-disclosure[open] .analysis-settings-chevron { transform: rotate(180deg); }
   .analysis-settings-body { padding: 0 12px 12px; }
   .analysis-controls { padding: 14px 0 4px; border-bottom: 1px solid var(--line); }
@@ -746,7 +764,10 @@
   .analysis-picker-head span { color: var(--muted); font-size: 9px; }
   .analysis-picker-actions { display: flex; flex: 0 0 auto; gap: 5px; }
   .analysis-picker-actions button { padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--ink); font: inherit; font-size: 9px; }
-  .analysis-label-choices { display: grid; gap: 7px; max-height: 240px; overflow: auto; overscroll-behavior: contain; }
+  .analysis-label-choices { display: grid; gap: 7px; height: 184px; max-height: 184px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 0 3px 8px 0; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+  .analysis-label-choices::-webkit-scrollbar { width: 5px; }
+  .analysis-label-choices::-webkit-scrollbar-thumb { border-radius: 99px; background: var(--line); }
+  .analysis-label-choices::-webkit-scrollbar-track { background: transparent; }
   .analysis-overlay-specials { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 3px 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
   .analysis-overlay-specials .analysis-check-row { font-weight: 700; }
   .analysis-overlay-note { margin: 8px 0 0; color: var(--muted); font-size: 9px; line-height: 1.55; }
@@ -807,9 +828,39 @@
     .analysis-hourly { gap: 2px; }
     .analysis-hour-value { font-size: 6px; }
   }
-  @media (prefers-reduced-motion: reduce) { .trend-chevron, .analysis-settings-chevron { transition: none; } .trend-body { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .trend-chevron, .analysis-settings-chevron { transition: none; } .trend-body, .overview.day-change-in, .settings[open] > .settings-body, .auto-stop-disclosure[open] .auto-stop-content, .routine-disclosure[open] .routine-body, .records-disclosure[open] .record-list, .analysis-settings-disclosure[open] .analysis-settings-body, .label-options-disclosure[open] .label-options-content { animation: none !important; } }
 
   .footer { padding-top: 22px; color: var(--muted); font-size: 9px; letter-spacing: .1em; text-align: center; }
+  .loading-overlay { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 22px 16px calc(22px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--bg) 72%, transparent); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); }
+  .loading-overlay[hidden] { display: none !important; }
+  .loading-panel { width: min(100%, 340px); padding: 23px 21px 20px; border: 1px solid var(--line); border-radius: 19px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow); animation: loading-panel-in .18s ease-out both; }
+  @keyframes loading-panel-in { from { opacity: .65; } to { opacity: 1; } }
+  .loading-heading { display: flex; align-items: center; gap: 12px; }
+  .loading-spinner { width: 22px; height: 22px; flex: 0 0 22px; border: 2px solid var(--line); border-top-color: var(--accent-strong); border-radius: 50%; animation: loading-spin .9s linear infinite; }
+  @keyframes loading-spin { to { transform: rotate(360deg); } }
+  .loading-title { margin: 0; color: var(--ink); font-size: 13px; font-weight: 750; }
+  .loading-detail { min-height: 2.7em; margin: 13px 0 11px; color: var(--muted); font-size: 10px; line-height: 1.65; }
+  .loading-progress-track { height: 5px; overflow: hidden; border-radius: 99px; background: var(--surface-2); }
+  .loading-progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--accent-strong); transition: width .16s ease; }
+  .loading-progress-track.is-indeterminate .loading-progress-fill { width: 34%; animation: loading-progress-sweep 1.2s ease-in-out infinite alternate; }
+  @keyframes loading-progress-sweep { from { transform: translateX(-8%); } to { transform: translateX(205%); } }
+  .loading-percent { display: block; margin-top: 8px; color: var(--muted); font-size: 9px; font-variant-numeric: tabular-nums; text-align: right; }
+  @media (prefers-reduced-motion: reduce) { .loading-panel { animation: none; } .loading-spinner { animation: none; border-top-color: var(--accent-strong); } .loading-progress-fill { transition: none; } .loading-progress-track.is-indeterminate .loading-progress-fill { animation: none; width: 58%; } }
+  .confirm-overlay { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 22px 16px calc(22px + env(safe-area-inset-bottom)); background: rgba(35, 29, 25, .42); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+  .confirm-overlay[hidden] { display: none !important; }
+  .confirm-dialog { width: min(100%, 410px); padding: 24px; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 76px rgba(36, 27, 21, .22); animation: confirm-dialog-in .18s ease-out both; }
+  @keyframes confirm-dialog-in { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .confirm-dialog-mark { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 15px; border-radius: 14px; background: var(--accent-soft); color: var(--accent-strong); }
+  .confirm-dialog-mark svg { width: 21px; height: 21px; }
+  .confirm-dialog-title { margin: 0; color: var(--ink); font-size: 16px; font-weight: 740; letter-spacing: .01em; }
+  .confirm-dialog-message { margin: 10px 0 23px; color: var(--muted); font-size: 12px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+  .confirm-dialog-actions { display: flex; justify-content: flex-end; gap: 9px; }
+  .confirm-dialog-button { min-width: 94px; min-height: 41px; padding: 0 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 650; transition: background .15s ease, transform .15s ease; }
+  .confirm-dialog-button:active { transform: scale(.98); }
+  .confirm-dialog-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .confirm-dialog-delete { border-color: transparent; background: var(--accent-strong); color: #fff; }
+  .confirm-dialog-delete:hover { filter: brightness(1.05); }
+  @media (prefers-reduced-motion: reduce) { .confirm-dialog { animation: none; } .confirm-dialog-button { transition: none; } }
   .toast { position: fixed; z-index: 20; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); padding: 10px 16px; border-radius: 99px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); font-size: 11px; opacity: 0; pointer-events: none; transform: translate(-50%,14px); transition: .2s ease; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translate(-50%,0); }
   .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -1107,7 +1158,11 @@
               <button class="small-action" id="importBtn" type="button">JSONを読み込む</button>
               <input class="visually-hidden" id="importFile" type="file" accept=".json,application/json">
             </div>
-            <p class="setting-note">端末間の移行は、書き出したJSONファイルを新しい端末で読み込んでください。読み込み時は現在のデータが置き換わります。</p>
+            <div class="data-merge-action">
+              <button class="small-action button-with-icon" id="mergeSessionsBtn" type="button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7h10M7 17h10M7 7l3-3M7 7l3 3M17 17l-3-3M17 17l-3 3"/><path d="M12 7v10"/></svg><span>別端末と合成</span></button>
+              <input class="visually-hidden" id="mergeSessionsFile" type="file" accept=".json,application/json">
+            </div>
+            <p class="setting-note">「JSONを読み込む」は現在のデータを置き換えます。「別端末と合成」は、相手端末の完了済みセッションを現在の記録へ追加します。同じ記録IDは重複登録せず、必要なラベル・サブラベルだけを補います。別端末の最初のセッションが、この端末で計測中の時間区間の途中から始まっている場合は、切り忘れと判断してこの端末の計測をその開始時刻で終了します。終了時刻より後の区間は破棄されるため、確定前に内容を確認してください。日課・テーマ・分析設定はこの端末の内容を維持します。</p>
           </section>
         </div>
       </details>
@@ -1231,7 +1286,6 @@
             <label class="analysis-field"><span>分析対象</span><select id="analysisTargetMode" class="analysis-select">
               <option value="all">記録済み全体</option>
               <option value="selected">選択したラベル・サブラベル</option>
-              <option value="unrecorded">未記録時間</option>
               <option value="compare">記録済み時間と未記録時間を比較</option>
               <option value="multi">複数の推移を同じグラフに重ねて比較</option>
             </select></label>
@@ -1250,7 +1304,7 @@
             <div class="analysis-label-choices" id="analysisOverlayChoices"></div>
             <p class="analysis-definition">各系列は独立して集計します。異なるラベルの記録時間が同時刻に重なる場合、線の値は重なって表示され、系列同士を足しても記録済み全体とは一致しないことがあります。</p>
           </div>
-          <p class="analysis-definition" id="analysisDefinition">記録済み全体の推移を表示します。</p>
+          
           </section>
             </div>
           </details>
@@ -1271,6 +1325,27 @@
     </section>
     <footer class="footer">DAYLOG</footer>
   </main>
+  <div class="confirm-overlay" id="appConfirmDialog" hidden aria-hidden="true">
+    <section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogMessage" tabindex="-1">
+      <div class="confirm-dialog-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></div>
+      <h2 class="confirm-dialog-title" id="confirmDialogTitle">削除しますか？</h2>
+      <p class="confirm-dialog-message" id="confirmDialogMessage"></p>
+      <div class="confirm-dialog-actions">
+        <button class="confirm-dialog-button" id="confirmDialogCancel" type="button">キャンセル</button>
+        <button class="confirm-dialog-button confirm-dialog-delete" id="confirmDialogAccept" type="button">削除する</button>
+      </div>
+    </section>
+  </div>
+  <div class="loading-overlay" id="loadingOverlay" hidden aria-hidden="true">
+    <section class="loading-panel" role="status" aria-live="polite" aria-atomic="true" aria-describedby="loadingDetail" aria-busy="true">
+      <div class="loading-heading"><span class="loading-spinner" aria-hidden="true"></span><h2 class="loading-title" id="loadingTitle">処理しています</h2></div>
+      <p class="loading-detail" id="loadingDetail" aria-live="polite">しばらくお待ちください。</p>
+      <div class="loading-progress-track is-indeterminate" id="loadingProgressTrack" role="progressbar" aria-label="処理の進捗" aria-valuemin="0" aria-valuemax="100">
+        <div class="loading-progress-fill" id="loadingProgressFill"></div>
+      </div>
+      <span class="loading-percent" id="loadingPercent">処理中</span>
+    </section>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (() => {
@@ -1327,17 +1402,26 @@
   const makeId = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `d${Date.now().toString(36)}${Math.random().toString(36).slice(2,9)}`;
   const isPlainObject = value => !!value && typeof value === 'object' && !Array.isArray(value);
   const isFiniteNumber = value => typeof value === 'number' && Number.isFinite(value);
+  const safeColorCache = new Map();
   const safeColor = (c) => {
+    const cacheKey = typeof c === 'string' ? c.toLowerCase() : '';
+    const cached = safeColorCache.get(cacheKey);
+    if (cached) return cached;
     const raw = /^#[0-9a-f]{6}$/i.test(typeof c === 'string' ? c : '') ? c.toLowerCase() : '#879978';
-    if (LABEL_COLOR_TEMPLATES.some(preset => preset.color === raw)) return raw;
-    const rgb = raw.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
-    let nearest = LABEL_COLOR_TEMPLATES[0], nearestDistance = Infinity;
-    for (const preset of LABEL_COLOR_TEMPLATES) {
-      const channels = preset.color.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
-      const distance = channels.reduce((sum, value, index) => sum + (value - rgb[index]) ** 2, 0);
-      if (distance < nearestDistance) { nearest = preset; nearestDistance = distance; }
+    let resolved = raw;
+    if (!LABEL_COLOR_TEMPLATES.some(preset => preset.color === raw)) {
+      const rgb = raw.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
+      let nearest = LABEL_COLOR_TEMPLATES[0], nearestDistance = Infinity;
+      for (const preset of LABEL_COLOR_TEMPLATES) {
+        const channels = preset.color.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
+        const distance = channels.reduce((sum, value, index) => sum + (value - rgb[index]) ** 2, 0);
+        if (distance < nearestDistance) { nearest = preset; nearestDistance = distance; }
+      }
+      resolved = nearest.color;
     }
-    return nearest.color;
+    safeColorCache.set(cacheKey, resolved);
+    if (safeColorCache.size > 64) safeColorCache.delete(safeColorCache.keys().next().value);
+    return resolved;
   };
   const clone = (v) => JSON.parse(JSON.stringify(v));
   const normalizeAutoStop = (value) => {
@@ -1517,6 +1601,8 @@
       }
       if (item.segments.length > MAX_SEGMENTS_PER_SESSION) throw new Error('1件の記録に含まれる時間区間が多すぎます。');
       const segments = [];
+      let openSegmentCount = 0;
+      let lastOpenSegmentIndex = -1;
       for (const part of item.segments) {
         if (!isPlainObject(part)) {
           if (strict) throw new Error('時間区間に不正な項目があります。');
@@ -1529,6 +1615,7 @@
           continue;
         }
         segments.push({ startAt, endAt });
+        if (endAt == null) { openSegmentCount++; lastOpenSegmentIndex = segments.length - 1; }
       }
       const createdAtRaw = Number(item.createdAt);
       if (strict && (!Number.isFinite(createdAtRaw) || createdAtRaw <= 0)) throw new Error('記録の開始時刻が正しくありません。');
@@ -1540,22 +1627,22 @@
       let status = ['running','paused','done'].includes(item.status) ? item.status : 'done';
       if (strict && status !== 'done' && endedAt !== null) throw new Error('計測中の記録に終了時刻が設定されています。');
       if (!strict && status !== 'done') endedAt = null;
-      const openSegmentIndexes = segments.map((part,index)=>part.endAt == null ? index : -1).filter(index=>index>=0);
       if (strict && status !== 'done' && segments.length === 0) throw new Error('計測中・一時停止中の記録に時間区間がありません。');
-      if (strict && status === 'running' && (openSegmentIndexes.length !== 1 || openSegmentIndexes[0] !== segments.length - 1)) {
+      if (strict && status === 'running' && (openSegmentCount !== 1 || lastOpenSegmentIndex !== segments.length - 1)) {
         throw new Error('計測中の記録に有効な実行中区間がありません。');
       }
-      if (strict && status !== 'running' && openSegmentIndexes.length > 0) {
+      if (strict && status !== 'running' && openSegmentCount > 0) {
         throw new Error('一時停止・終了済みの記録に未終了の時間区間があります。');
       }
-      if (!strict && openSegmentIndexes.length > 0) {
-        for (const index of openSegmentIndexes) {
+      if (!strict && openSegmentCount > 0) {
+        for (let index=0;index<segments.length;index++) {
+          if (segments[index].endAt != null) continue;
           const nextStart = segments[index + 1]?.startAt;
           const closeAt = status === 'running' && index === segments.length - 1 ? null : (Number.isFinite(nextStart) ? Math.max(segments[index].startAt, nextStart) : segments[index].startAt);
           if (closeAt !== null) segments[index].endAt = closeAt;
         }
       }
-      if (!strict && status === 'running' && !segments.some(part => part.endAt == null)) {
+      if (!strict && status === 'running' && openSegmentCount === 0) {
         const lastEnd = segments.length ? segments[segments.length - 1].endAt : null;
         segments.push({ startAt:Math.max(createdAt, Number.isFinite(lastEnd) ? lastEnd : createdAt), endAt:null });
       }
@@ -1621,7 +1708,222 @@
     if (parsed.formatVersion != null && (!Number.isInteger(parsed.formatVersion) || parsed.formatVersion < 1 || parsed.formatVersion > DATA_VERSION)) {
       throw new Error('このバックアップ形式には対応していません。DAYLOGを最新版にしてください。');
     }
+    // A current, canonical v6 backup has already passed the same structural
+    // invariants used by startup. Reuse it directly rather than allocating a
+    // second full copy of every session during large imports.
+    if (isCanonicalV6Snapshot(parsed.data)) return parsed.data;
     return normalizeData(parsed.data, { strict:true });
+  }
+  function mergeNameKey(value) {
+    return String(value || '').normalize('NFKC').trim().replace(/\s+/g, '').toLocaleLowerCase('ja-JP');
+  }
+  function mergeSessionFingerprint(session) {
+    return JSON.stringify([
+      Number(session.createdAt) || 0,
+      Number(session.endedAt) || 0,
+      mergeNameKey(session.labelName),
+      mergeNameKey(session.subLabelName),
+      (Array.isArray(session.segments) ? session.segments : []).map(part => [Number(part.startAt) || 0, part.endAt == null ? null : Number(part.endAt) || 0])
+    ]);
+  }
+  async function buildSessionMergePlan(parsedBackup, progress = null) {
+    if (progress) progress(5, 'バックアップの内容を検証しています');
+    const expectedSessions = parsedBackup?.data?.sessions?.length || 0;
+    const shouldShowValidation = expectedSessions > 1000 || data.sessions.length > 1000;
+    await new Promise(resolve => window.setTimeout(resolve, shouldShowValidation ? 190 : 0));
+    const incoming = parseBackupPayload(parsedBackup);
+    const rawSessions = parsedBackup.data.sessions;
+    const localIds = new Set();
+    const localFingerprints = new Set();
+    const localById = new Map();
+    for (let localIndex=0; localIndex<data.sessions.length; localIndex++) {
+      const localSession=data.sessions[localIndex];
+      localIds.add(localSession.id);
+      localFingerprints.add(mergeSessionFingerprint(localSession));
+      localById.set(localSession.id,localSession);
+      if (progress && (localIndex % 500 === 499 || localIndex === data.sessions.length - 1)) {
+        progress(5 + ((localIndex + 1) / Math.max(1,data.sessions.length)) * 3, `${(localIndex + 1).toLocaleString('ja-JP')} / ${data.sessions.length.toLocaleString('ja-JP')} 件の既存記録を確認中`);
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+    const eligible = [];
+    let duplicateCount = 0;
+    let activeSkipped = 0;
+    let idConflictCount = 0;
+    for (let index = 0; index < incoming.sessions.length; index++) {
+      if (progress && (index % 350 === 0 || index === incoming.sessions.length - 1)) {
+        progress(8 + (index / Math.max(1,incoming.sessions.length)) * 42, `${index.toLocaleString('ja-JP')} / ${incoming.sessions.length.toLocaleString('ja-JP')} 件の重複を確認中`);
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+      const session = incoming.sessions[index];
+      if (session.status !== 'done') { activeSkipped++; continue; }
+      const rawId = typeof rawSessions[index]?.id === 'string' ? rawSessions[index].id.trim().slice(0,128) : '';
+      if (rawId && localIds.has(session.id)) {
+        duplicateCount++;
+        const existing = localById.get(session.id);
+        if (existing && mergeSessionFingerprint(existing) !== mergeSessionFingerprint(session)) idConflictCount++;
+        continue;
+      }
+      const fingerprint = mergeSessionFingerprint(session);
+      if (!rawId && localFingerprints.has(fingerprint)) { duplicateCount++; continue; }
+      eligible.push({ session:clone(session), sourceIndex:index, sourceId:rawId || session.id });
+      localIds.add(session.id);
+      localFingerprints.add(fingerprint);
+    }
+    if (progress) progress(50, `照合完了：${eligible.length.toLocaleString('ja-JP')} 件を追加候補として確認しました`);
+    if (!eligible.length) return { candidate:null, added:0, duplicateCount, activeSkipped, idConflictCount, labelsAdded:0, subLabelsAdded:0 };
+    if (data.sessions.length + eligible.length > MAX_SESSIONS) throw new Error(`記録の上限${MAX_SESSIONS.toLocaleString('ja-JP')}件を超えるため合成できません。`);
+
+    const labels = clone(data.labels);
+    const sourceLabelById = new Map(incoming.labels.map(label => [label.id, label]));
+    const sourceLabelMap = new Map();
+    const sourceSubLabelMap = new Map();
+    const fallbackSourceLabels = new Map();
+    let labelsAdded = 0;
+    let subLabelsAdded = 0;
+    const resolveSourceLabel = session => {
+      const found = sourceLabelById.get(session.labelId) || incoming.labels.find(label => mergeNameKey(label.name) === mergeNameKey(session.labelName));
+      if (found) return found;
+      const key = mergeNameKey(session.labelName) || 'その他';
+      if (!fallbackSourceLabels.has(key)) fallbackSourceLabels.set(key, {
+        id:session.labelId || makeId(), name:session.labelName || 'その他', color:session.labelColor, subLabels:[], autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}
+      });
+      return fallbackSourceLabels.get(key);
+    };
+    const resolveTargetLabel = sourceLabel => {
+      if (sourceLabelMap.has(sourceLabel.id)) return labels.find(label => label.id === sourceLabelMap.get(sourceLabel.id));
+      let target = labels.find(label => label.id === sourceLabel.id);
+      if (!target) {
+        const sameName = labels.filter(label => mergeNameKey(label.name) === mergeNameKey(sourceLabel.name));
+        if (sameName.length === 1) target = sameName[0];
+        else if (sameName.length > 1) throw new Error(`「${sourceLabel.name}」と同じ名前のラベルが複数あるため、自動で対応付けできません。先にラベル名を整理してください。`);
+      }
+      if (!target) {
+        if (labels.length >= MAX_LABELS) throw new Error(`新しいラベル「${sourceLabel.name}」を追加できません。ラベル上限${MAX_LABELS}個に達しています。先に不要なラベルを整理してください。`);
+        target = {
+          id:sourceLabel.id || makeId(),
+          name:String(sourceLabel.name || 'その他').trim().slice(0,24) || 'その他',
+          color:safeColor(sourceLabel.color),
+          subLabels:[],
+          autoStopDefault:normalizeAutoStop(sourceLabel.autoStopDefault)
+        };
+        if (labels.some(label => label.id === target.id)) target.id = makeId();
+        labels.push(target);
+        labelsAdded++;
+      }
+      sourceLabelMap.set(sourceLabel.id, target.id);
+      return target;
+    };
+    const resolveTargetSubLabel = (sourceLabel, targetLabel, sourceSub) => {
+      const mapKey = JSON.stringify([sourceLabel.id, sourceSub.id]);
+      if (sourceSubLabelMap.has(mapKey)) return targetLabel.subLabels.find(item => item.id === sourceSubLabelMap.get(mapKey));
+      let target = targetLabel.subLabels.find(item => item.id === sourceSub.id);
+      if (!target) {
+        const sameName = targetLabel.subLabels.filter(item => mergeNameKey(item.name) === mergeNameKey(sourceSub.name));
+        if (sameName.length === 1) target = sameName[0];
+        else if (sameName.length > 1) throw new Error(`「${targetLabel.name}」内に同名のサブラベル「${sourceSub.name}」が複数あり、自動対応できません。`);
+      }
+      if (!target) {
+        if (targetLabel.subLabels.length >= MAX_SUBLABELS) throw new Error(`ラベル「${targetLabel.name}」のサブラベル上限${MAX_SUBLABELS}個に達しています。先に整理してください。`);
+        target = { id:sourceSub.id || makeId(), name:String(sourceSub.name || 'サブラベル').trim().slice(0,24) || 'サブラベル' };
+        if (targetLabel.subLabels.some(item => item.id === target.id)) target.id = makeId();
+        targetLabel.subLabels.push(target);
+        subLabelsAdded++;
+      }
+      sourceSubLabelMap.set(mapKey, target.id);
+      return target;
+    };
+
+    const mergedSessions = [];
+    for (let eligibleIndex=0; eligibleIndex<eligible.length; eligibleIndex++) {
+      const {session} = eligible[eligibleIndex];
+      const sourceLabel = resolveSourceLabel(session);
+      const targetLabel = resolveTargetLabel(sourceLabel);
+      let targetSub = null;
+      if (session.subLabelId || session.subLabelName) {
+        const sourceSub = sourceLabel.subLabels.find(item => item.id === session.subLabelId) || sourceLabel.subLabels.find(item => mergeNameKey(item.name) === mergeNameKey(session.subLabelName)) || {
+          id:session.subLabelId || makeId(), name:session.subLabelName || ''
+        };
+        if (sourceSub.name) targetSub = resolveTargetSubLabel(sourceLabel, targetLabel, sourceSub);
+      }
+      mergedSessions.push({
+        ...session,
+        labelId:targetLabel.id,
+        labelName:targetLabel.name,
+        labelColor:targetLabel.color,
+        subLabelId:targetSub?.id || '',
+        subLabelName:targetSub?.name || ''
+      });
+      if (progress && (eligibleIndex % 350 === 349 || eligibleIndex === eligible.length - 1)) {
+        progress(52 + ((eligibleIndex + 1) / Math.max(1,eligible.length)) * 27, `${(eligibleIndex + 1).toLocaleString('ja-JP')} / ${eligible.length.toLocaleString('ja-JP')} 件のラベルを対応付け中`);
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+
+    // Special recovery for a forgotten timer on this device:
+    // if a newly imported, completed session began while the local timer's
+    // current running segment was open, close the local session at the
+    // earliest imported start. Keep only local segments before that instant.
+    // Paused timers, sessions that began before the local timer, duplicate
+    // imports, and future timestamps never trigger this rule.
+    const localSessions = [];
+    for (let index=0; index<data.sessions.length; index++) {
+      localSessions.push(clone(data.sessions[index]));
+      if (progress && (index % 500 === 499 || index === data.sessions.length - 1)) {
+        progress(80 + ((index + 1) / Math.max(1,data.sessions.length)) * 12, `${(index + 1).toLocaleString('ja-JP')} / ${data.sessions.length.toLocaleString('ja-JP')} 件の既存記録を保持中`);
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+    let autoClosedActive = null;
+    const activeLocal = data.sessions.find(session => session.status === 'running') || null;
+    if (activeLocal) {
+      const openSegment = activeLocal.segments[activeLocal.segments.length - 1];
+      const now = Date.now();
+      const cutoff = eligible
+        .filter(item => Number(item.session.endedAt) > Number(item.session.createdAt) && Number(item.session.endedAt) <= now && item.session.segments.some(part => part.endAt != null && part.endAt > part.startAt))
+        .map(item => Number(item.session.createdAt))
+        .filter(stamp => Number.isFinite(stamp) && openSegment && stamp > openSegment.startAt && stamp <= now)
+        .sort((a,b) => a-b)[0];
+      if (cutoff != null) {
+        const localCopy = localSessions.find(session => session.id === activeLocal.id);
+        const clippedSegments = [];
+        for (const part of localCopy.segments) {
+          if (part.startAt >= cutoff) break;
+          const endAt = part.endAt == null ? cutoff : Math.min(part.endAt, cutoff);
+          if (endAt > part.startAt) clippedSegments.push({ startAt:part.startAt, endAt });
+        }
+        if (clippedSegments.length) {
+          localCopy.segments = clippedSegments;
+          localCopy.status = 'done';
+          localCopy.endedAt = cutoff;
+          localCopy.autoStopAt = null;
+          localCopy.autoStopRemainingMs = null;
+          localCopy.autoStopReview = false;
+          localCopy.autoStopReviewSegmentIndex = -1;
+          const elapsedBeforeCutoff = clippedSegments.reduce((sum, part) => sum + (part.endAt - part.startAt), 0);
+          const elapsedBeforeMerge = activeLocal.segments.reduce((sum, part) => sum + Math.max(0, (part.endAt ?? now) - part.startAt), 0);
+          autoClosedActive = {
+            id:activeLocal.id,
+            labelName:activeLocal.labelName,
+            subLabelName:activeLocal.subLabelName,
+            endedAt:cutoff,
+            elapsedBeforeCutoff,
+            discardedAfterCutoff:Math.max(0, elapsedBeforeMerge - elapsedBeforeCutoff)
+          };
+        }
+      }
+    }
+
+    if (progress) progress(95, '合成後のデータを最終確認しています');
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const candidate = normalizeData({
+      version:DATA_VERSION,
+      labels,
+      sessions:[...localSessions, ...mergedSessions],
+      settings:clone(data.settings),
+      routines:clone(data.routines)
+    }, { strict:true });
+    return { candidate, added:mergedSessions.length, duplicateCount, activeSkipped, idConflictCount, labelsAdded, subLabelsAdded, autoClosedActive };
   }
   const initialData = () => normalizeData({
     labels: clone(DEFAULT_LABELS).map(label => ({ ...label, subLabels:[], autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'} })),
@@ -1634,6 +1936,58 @@
         localStorage.setItem(RECOVERY_STORAGE_KEY, JSON.stringify({ savedAt:new Date().toISOString(), raw }));
       }
     } catch { /* Recovery copy is best-effort; never block app startup. */ }
+  }
+  // Snapshots written by DAYLOG v6 are already normalized. Validate their
+  // canonical shape without cloning every session; fall back to full repair
+  // normalization for old or externally modified data.
+  function isCanonicalV6Snapshot(value) {
+    if (!isPlainObject(value) || value.version!==DATA_VERSION || !Array.isArray(value.labels) || !value.labels.length || value.labels.length>MAX_LABELS || !Array.isArray(value.sessions) || value.sessions.length>MAX_SESSIONS || !isPlainObject(value.settings) || !isPlainObject(value.routines)) return false;
+    const labelIds=new Set();
+    for(const label of value.labels) {
+      if(!isPlainObject(label)||typeof label.id!=='string'||!label.id||labelIds.has(label.id)||typeof label.name!=='string'||!label.name||label.name.length>24||safeColor(label.color)!==label.color||!Array.isArray(label.subLabels)||label.subLabels.length>MAX_SUBLABELS||!isPlainObject(label.autoStopDefault)) return false;
+      labelIds.add(label.id);
+      const subIds=new Set();
+      for(const sub of label.subLabels) if(!isPlainObject(sub)||typeof sub.id!=='string'||!sub.id||subIds.has(sub.id)||typeof sub.name!=='string'||!sub.name||sub.name.length>24) return false; else subIds.add(sub.id);
+      const auto=label.autoStopDefault;
+      if(!['off','duration','time'].includes(auto.mode)||!Number.isInteger(auto.durationMinutes)||auto.durationMinutes<1||auto.durationMinutes>10080||!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(auto.time||''))) return false;
+    }
+    const settings=value.settings;
+    if(!['light','dark','system'].includes(settings.theme)||typeof settings.selectedLabelId!=='string'||typeof settings.selectedSubLabelId!=='string'||!['default','custom'].includes(settings.autoStopScope)||!isPlainObject(settings.autoStopOverride)||typeof settings.ambientEnabled!=='boolean'||!['subtle','balanced','rich'].includes(settings.ambientStrength)||typeof settings.ambientFollowLabel!=='boolean') return false;
+    if(!['off','duration','time'].includes(settings.autoStopOverride.mode)||!Number.isInteger(settings.autoStopOverride.durationMinutes)||settings.autoStopOverride.durationMinutes<1||settings.autoStopOverride.durationMinutes>10080||!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(settings.autoStopOverride.time||''))) return false;
+    if(!labelIds.has(settings.selectedLabelId)) return false;
+    const selectedLabel=value.labels.find(label=>label.id===settings.selectedLabelId);
+    if(settings.selectedSubLabelId && !selectedLabel?.subLabels.some(sub=>sub.id===settings.selectedSubLabelId)) return false;
+    if(!Array.isArray(value.routines.items)||value.routines.items.length>MAX_ROUTINE_ITEMS||!isPlainObject(value.routines.checks)) return false;
+    const routineIds=new Set();
+    for(const item of value.routines.items) if(!isPlainObject(item)||typeof item.id!=='string'||!item.id||routineIds.has(item.id)||typeof item.text!=='string'||!item.text||item.text.length>80) return false; else routineIds.add(item.id);
+    const checkDays=Object.entries(value.routines.checks);
+    if(checkDays.length>MAX_ROUTINE_DAYS) return false;
+    for(const [day,checks] of checkDays) {
+      const match=/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.exec(day);
+      if(!match||!isPlainObject(checks)) return false;
+      const y=Number(match[1]),m=Number(match[2]),d=Number(match[3]),date=new Date(y,m-1,d);
+      if(date.getFullYear()!==y||date.getMonth()!==m-1||date.getDate()!==d) return false;
+      for(const [id,checked] of Object.entries(checks)) if(checked!==true||!routineIds.has(id)) return false;
+    }
+    const sessionIds=new Set();let activeCount=0;
+    for(const session of value.sessions) {
+      if(!isPlainObject(session)||typeof session.id!=='string'||!session.id||sessionIds.has(session.id)||!Number.isFinite(session.createdAt)||session.createdAt<=0||!['running','paused','done'].includes(session.status)||!Array.isArray(session.segments)||session.segments.length>MAX_SEGMENTS_PER_SESSION||!isPlainObject(session.autoStop)||!['off','duration','time'].includes(session.autoStop.mode)||!Number.isFinite(session.autoStop.durationMinutes)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(session.autoStop.time||''))||!(session.autoStopAt===null||Number.isFinite(session.autoStopAt)&&session.autoStopAt>0)||!(session.autoStopRemainingMs===null||Number.isFinite(session.autoStopRemainingMs)&&session.autoStopRemainingMs>=0)) return false;
+      sessionIds.add(session.id);
+      if(session.status!=='done') activeCount++;
+      if(typeof session.labelId!=='string'||typeof session.labelName!=='string'||typeof session.subLabelId!=='string'||typeof session.subLabelName!=='string'||safeColor(session.labelColor)!==session.labelColor) return false;
+      if(session.status==='done') { if(!Number.isFinite(session.endedAt)||session.endedAt<session.createdAt) return false; }
+      else if(session.endedAt!==null) return false;
+      let openCount=0,lastOpen=-1;
+      for(let partIndex=0;partIndex<session.segments.length;partIndex++) {
+        const part=session.segments[partIndex];
+        if(!isPlainObject(part)||!Number.isFinite(part.startAt)||part.startAt<=0||!(part.endAt===null||Number.isFinite(part.endAt)&&part.endAt>=part.startAt)) return false;
+        if(part.endAt===null){openCount++;lastOpen=partIndex;}
+      }
+      if(session.status==='running'&&(openCount!==1||lastOpen!==session.segments.length-1)) return false;
+      if(session.status!=='running'&&openCount!==0) return false;
+      if(typeof session.autoStopReview!=='boolean'||!Number.isInteger(session.autoStopReviewSegmentIndex)||session.autoStopReviewSegmentIndex < -1||session.autoStopReviewSegmentIndex>=session.segments.length) return false;
+    }
+    return activeCount<=1;
   }
   function loadData() {
     let raw = null;
@@ -1653,6 +2007,10 @@
         return initialData();
       }
       try {
+        if(isCanonicalV6Snapshot(parsed)) {
+          startupMigrationPending = false;
+          return parsed;
+        }
         const normalized = normalizeData(parsed);
         const routineDataNeedsNormalization = JSON.stringify(parsed.routines ?? null) !== JSON.stringify(normalized.routines);
         startupMigrationPending = parsed.version !== DATA_VERSION || !isPlainObject(parsed.settings) || !isPlainObject(parsed.routines) || routineDataNeedsNormalization ||
@@ -1670,6 +2028,30 @@
     }
   }
   let data = loadData();
+  // Hot-path caches: timer animation can ask for the active session many times
+  // per second, while the calendar repeatedly asks for the same 42 day summaries.
+  let activeSessionCache = null;
+  let activeSessionCacheResolved = false;
+  const DAY_STATS_CACHE_LIMIT = 180;
+  const dayStatsCache = new Map();
+  let dataRevision = 0;
+  let analysisLabelCatalogCache = null;
+  let analysisLabelCatalogRevision = -1;
+  function resetActiveSessionCache(knownSession = undefined) {
+    if (knownSession !== undefined) {
+      activeSessionCache = knownSession;
+      activeSessionCacheResolved = true;
+    } else {
+      activeSessionCache = null;
+      activeSessionCacheResolved = false;
+    }
+  }
+  function invalidateDataCaches() {
+    dataRevision++;
+    dayStatsCache.clear();
+    analysisLabelCatalogCache = null;
+    analysisLabelCatalogRevision = -1;
+  }
   let selectedLabelId = data.settings.selectedLabelId || data.labels[0]?.id || '';
   let selectedSubLabelId = data.settings.selectedSubLabelId || '';
   let autoStopScope = data.settings.autoStopScope || 'default';
@@ -1679,6 +2061,8 @@
   let visibleMonth = new Date();
   visibleMonth.setDate(1);
   let toastTimer = null;
+  let confirmDialogResolver = null;
+  let confirmDialogPreviousFocus = null;
   let timerFrameId = 0;
   let lastWholeReadout = null;
   let lastFractionTens = null;
@@ -1708,10 +2092,19 @@
   }
   function persistDataSnapshot(candidate) {
     const serialized = JSON.stringify(candidate);
-    localStorage.setItem(STORAGE_KEY, serialized);
+    try {
+      localStorage.setItem(STORAGE_KEY, serialized);
+    } catch (error) {
+      const quotaExceeded = error?.name === 'QuotaExceededError' || error?.code === 22 || error?.code === 1014;
+      if (quotaExceeded) {
+        throw new Error('この端末のブラウザー保存容量を超えました。現在の保存データは置き換えていません。先にJSONバックアップを保管し、不要な古い記録を整理してから再度お試しください。');
+      }
+      throw error;
+    }
     return serialized.length;
   }
   const save = () => {
+    invalidateDataCaches();
     try {
       data.version = DATA_VERSION;
       syncRuntimeSettings();
@@ -1722,11 +2115,29 @@
       startupMigrationPending = false;
       return true;
     } catch (error) {
-      showToast('保存できませんでした。端末の空き容量またはブラウザの保存設定を確認してください。');
+      showToast(error?.message || '保存できませんでした。端末の空き容量またはブラウザの保存設定を確認してください。');
       return false;
     }
   };
-  const getActive = () => data.sessions.find(s => s.status === 'running' || s.status === 'paused') || null;
+  const getActive = () => {
+    if (activeSessionCacheResolved) {
+      if (activeSessionCache && (activeSessionCache.status === 'running' || activeSessionCache.status === 'paused')) return activeSessionCache;
+      return null;
+    }
+    // Active sessions are normally appended last; scan backwards once, then
+    // keep a direct reference for requestAnimationFrame and auto-stop checks.
+    for (let i = data.sessions.length - 1; i >= 0; i--) {
+      const session = data.sessions[i];
+      if (session.status === 'running' || session.status === 'paused') {
+        activeSessionCache = session;
+        activeSessionCacheResolved = true;
+        return session;
+      }
+    }
+    activeSessionCache = null;
+    activeSessionCacheResolved = true;
+    return null;
+  };
   const findLabel = (id) => data.labels.find(l => l.id === id);
   const findSubLabel = (labelId, subLabelId) => findLabel(labelId)?.subLabels?.find(item => item.id === subLabelId);
   const labelPath = (labelName, subLabelName) => subLabelName ? `${labelName} › ${subLabelName}` : labelName;
@@ -1768,6 +2179,7 @@
       }
     }
     active.status = 'done';
+    resetActiveSessionCache(null);
     active.endedAt = stopAt;
     active.autoStopAt = null;
     active.autoStopRemainingMs = null;
@@ -1808,6 +2220,104 @@
   function showToast(message) {
     const node=$('toast'); node.textContent=message; node.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>node.classList.remove('show'),2300);
   }
+  let loadingSequence = 0;
+  let loadingRevealTimer = 0;
+  function startLoading(title, detail = 'しばらくお待ちください。', percent = null) {
+    const token = ++loadingSequence;
+    clearTimeout(loadingRevealTimer);
+    $('loadingTitle').textContent = title;
+    updateLoading(token, detail, percent);
+    $('loadingOverlay').hidden = true;
+    $('loadingOverlay').setAttribute('aria-hidden', 'true');
+    // Avoid flashing a panel for operations that finish almost immediately.
+    loadingRevealTimer = window.setTimeout(() => {
+      if (token !== loadingSequence) return;
+      $('loadingOverlay').hidden = false;
+      $('loadingOverlay').setAttribute('aria-hidden', 'false');
+    }, 170);
+    return token;
+  }
+  function updateLoading(token, detail, percent = null, title = '') {
+    if (token !== loadingSequence) return;
+    if (title) $('loadingTitle').textContent = title;
+    if (detail != null) $('loadingDetail').textContent = detail;
+    const track = $('loadingProgressTrack');
+    const fill = $('loadingProgressFill');
+    const label = $('loadingPercent');
+    if (Number.isFinite(percent)) {
+      const safe = Math.max(0, Math.min(100, percent));
+      track.classList.remove('is-indeterminate');
+      track.setAttribute('aria-valuenow', String(Math.round(safe)));
+      fill.style.width = `${safe}%`;
+      label.textContent = `${Math.round(safe)}%`;
+    } else {
+      track.classList.add('is-indeterminate');
+      track.removeAttribute('aria-valuenow');
+      fill.style.width = '34%';
+      label.textContent = '処理中';
+    }
+  }
+  function finishLoading(token) {
+    if (token !== loadingSequence) return;
+    clearTimeout(loadingRevealTimer);
+    loadingRevealTimer = 0;
+    $('loadingOverlay').hidden = true;
+    $('loadingOverlay').setAttribute('aria-hidden', 'true');
+  }
+  function yieldToPaint() {
+    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  }
+  function closeConfirmDialog(confirmed = false) {
+    const overlay = $('appConfirmDialog');
+    if (!overlay || !confirmDialogResolver) return;
+    overlay.hidden = true;
+    overlay.setAttribute('aria-hidden', 'true');
+    const resolve = confirmDialogResolver;
+    const previousFocus = confirmDialogPreviousFocus;
+    confirmDialogResolver = null;
+    confirmDialogPreviousFocus = null;
+    resolve(confirmed);
+    if (previousFocus && typeof previousFocus.focus === 'function') {
+      requestAnimationFrame(() => {
+        if (previousFocus.isConnected) previousFocus.focus({ preventScroll: true });
+      });
+    }
+  }
+  function showConfirmDialog(message, title = '削除しますか？') {
+    if (confirmDialogResolver) return Promise.resolve(false);
+    const overlay = $('appConfirmDialog');
+    $('confirmDialogTitle').textContent = title;
+    $('confirmDialogMessage').textContent = message;
+    confirmDialogPreviousFocus = document.activeElement;
+    overlay.hidden = false;
+    overlay.setAttribute('aria-hidden', 'false');
+    return new Promise(resolve => {
+      confirmDialogResolver = resolve;
+      requestAnimationFrame(() => $('confirmDialogCancel')?.focus({ preventScroll: true }));
+    });
+  }
+  $('confirmDialogCancel').addEventListener('click', () => closeConfirmDialog(false));
+  $('confirmDialogAccept').addEventListener('click', () => closeConfirmDialog(true));
+  $('appConfirmDialog').addEventListener('click', event => {
+    if (event.target === $('appConfirmDialog')) closeConfirmDialog(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (!confirmDialogResolver) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeConfirmDialog(false);
+      return;
+    }
+    if (event.key === 'Tab') {
+      const cancel = $('confirmDialogCancel');
+      const accept = $('confirmDialogAccept');
+      if (event.shiftKey && document.activeElement === cancel) {
+        event.preventDefault(); accept.focus();
+      } else if (!event.shiftKey && document.activeElement === accept) {
+        event.preventDefault(); cancel.focus();
+      }
+    }
+  });
   function getLocalDayBounds(key) {
     const startDate = parseDay(key);
     const nextDate = new Date(startDate);
@@ -1855,8 +2365,9 @@
     }
     return windows;
   }
-  function getDayStats(key) {
-    const slices=getSegmentsForDay(key), byLabel=new Map(), byActivity=new Map();
+  function buildDayStatsFromSlices(slices) {
+    slices.sort((a,b)=>a.startAt-b.startAt);
+    const byLabel=new Map(), byActivity=new Map();
     for (const s of slices) {
       const duration=s.endAt-s.startAt;
       byLabel.set(s.labelId,(byLabel.get(s.labelId)||0)+duration);
@@ -1865,6 +2376,61 @@
       activity.ms+=duration; byActivity.set(activityId,activity);
     }
     return { slices, total:[...byLabel.values()].reduce((a,b)=>a+b,0), byLabel, byActivity };
+  }
+  function rememberDayStats(key, stats, now = Date.now()) {
+    const liveMinute = key === todayKey(new Date(now)) && getActive()?.status === 'running' ? Math.floor(now / 60000) : null;
+    dayStatsCache.delete(key);
+    dayStatsCache.set(key, { stats, liveMinute });
+    while (dayStatsCache.size > DAY_STATS_CACHE_LIMIT) dayStatsCache.delete(dayStatsCache.keys().next().value);
+    return stats;
+  }
+  function getDayStats(key) {
+    const now=Date.now();
+    const cached=dayStatsCache.get(key);
+    const isLiveToday=key===todayKey(new Date(now)) && getActive()?.status==='running';
+    const minute=Math.floor(now/60000);
+    if(cached && (!isLiveToday || cached.liveMinute===minute)) {
+      dayStatsCache.delete(key);dayStatsCache.set(key,cached);
+      return cached.stats;
+    }
+    if(cached) dayStatsCache.delete(key);
+    return rememberDayStats(key,buildDayStatsFromSlices(getSegmentsForDay(key)),now);
+  }
+  function warmDayStatsCache(keys) {
+    if(!Array.isArray(keys)||!keys.length) return;
+    const now=Date.now(), minute=Math.floor(now/60000), liveKey=todayKey(new Date(now));
+    const unique=[...new Set(keys)];
+    const missing=unique.filter(key=>{
+      const cached=dayStatsCache.get(key);
+      const live=key===liveKey && getActive()?.status==='running';
+      return !cached || (live && cached.liveMinute!==minute);
+    });
+    if(!missing.length) return;
+    const bucketMap=new Map(missing.map(key=>[key,[]]));
+    const bounds=missing.map(key=>({key,...getLocalDayBounds(key)})).sort((a,b)=>a.start-b.start);
+    const rangeStart=bounds[0].start, rangeEnd=bounds[bounds.length-1].end;
+    // One pass through all sessions fills every visible calendar day, instead
+    // of rescanning the full history 42 times during the initial render.
+    for(const session of data.sessions) {
+      for(const part of session.segments||[]) {
+        const rawEnd=part.endAt ?? (session.status==='running'?now:part.startAt);
+        let cursor=Math.max(part.startAt,rangeStart);
+        const finish=Math.min(rawEnd,rangeEnd);
+        if(!(finish>cursor)) continue;
+        while(cursor<finish) {
+          const date=new Date(cursor);
+          const dayStart=new Date(date.getFullYear(),date.getMonth(),date.getDate()).getTime();
+          const nextDay=new Date(date.getFullYear(),date.getMonth(),date.getDate()+1).getTime();
+          const key=todayKey(date);
+          const sliceStart=Math.max(cursor,dayStart), sliceEnd=Math.min(finish,nextDay);
+          const bucket=bucketMap.get(key);
+          if(bucket && sliceEnd>sliceStart) bucket.push({sessionId:session.id,labelId:session.labelId,labelName:session.labelName,labelColor:session.labelColor,subLabelId:session.subLabelId||'',subLabelName:session.subLabelName||'',startAt:sliceStart,endAt:sliceEnd,status:session.status});
+          if(nextDay<=cursor) break;
+          cursor=sliceEnd;
+        }
+      }
+    }
+    for(const [key,slices] of bucketMap) rememberDayStats(key,buildDayStatsFromSlices(slices),now);
   }
   function formatTopDate() {
     const now=new Date();
@@ -2077,7 +2643,9 @@
       autoStopAt = nextLocalTimeStamp(now, autoStop.time);
     }
     const subLabel=findSubLabel(label.id,selectedSubLabelId);
-    data.sessions.push({id:makeId(),labelId:label.id,labelName:label.name,labelColor:label.color,subLabelId:subLabel?.id||'',subLabelName:subLabel?.name||'',createdAt:now,endedAt:null,status:'running',segments:[{startAt:now,endAt:null}],autoStop,autoStopAt,autoStopRemainingMs,autoStopReview:false,autoStopReviewSegmentIndex:-1});
+    const newSession = {id:makeId(),labelId:label.id,labelName:label.name,labelColor:label.color,subLabelId:subLabel?.id||'',subLabelName:subLabel?.name||'',createdAt:now,endedAt:null,status:'running',segments:[{startAt:now,endAt:null}],autoStop,autoStopAt,autoStopRemainingMs,autoStopReview:false,autoStopReviewSegmentIndex:-1};
+    data.sessions.push(newSession);
+    resetActiveSessionCache(newSession);
     save(); renderAll(); showToast(`${labelPath(label.name,subLabel?.name)}の計測を開始しました`);
   }
   function pauseSession() {
@@ -2101,7 +2669,7 @@
       const remaining = Math.max(0, Number(active.autoStopRemainingMs ?? active.autoStop.durationMinutes * 60000 - getElapsedMs(active, now)));
       if (remaining <= 0) {
         active.segments[active.segments.length-1].endAt=now;
-        active.status='done'; active.endedAt=now; active.autoStopReview=true; active.autoStopReviewSegmentIndex=active.segments.length-1; active.autoStopAt=null; active.autoStopRemainingMs=null;
+        active.status='done'; resetActiveSessionCache(null); active.endedAt=now; active.autoStopReview=true; active.autoStopReviewSegmentIndex=active.segments.length-1; active.autoStopAt=null; active.autoStopRemainingMs=null;
         save(); renderAll(); showToast('設定した時間に自動終了しました'); return;
       }
       active.autoStopRemainingMs=remaining;
@@ -2115,7 +2683,7 @@
     const now=Date.now();
     const current=active.segments[active.segments.length-1];
     if(current && current.endAt==null) current.endAt=now;
-    active.status='done'; active.endedAt=now; active.autoStopAt=null; active.autoStopRemainingMs=null;
+    active.status='done'; resetActiveSessionCache(null); active.endedAt=now; active.autoStopAt=null; active.autoStopRemainingMs=null;
     if(getElapsedMs(active) < 1000) data.sessions=data.sessions.filter(s=>s.id!==active.id);
     save(); renderAll(); showToast('記録を保存しました');
   }
@@ -2346,9 +2914,10 @@
         save(); renderAll();
       });
       remove.disabled=active?.labelId===label.id; remove.style.opacity=remove.disabled?'.25':'1';
-      remove.addEventListener('click',()=>{
+      remove.addEventListener('click', async ()=>{
         if(data.labels.length<=1){showToast('ラベルは最低1つ必要です');return;}
-        if(!confirm(`「${label.name}」をラベル一覧から削除しますか？\n過去の記録は残ります。`))return;
+        const confirmed = await showConfirmDialog(`「${label.name}」をラベル一覧から削除します。\n過去の記録は残ります。`, 'ラベルを削除しますか？');
+        if(!confirmed)return;
         data.labels=data.labels.filter(item=>item.id!==label.id);
         if(selectedLabelId===label.id){selectedLabelId=data.labels[0].id;selectedSubLabelId='';}
         save(); renderAll();
@@ -2380,8 +2949,9 @@
             data.sessions.filter(session=>session.labelId===label.id && session.subLabelId===sub.id).forEach(session=>session.subLabelName=value);
             save(); renderSelectFallback(); renderTimer();
           });
-          del.addEventListener('click',()=>{
-            if(!confirm(`「${sub.name}」をサブラベルから削除しますか？\n過去の記録名はそのまま残ります。`))return;
+          del.addEventListener('click', async ()=>{
+            const confirmed = await showConfirmDialog(`「${sub.name}」をサブラベルから削除します。\n過去の記録名はそのまま残ります。`, 'サブラベルを削除しますか？');
+            if(!confirmed)return;
             label.subLabels=label.subLabels.filter(item=>item.id!==sub.id);
             if(selectedLabelId===label.id && selectedSubLabelId===sub.id) selectedSubLabelId='';
             save(); refreshSubLabels(); renderSelectFallback();
@@ -2607,12 +3177,14 @@
     const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     $('nextMonth').disabled = visibleMonth >= currentMonth;
     const first=new Date(y,m,1), offset=(first.getDay()+6)%7, start=new Date(y,m,1-offset);
+    const calendarDates=Array.from({length:42},(_,i)=>{const date=new Date(start);date.setDate(start.getDate()+i);return date;});
+    warmDayStatsCache(calendarDates.map(date=>todayKey(date)));
     const weekdays=['月','火','水','木','金','土','日'];
     const grid=$('calendarGrid');grid.innerHTML='';
     weekdays.forEach(w=>{const el=document.createElement('div');el.className='weekday';el.textContent=w;grid.appendChild(el);});
     let recorded=0;
     for(let i=0;i<42;i++){
-      const date=new Date(start);date.setDate(start.getDate()+i);const key=todayKey(date),stats=getDayStats(key),inMonth=date.getMonth()===m;
+      const date=calendarDates[i],key=todayKey(date),stats=getDayStats(key),inMonth=date.getMonth()===m;
       if(inMonth&&stats.total>0)recorded++;
       const future = key > todayValue;
       const btn=document.createElement('button');btn.type='button';btn.disabled=future;btn.className='day-cell'+(!inMonth?' outside':'')+(key===selectedDay?' selected':'')+(key===todayValue?' today':'');btn.setAttribute('aria-label',`${fmtDateLong(key)}、${fmtDuration(stats.total)}${future?'、未来の日付':''}`);btn.setAttribute('aria-pressed',String(key===selectedDay));
@@ -2637,13 +3209,16 @@
   const analysisPrefs = (() => {
     try {
       const saved = JSON.parse(localStorage.getItem(ANALYSIS_PREF_KEY) || '{}');
+      const legacyUnrecordedMode = saved.mode === 'unrecorded';
+      const savedTokens = Array.isArray(saved.tokens) ? saved.tokens.filter(x => typeof x === 'string') : [];
+      const tokens = legacyUnrecordedMode && !savedTokens.includes('@unrecorded') ? [...savedTokens, '@unrecorded'] : savedTokens;
       return {
-        mode: ['all','selected','unrecorded','compare','multi'].includes(saved.mode) ? saved.mode : 'all',
+        mode: legacyUnrecordedMode ? 'selected' : (['all','selected','compare','multi'].includes(saved.mode) ? saved.mode : 'all'),
         chart: ['line','bar','ratio'].includes(saved.chart) ? saved.chart : 'line',
         period: ['week','month','quarter','all','custom'].includes(saved.period) ? saved.period : 'week',
         customStart: typeof saved.customStart === 'string' ? saved.customStart : '',
         customEnd: typeof saved.customEnd === 'string' ? saved.customEnd : '',
-        tokens: Array.isArray(saved.tokens) ? saved.tokens.filter(x => typeof x === 'string').slice(0,300) : [],
+        tokens: tokens.slice(0,300),
         overlayTokens: Array.isArray(saved.overlayTokens) ? saved.overlayTokens.filter(x => typeof x === 'string').slice(0,8) : []
       };
     } catch { return { mode:'all', chart:'line', period:'week', customStart:'', customEnd:'', tokens:[], overlayTokens:[] }; }
@@ -2685,6 +3260,7 @@
     return total;
   }
   function getAnalysisLabelCatalog() {
+    if(analysisLabelCatalogCache && analysisLabelCatalogRevision===dataRevision) return analysisLabelCatalogCache;
     const catalog=new Map();
     for(const label of data.labels) catalog.set(label.id,{id:label.id,name:label.name,color:safeColor(label.color),subLabels:new Map()});
     for(const session of data.sessions) {
@@ -2700,7 +3276,9 @@
       const item=catalog.get(label.id);
       for(const sub of label.subLabels||[]) item.subLabels.set(sub.id,{id:sub.id,name:sub.name});
     }
-    return [...catalog.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'));
+    analysisLabelCatalogCache=[...catalog.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'));
+    analysisLabelCatalogRevision=dataRevision;
+    return analysisLabelCatalogCache;
   }
   function renderAnalysisLabelChoices() {
     const host=$('analysisLabelChoices');
@@ -2709,7 +3287,7 @@
     const signature=JSON.stringify(catalog.map(label=>[label.id,label.name,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
     analysisLabelsSignature=signature;
     host.replaceChildren();
-    if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);return;}
+    if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);}
     for(const label of catalog) {
       const group=document.createElement('div');group.className='analysis-label-group';
       const parent=document.createElement('label');parent.className='analysis-check-row';
@@ -2729,6 +3307,12 @@
       }
       host.appendChild(group);
     }
+    const unrecordedGroup=document.createElement('div');unrecordedGroup.className='analysis-label-group';
+    const unrecordedRow=document.createElement('label');unrecordedRow.className='analysis-check-row';
+    const unrecordedInput=document.createElement('input');unrecordedInput.type='checkbox';unrecordedInput.dataset.analysisToken='@unrecorded';unrecordedInput.checked=analysisPrefs.tokens.includes('@unrecorded');
+    const unrecordedDot=document.createElement('i');unrecordedDot.className='trend-legend-dot';unrecordedDot.style.backgroundColor='#9d8979';
+    const unrecordedName=document.createElement('span');unrecordedName.textContent='未記録時間';
+    unrecordedRow.append(unrecordedInput,unrecordedDot,unrecordedName);unrecordedGroup.appendChild(unrecordedRow);host.appendChild(unrecordedGroup);
   }
   function renderAnalysisOverlayChoices() {
     const host=$('analysisOverlayChoices');
@@ -2736,10 +3320,7 @@
     const catalog=getAnalysisLabelCatalog();
     host.replaceChildren();
     const specials=document.createElement('div');specials.className='analysis-overlay-specials';
-    [
-      {token:'@tracked',name:'記録済み全体',note:'重複を除いた合計'},
-      {token:'@unrecorded',name:'未記録時間',note:'記録のない時間'}
-    ].forEach(item=>{
+    [{token:'@tracked',name:'記録済み全体',note:'重複を除いた合計'}].forEach(item=>{
       const row=document.createElement('label');row.className='analysis-check-row';
       const input=document.createElement('input');input.type='checkbox';input.dataset.overlayToken=item.token;input.checked=analysisPrefs.overlayTokens.includes(item.token);
       const name=document.createElement('span');name.textContent=item.name;
@@ -2747,7 +3328,7 @@
       row.append(input,name,note);specials.appendChild(row);
     });
     host.appendChild(specials);
-    if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);return;}
+    if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);}
     for(const label of catalog) {
       const group=document.createElement('div');group.className='analysis-label-group';
       const parent=document.createElement('label');parent.className='analysis-check-row';
@@ -2767,6 +3348,12 @@
       }
       host.appendChild(group);
     }
+    const unrecordedGroup=document.createElement('div');unrecordedGroup.className='analysis-label-group';
+    const unrecordedRow=document.createElement('label');unrecordedRow.className='analysis-check-row';
+    const unrecordedInput=document.createElement('input');unrecordedInput.type='checkbox';unrecordedInput.dataset.overlayToken='@unrecorded';unrecordedInput.checked=analysisPrefs.overlayTokens.includes('@unrecorded');
+    const unrecordedDot=document.createElement('i');unrecordedDot.className='trend-legend-dot';unrecordedDot.style.backgroundColor='#9d8979';
+    const unrecordedName=document.createElement('span');unrecordedName.textContent='未記録時間';
+    unrecordedRow.append(unrecordedInput,unrecordedDot,unrecordedName);unrecordedGroup.appendChild(unrecordedRow);host.appendChild(unrecordedGroup);
   }
   function readAnalysisOverlayTokensFromUi() {
     return [...$('analysisOverlayChoices').querySelectorAll('input[data-overlay-token]:checked')].map(input=>input.dataset.overlayToken);
@@ -2780,7 +3367,7 @@
     const subId=session.subLabelId || session.subLabelName || '';
     return !!subId && tokens.includes(`S:${labelId}::${subId}`);
   }
-  function collectAdvancedPeriod(dayKeys, mode, tokens, comparisonElapsedMs = null) {
+  async function collectAdvancedPeriod(dayKeys, mode, tokens, comparisonElapsedMs = null, progress = null) {
     const now=Date.now();
     const days=dayKeys.map((key,index)=>{
       const bounds=getLocalDayBounds(key);
@@ -2793,7 +3380,14 @@
     if(!days.length) return {days,total:0,trackedTotal:0,unrecordedTotal:0,availableTotal:0,sessions:new Set(),activeDays:0,byActivity:new Map(),hourly:Array(24).fill(0),hourlyTracked:Array(24).fill(0),hourlyUnrecorded:Array(24).fill(0),hourlyAvailable:Array(24).fill(0)};
     const rangeStart=getLocalDayBounds(days[0].key).start;
     const rangeEnd=days[days.length-1].dayEnd;
-    for(const session of data.sessions) {
+    const sessionCount = data.sessions.length;
+    for(let sessionIndex=0; sessionIndex<sessionCount; sessionIndex++) {
+      if (progress && (sessionIndex % 350 === 0 || sessionIndex === sessionCount - 1)) {
+        progress(sessionCount ? (sessionIndex / sessionCount) * 64 : 64, `${sessionIndex.toLocaleString('ja-JP')} / ${sessionCount.toLocaleString('ja-JP')} 件の記録を集計中`);
+        await new Promise(resolve => setTimeout(resolve, 0));
+        if (progress.isCurrent && !progress.isCurrent()) return null;
+      }
+      const session = data.sessions[sessionIndex];
       const selected=sessionMatchesAnalysis(session,tokens);
       let included=false;
       for(const part of session.segments||[]) {
@@ -2823,17 +3417,20 @@
       }
       // Session identity is counted per-day by unique id; the period-level set is assembled below.
       void included;
+      // Yielding and reporting occur at the top of the next batch so continue
+      // branches (e.g. out-of-range sessions) cannot skip progress updates.
     }
     const allSessions=new Set(), selectedSessions=new Set(), byActivity=new Map();
     const hourly=Array(24).fill(0), hourlyTracked=Array(24).fill(0), hourlyUnrecorded=Array(24).fill(0), hourlyAvailable=Array(24).fill(0);
     let periodTracked=0, periodUnrecorded=0, periodAvailable=0, total=0, activeDays=0;
-    for(const day of days) {
+    for(let dayIndex=0; dayIndex<days.length; dayIndex++) {
+      const day = days[dayIndex];
       const rawIntervals=day.intervals.map(x=>({start:x.start,end:x.end}));
       const merged=mergeTimeIntervals(rawIntervals);
       const tracked=intervalTotal(merged);
       const unrecorded=Math.max(0,day.dayMs-tracked);
       const selectedIntervals=mergeTimeIntervals(day.intervals.filter(x=>x.selected).map(x=>({start:x.start,end:x.end})));
-      const selectedMs=intervalTotal(selectedIntervals);
+      const selectedMs=intervalTotal(selectedIntervals)+(tokens.includes('@unrecorded')?unrecorded:0);
       const selectedSet=new Set(day.intervals.filter(x=>x.selected).map(x=>x.sessionId));
       const dayTotal=mode==='unrecorded'?unrecorded:(mode==='selected'?selectedMs:tracked);
       day.trackedMs=tracked;day.unrecordedMs=unrecorded;day.selectedMs=selectedMs;day.primaryMs=mode==='unrecorded'?unrecorded:(mode==='selected'?selectedMs:tracked);
@@ -2855,9 +3452,14 @@
         hourlyTracked[hour]+=trackedHour;
         hourlyUnrecorded[hour]+=unrecordedHour;
         hourlyAvailable[hour]+=available;
-        hourly[hour]+=mode==='unrecorded'?unrecordedHour:(mode==='selected'?selectedHour:trackedHour);
+        hourly[hour]+=mode==='unrecorded'?unrecordedHour:(mode==='selected'?selectedHour+(tokens.includes('@unrecorded')?unrecordedHour:0):trackedHour);
       }
       day.series=mode==='compare'?[tracked,unrecorded]:[dayTotal];
+      if (progress && (dayIndex % 24 === 23 || dayIndex === days.length - 1)) {
+        progress(64 + (days.length ? ((dayIndex + 1) / days.length) * 36 : 36), `${(dayIndex + 1).toLocaleString('ja-JP')} / ${days.length.toLocaleString('ja-JP')} 日分を集計中`);
+        await new Promise(resolve => setTimeout(resolve, 0));
+        if (progress.isCurrent && !progress.isCurrent()) return null;
+      }
     }
     const sessions=mode==='selected'?selectedSessions:allSessions;
     if(mode==='compare') total=periodTracked;
@@ -2988,6 +3590,7 @@
     if(mode==='selected'&&tokens.length) {
       const catalog=getAnalysisLabelCatalog();
       const names=tokens.map(token=>{
+        if(token==='@unrecorded') return '未記録時間';
         if(token.startsWith('L:')) return catalog.find(item=>item.id===token.slice(2))?.name || 'ラベル';
         if(token.startsWith('S:')) {
           const raw=token.slice(2), split=raw.indexOf('::'), labelId=raw.slice(0,split), subId=raw.slice(split+2);
@@ -2998,11 +3601,13 @@
       });
       selectedName=names.length<=2?names.join(' ＋ '):`${names.length}項目の合算`;
     }
-    const items=mode==='compare'?[['記録済み時間','var(--accent-strong)'],['未記録時間','#9d8979']]:[[mode==='unrecorded'?'未記録時間':mode==='selected'?selectedName:'記録済み時間',mode==='unrecorded'?'#9d8979':'var(--accent-strong)']];
+    const selectedUnrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
+    const items=mode==='compare'?[['記録済み時間','var(--accent-strong)'],['未記録時間','#9d8979']]:[[mode==='unrecorded'?'未記録時間':mode==='selected'?selectedName:'記録済み時間',mode==='unrecorded'||selectedUnrecordedOnly?'#9d8979':'var(--accent-strong)']];
     items.forEach(([name,color])=>{const item=document.createElement('span');item.className='analysis-legend-item';const dot=document.createElement('i');dot.className='analysis-legend-dot';dot.style.backgroundColor=color;const label=document.createElement('span');label.textContent=name;item.append(dot,label);host.appendChild(item);});
   }
-  function renderAnalysisKpis(targetId, current, previous, mode, comparisonName) {
+  function renderAnalysisKpis(targetId, current, previous, mode, comparisonName, tokens = []) {
     const target=$(targetId);target.replaceChildren();
+    const unrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
     const value=mode==='unrecorded'?current.unrecordedTotal:(mode==='selected'?current.total:current.trackedTotal);
     const prevValue=previous?(mode==='unrecorded'?previous.unrecordedTotal:(mode==='selected'?previous.total:previous.trackedTotal)):null;
     const delta=prevValue===null?null:value-prevValue;
@@ -3015,15 +3620,16 @@
       ['記録率',`${rate.toFixed(1)}%`,'記録済み時間 ÷ 期間の実時間'],
       [`${comparisonName}（記録済み）`,deltaText,prevValue===null?'全期間のため比較なし':pct===null?'比較対象の記録なし':`${pct>=0?'+':''}${pct.toFixed(1)}%`]
     ] : [
-      ['期間合計',fmtDuration(value),mode==='unrecorded'?'記録のない時間':mode==='selected'?'選択項目の合算':'重複を除いた記録時間'],
+      ['期間合計',fmtDuration(value),mode==='unrecorded'||unrecordedOnly?'記録のない時間':mode==='selected'?'選択項目の合算':'重複を除いた記録時間'],
       ['1日平均',fmtDuration(current.days.length?value/current.days.length:0),'期間内の全日数で平均'],
       [comparisonName,deltaText,prevValue===null?'全期間のため比較なし':pct===null?'比較対象の記録なし':`${pct>=0?'+':''}${pct.toFixed(1)}%`],
-      [mode==='unrecorded'?'記録率':'セッション数',mode==='unrecorded'?`${rate.toFixed(1)}%`:`${current.sessions.size}回`,mode==='unrecorded'?'記録済み時間 ÷ 1日の総時間':'対象に含まれる計測回数']
+      [mode==='unrecorded'||unrecordedOnly?'記録率':'セッション数',mode==='unrecorded'||unrecordedOnly?`${rate.toFixed(1)}%`:`${current.sessions.size}回`,mode==='unrecorded'||unrecordedOnly?'記録済み時間 ÷ 1日の総時間':'対象に含まれる計測回数']
     ];
     values.forEach(([label,valueText,sub])=>{const card=document.createElement('div');card.className='trend-kpi';const l=document.createElement('div');l.className='trend-kpi-label';l.textContent=label;const v=document.createElement('div');v.className='trend-kpi-value';v.textContent=valueText;const small=document.createElement('div');small.className='trend-kpi-sub';small.textContent=sub;card.append(l,v,small);target.appendChild(card);});
   }
-  function renderAnalysisHourly(targetId, stats, mode) {
+  function renderAnalysisHourly(targetId, stats, mode, tokens = []) {
     const host=$(targetId);host.replaceChildren();
+    const unrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
     const main=stats.hourly.map(value=>value/Math.max(1,stats.days.length));
     const tracked=stats.hourlyTracked.map(value=>value/Math.max(1,stats.days.length));
     const unrecorded=stats.hourlyUnrecorded.map(value=>value/Math.max(1,stats.days.length));
@@ -3037,7 +3643,7 @@
         const trackedBar=document.createElement('i');trackedBar.className='analysis-hour-bar';trackedBar.style.height=`${tracked[hour]/maximum*100}%`;trackedBar.style.backgroundColor='var(--accent-strong)';
         const unrecordedBar=document.createElement('i');unrecordedBar.className='analysis-hour-bar';unrecordedBar.style.height=`${unrecorded[hour]/maximum*100}%`;unrecordedBar.style.backgroundColor='#9d8979';track.append(trackedBar,unrecordedBar);
       } else {
-        const bar=document.createElement('i');bar.className='analysis-hour-bar';bar.style.height=`${main[hour]/maximum*100}%`;bar.style.backgroundColor=mode==='unrecorded'?'#9d8979':'var(--accent-strong)';track.appendChild(bar);
+        const bar=document.createElement('i');bar.className='analysis-hour-bar';bar.style.height=`${main[hour]/maximum*100}%`;bar.style.backgroundColor=mode==='unrecorded'||unrecordedOnly?'#9d8979':'var(--accent-strong)';track.appendChild(bar);
       }
       const name=document.createElement('div');name.className='analysis-hour-name';name.textContent=hour%3===0?String(hour):'';
       const title=document.createElement('title');title.textContent=`${hour}時：${fmtDuration(mode==='compare'?available[hour]:main[hour])}`;col.append(value,track,name);col.title=title.textContent;host.appendChild(col);
@@ -3046,7 +3652,13 @@
   function renderAnalysisBreakdown(targetId, stats, mode, tokens) {
     const host=$(targetId);host.replaceChildren();
     if(mode==='unrecorded'||mode==='compare') return;
-    const items=[...stats.byActivity.values()].filter(item=>mode!=='selected'||tokens.length===0||sessionMatchesAnalysis({labelId:item.labelId,labelName:'',subLabelId:item.subLabelId,subLabelName:''},tokens)).sort((a,b)=>b.ms-a.ms).slice(0,8);
+    const items=[...stats.byActivity.values()].filter(item=>mode!=='selected'||tokens.length===0||sessionMatchesAnalysis({labelId:item.labelId,labelName:'',subLabelId:item.subLabelId,subLabelName:''},tokens));
+    if(mode==='selected'&&tokens.includes('@unrecorded')) {
+      const unrecordedMs=stats.days.reduce((sum,day)=>sum+(day.unrecordedMs||0),0);
+      if(unrecordedMs>0) items.push({id:'@unrecorded',name:'未記録時間',color:'#9d8979',ms:unrecordedMs});
+    }
+    items.sort((a,b)=>b.ms-a.ms);
+    items.splice(8);
     if(!items.length) return;
     const max=Math.max(1,...items.map(x=>x.ms));
     const title=document.createElement('div');title.className='analysis-chart-title';title.textContent='ラベル・サブラベル内訳';host.appendChild(title);
@@ -3214,10 +3826,14 @@
     const rangeText=`${startLabel}〜${endLabel} · ${keys.length.toLocaleString('ja-JP')}日`;
     return {keys,previousKeys,comparisonElapsedMs,title,comparisonLabel,compare,rangeText,startKey,endKey};
   }
-  function renderMultiSeriesPeriod(range, tokens, chartMode) {
-    const stats=collectAdvancedPeriod(range.keys,'all',[]);
+  async function renderMultiSeriesPeriod(range, tokens, chartMode, loadingToken, isCurrent) {
+    const report = (base, span) => (percent, detail) => updateLoading(loadingToken, detail, base + percent / 100 * span);
+    report(8, 42)(0, '選択した系列を集計しています');
+    const stats=await collectAdvancedPeriod(range.keys,'all',[],null,Object.assign(report(8,42),{isCurrent}));
+    if (!stats || !isCurrent()) return;
     const series=buildOverlaySeries(stats,tokens);
-    const previousStats=range.compare?collectAdvancedPeriod(range.previousKeys,'all',[],range.comparisonElapsedMs):null;
+    const previousStats=range.compare?await collectAdvancedPeriod(range.previousKeys,'all',[],range.comparisonElapsedMs,Object.assign(report(52,30),{isCurrent})):null;
+    if (!isCurrent()) return;
     const previousSeries=previousStats?buildOverlaySeries(previousStats,tokens):null;
     $('periodTrendTitle').textContent='推移の重ね合わせ';
     $('periodTrendRange').textContent=range.rangeText;
@@ -3241,16 +3857,22 @@
     $('periodChartTitle').textContent=chartMode==='ratio'?'各系列が1日のうちに占める割合':chartMode==='bar'?'系列別・日ごとの時間':'日ごとの推移（系列を重ねて比較）';
     $('periodChartNote').textContent=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは最大120区分に圧縮しています。各系列の合計・平均は全日分の正確な値です。異なるラベルの時間が重なる場合、系列同士は独立した値として表示します。`:'各系列は同じ時間軸・縦軸で表示しています。異なるラベルの記録時間が同時刻に重なる場合、線は重なりますが、系列同士を足した値は記録済み全体と一致しないことがあります。';
   }
-  function renderSelectedAnalysisPeriod(range, mode, tokens, chartMode) {
+  async function renderSelectedAnalysisPeriod(range, mode, tokens, chartMode, loadingToken, isCurrent) {
     $('periodHourlyBlock').hidden=false;$('periodBreakdown').hidden=false;
-    const stats=collectAdvancedPeriod(range.keys,mode,tokens);
-    const previous=range.compare?collectAdvancedPeriod(range.previousKeys,mode,tokens,range.comparisonElapsedMs):null;
+    const report = (base, span) => (percent, detail) => updateLoading(loadingToken, detail, base + percent / 100 * span);
+    const stats=await collectAdvancedPeriod(range.keys,mode,tokens,null,Object.assign(report(8,48),{isCurrent}));
+    if (!stats || !isCurrent()) return;
+    const previous=range.compare?await collectAdvancedPeriod(range.previousKeys,mode,tokens,range.comparisonElapsedMs,Object.assign(report(58,28),{isCurrent})):null;
+    if (!isCurrent()) return;
+    updateLoading(loadingToken, 'グラフと内訳を作成しています', 90);
     $('periodTrendTitle').textContent=range.title+'の分析';
     $('periodTrendRange').textContent=range.rangeText;
-    renderAnalysisKpis('periodTrendKpis',stats,previous,mode,range.compare?range.comparisonLabel:'全期間比較');
-    const hasChart=drawAnalysisChart('periodTrendChart',stats,mode,chartMode,'period');
+    renderAnalysisKpis('periodTrendKpis',stats,previous,mode,range.compare?range.comparisonLabel:'全期間比較',tokens);
+    const selectedUnrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
+    const selectedSeries=selectedUnrecordedOnly?[{name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.primaryMs)}]:null;
+    const hasChart=drawAnalysisChart('periodTrendChart',stats,mode,chartMode,'period',selectedSeries);
     renderAnalysisLegend('periodTrendLegend',mode,tokens);
-    renderAnalysisHourly('periodHourlyChart',stats,mode);
+    renderAnalysisHourly('periodHourlyChart',stats,mode,tokens);
     renderAnalysisBreakdown('periodBreakdown',stats,mode,tokens);
     const hasData=stats.days.length>0&&(stats.total>0||mode==='compare'||mode==='unrecorded');
     $('periodTrendEmpty').hidden=hasData;
@@ -3258,9 +3880,18 @@
     $('periodTrendLegend').hidden=$('periodTrendChart').hidden;
     $('periodChartTitle').textContent=chartMode==='ratio'?'1日のうち分析対象が占める割合':chartMode==='bar'?'日ごとの時間（棒グラフ）':'日ごとの時間推移';
     $('periodChartNote').textContent=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは見やすさのため最大120区分の1日平均に圧縮しています。合計・平均・内訳は全日分の正確な値です。`:'グラフは日ごとの推移です。時間帯別分布は期間内の1日平均を表示します。';
-    $('periodTrendEmpty').textContent=mode==='selected'&&!tokens.length?'ラベルまたはサブラベルを選択すると分析を表示します。':'この期間に該当する記録はありません。';
+    $('periodTrendEmpty').textContent=mode==='selected'&&!tokens.length?'ラベル、サブラベル、または未記録時間を選択すると分析を表示します。':'この期間に該当する記録はありません。';
   }
-  function renderAdvancedAnalytics() {
+  let analysisRenderSequence = 0;
+  async function renderAdvancedAnalytics() {
+    if(!$('trendDetails')?.open) return;
+    const sequence = ++analysisRenderSequence;
+    const isCurrent = () => sequence === analysisRenderSequence && !!$('trendDetails')?.open;
+    const loadingToken = startLoading('分析を集計しています', '対象の記録を確認しています', 3);
+    try {
+      await yieldToPaint();
+      if (!isCurrent()) return;
+
     if(!$('trendDetails')?.open) return;
     $('analysisPeriod').value=analysisPrefs.period;
     $('analysisTargetMode').value=analysisPrefs.mode;
@@ -3277,28 +3908,26 @@
     const signature=JSON.stringify(getAnalysisLabelCatalog().map(label=>[label.id,label.name,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
     if(signature!==analysisLabelsSignature) { renderAnalysisLabelChoices(); renderAnalysisOverlayChoices(); }
     const selectedCount=analysisPrefs.tokens.length;
-    const definition={
-      all:'記録済み全体を集計します。重なった記録区間は1回分として扱い、当日分は現在時刻までを対象にします。',
-      selected:selectedCount?`選択した${selectedCount}項目を合算します。ラベル全体とそのサブラベルを同時に重複計上せず、当日分は現在時刻までを対象にします。`:'分析対象が未選択です。上の一覧からラベルまたはサブラベルを選んでください。',
-      unrecorded:'未記録時間は、各日の実際の長さから記録区間の重なりを除いて算出します。当日分は現在時刻までです。睡眠や自由時間などの内容を自動推定するものではありません。',
-      compare:'記録済み時間と未記録時間を同じ日ごとに比較します。両者を足すと、その日の実時間になります。当日分は現在時刻までです。',
-      multi:'選択した各ラベル・サブラベル・未記録時間を、それぞれ別の系列として同じグラフに重ねます。'
-    };
-    $('analysisDefinition').textContent=definition[analysisPrefs.mode];
     const mode=analysisPrefs.mode==='selected'&&selectedCount===0?'selected':analysisPrefs.mode;
     const range=getSelectedAnalysisRange();
-    if(mode==='multi') { renderMultiSeriesPeriod(range,analysisPrefs.overlayTokens,analysisPrefs.chart); return; }
+    if(mode==='multi') { await renderMultiSeriesPeriod(range,analysisPrefs.overlayTokens,analysisPrefs.chart,loadingToken,isCurrent); return; }
     if(mode==='selected'&&selectedCount===0) {
       $('periodTrendChart').replaceChildren();$('periodTrendChart').hidden=true;
       $('periodTrendLegend').hidden=true;$('periodTrendLegend').replaceChildren();
-      $('periodTrendEmpty').hidden=false;$('periodTrendEmpty').textContent='ラベルまたはサブラベルを選択すると分析を表示します。';
+      $('periodTrendEmpty').hidden=false;$('periodTrendEmpty').textContent='ラベル、サブラベル、または未記録時間を選択すると分析を表示します。';
       $('periodTrendRange').textContent=range.rangeText;
       $('periodTrendKpis').replaceChildren();$('periodHourlyChart').replaceChildren();$('periodBreakdown').replaceChildren();
       $('periodChartNote').textContent='分析対象を選択してください。';
       $('periodTrendTitle').textContent=range.title+'の分析';
       return;
     }
-    renderSelectedAnalysisPeriod(range,mode,analysisPrefs.tokens,analysisPrefs.chart);
+    await renderSelectedAnalysisPeriod(range,mode,analysisPrefs.tokens,analysisPrefs.chart,loadingToken,isCurrent);
+    } catch (error) {
+      if (isCurrent()) showToast(error?.message || '分析を更新できませんでした。');
+    } finally {
+      if (isCurrent()) updateLoading(loadingToken, '分析を更新しました', 100);
+      finishLoading(loadingToken);
+    }
   }
   function applyTheme() {
     const choice=data.settings.theme||'light';
@@ -3309,7 +3938,7 @@
     if(appFavicon) appFavicon.href=dark?'./icon-dark.svg':'./icon-light.svg';
   }
   function renderAll() {
-    formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderOverview();renderCalendar();applyTheme();drawClock();syncTimerFrames();scheduleAutoStop();
+    formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderCalendar();renderOverview();applyTheme();drawClock();syncTimerFrames();scheduleAutoStop();
     renderRoutineChecklist();
     if ($('trendDetails')?.open) renderAdvancedAnalytics();
   }
@@ -3454,6 +4083,7 @@
     $('routineProgressFill').style.width = `${percent}%`;
     $('routineProgressTrack').setAttribute('aria-valuenow', String(percent));
     $('routineProgressTrack').setAttribute('aria-valuetext', `${done}件完了、${total}件中`);
+    if (!$('routineDetails')?.open && !focusEdit) return;
     list.replaceChildren();
     if (!total) {
       const empty = document.createElement('li');
@@ -3470,7 +4100,7 @@
         if (editingRoutineId === item.id) {
           row.innerHTML = `<form class="routine-edit-form" data-routine-edit-form="${escapeHtml(item.id)}"><label class="visually-hidden" for="routineEditInput">日課の名前を編集</label><input class="routine-edit-input" id="routineEditInput" type="text" maxlength="80" value="${escapeHtml(item.text)}"><button class="routine-edit-save" type="submit">${svgIconMarkup('check','ui-icon')}<span>保存</span></button><button class="routine-edit-cancel" type="button" data-routine-cancel="${escapeHtml(item.id)}">${svgIconMarkup('close','ui-icon')}<span>戻す</span></button></form>`;
         } else {
-          row.innerHTML = `<label class="routine-check-label"><input class="routine-checkbox" type="checkbox" data-routine-check="${escapeHtml(item.id)}" ${checked ? 'checked' : ''}><span class="routine-checkmark" aria-hidden="true">${svgIconMarkup('check','ui-icon')}</span><span class="routine-task-text">${escapeHtml(item.text)}</span></label><span class="routine-item-actions"><button class="routine-action" type="button" data-routine-edit="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を編集" title="編集">${svgIconMarkup('pencil','ui-icon')}</button><button class="routine-action" type="button" data-routine-delete="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を削除" title="削除">${svgIconMarkup('trash','ui-icon')}</button></span>`;
+          row.innerHTML = `<label class="routine-check-label"><input class="routine-checkbox" type="checkbox" data-routine-check="${escapeHtml(item.id)}" ${checked ? 'checked' : ''}><span class="routine-checkmark" aria-hidden="true">${svgIconMarkup('check','ui-icon')}</span><span class="routine-task-text">${escapeHtml(item.text)}</span></label><span class="routine-item-actions"><button class="routine-action" type="button" data-routine-move="up" data-routine-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を上へ移動" title="上へ" ${items.indexOf(item)===0?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button><button class="routine-action" type="button" data-routine-move="down" data-routine-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を下へ移動" title="下へ" ${items.indexOf(item)===items.length-1?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg></button><button class="routine-action" type="button" data-routine-edit="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を編集" title="編集">${svgIconMarkup('pencil','ui-icon')}</button><button class="routine-action" type="button" data-routine-delete="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を削除" title="削除">${svgIconMarkup('trash','ui-icon')}</button></span>`;
         }
         fragment.appendChild(row);
       });
@@ -3547,19 +4177,35 @@
     saveRoutineChecks(checks, routineRenderedDayKey);
     renderRoutineChecklist();
   });
-  $('routineList')?.addEventListener('click', event => {
+  $('routineList')?.addEventListener('click', async event => {
     const target = event.target instanceof Element ? event.target : null;
     if (!target) return;
     const edit = target.closest('[data-routine-edit]');
     const cancel = target.closest('[data-routine-cancel]');
     const remove = target.closest('[data-routine-delete]');
+    const move = target.closest('[data-routine-move]');
+    if (move && !move.disabled) {
+      const id = move.dataset.routineId;
+      const direction = move.dataset.routineMove;
+      const index = data.routines.items.findIndex(item => item.id === id);
+      const nextIndex = index + (direction === 'up' ? -1 : 1);
+      if (index >= 0 && nextIndex >= 0 && nextIndex < data.routines.items.length) {
+        const saved = commitRoutineMutation(() => {
+          const list = data.routines.items;
+          [list[index], list[nextIndex]] = [list[nextIndex], list[index]];
+        });
+        if (saved) renderRoutineChecklist();
+      }
+      return;
+    }
     if (edit) { editingRoutineId = edit.dataset.routineEdit; renderRoutineChecklist(true); }
     if (cancel) { editingRoutineId = ''; renderRoutineChecklist(); }
     if (remove) {
       const id = remove.dataset.routineDelete;
       const item = data.routines.items.find(entry => entry.id === id);
       if (!item) return;
-      if (!window.confirm(`「${item.text}」を日課から削除しますか？過去のチェック履歴も削除されます。`)) return;
+      const confirmed = await showConfirmDialog(`「${item.text}」を日課から削除します。\n過去のチェック履歴も削除されます。`, '日課を削除しますか？');
+      if (!confirmed) return;
       const saved = commitRoutineMutation(() => {
         data.routines.items = data.routines.items.filter(entry => entry.id !== id);
         Object.keys(data.routines.checks).forEach(day => {
@@ -3650,62 +4296,11 @@
   });
   $('mainTimerBtn').addEventListener('animationend',event=>{if(event.animationName==='timer-start-soft')event.currentTarget.classList.remove('start-feedback');});
 
-  // Gentle settings panel motion. Keep the native <details>/<summary> semantics,
-  // but animate the body height and opacity on both open and close.
+  // Use native details behavior; panel contents share the subtle fade used elsewhere.
   const settingsPanel = $('settingsPanel');
   const settingsSummary = settingsPanel?.querySelector(':scope > summary');
-  const settingsBody = settingsPanel?.querySelector('.settings-body');
-  let settingsMotionBusy = false;
-  const clearSettingsMotionStyles = () => {
-    if (!settingsBody) return;
-    settingsBody.style.height = '';
-    settingsBody.style.overflow = '';
-    settingsBody.style.opacity = '';
-    settingsBody.style.transform = '';
-  };
-  settingsSummary?.addEventListener('click', event => {
-    event.preventDefault();
-    if (settingsMotionBusy || !settingsPanel || !settingsBody) return;
-    if (typeof settingsBody.animate !== 'function') {
-      settingsPanel.open = !settingsPanel.open;
-      settingsSummary.setAttribute('aria-expanded', String(settingsPanel.open));
-      return;
-    }
-    settingsMotionBusy = true;
-    if (!settingsPanel.open) {
-      const fullHeight = settingsBody.scrollHeight;
-      settingsPanel.open = true;
-      settingsSummary.setAttribute('aria-expanded', 'true');
-      settingsBody.style.overflow = 'hidden';
-      const animation = settingsBody.animate(
-        [
-          { height: '0px', opacity: 0, transform: 'translateY(-4px)' },
-          { height: `${fullHeight}px`, opacity: 1, transform: 'translateY(0)' }
-        ],
-        { duration: 220, easing: 'cubic-bezier(.2,.7,.25,1)' }
-      );
-      animation.onfinish = () => { clearSettingsMotionStyles(); settingsMotionBusy = false; };
-      animation.oncancel = () => { clearSettingsMotionStyles(); settingsMotionBusy = false; };
-    } else {
-      const currentHeight = settingsBody.getBoundingClientRect().height;
-      settingsBody.style.overflow = 'hidden';
-      const animation = settingsBody.animate(
-        [
-          { height: `${currentHeight}px`, opacity: 1, transform: 'translateY(0)' },
-          { height: '0px', opacity: 0, transform: 'translateY(-4px)' }
-        ],
-        { duration: 180, easing: 'cubic-bezier(.4,0,.2,1)' }
-      );
-      animation.onfinish = () => {
-        settingsPanel.open = false;
-        settingsSummary.setAttribute('aria-expanded', 'false');
-        clearSettingsMotionStyles();
-        settingsMotionBusy = false;
-      };
-      animation.oncancel = () => { clearSettingsMotionStyles(); settingsMotionBusy = false; };
-    }
-  });
   settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel?.open));
+  settingsPanel?.addEventListener('toggle', () => settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel.open)));
   $('stopTimerBtn').addEventListener('click',stopSession);
   $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color,subLabels:[],autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}};data.labels.push(label);selectedLabelId=label.id;selectedSubLabelId='';save();renderAll();showToast('ラベルを追加しました');});
   $('themeSelect').addEventListener('change',e=>{data.settings.theme=e.target.value;save();applyTheme();});
@@ -3823,6 +4418,8 @@
   $('analysisSelectAll').addEventListener('click', () => {
     $('analysisLabelChoices').querySelectorAll('input[data-analysis-token^="L:"]').forEach(input=>input.checked=true);
     $('analysisLabelChoices').querySelectorAll('input[data-analysis-token^="S:"]').forEach(input=>input.checked=false);
+    const unrecordedInput=$('analysisLabelChoices').querySelector('input[data-analysis-token="@unrecorded"]');
+    if(unrecordedInput) unrecordedInput.checked=true;
     analysisPrefs.tokens=readAnalysisTokensFromUi();saveAnalysisPrefs();renderAdvancedAnalytics();
   });
   $('analysisClearAll').addEventListener('click', () => {
@@ -3832,10 +4429,58 @@
   $('prevMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1);renderCalendar();if($('trendDetails').open)renderAdvancedAnalytics();});
   $('nextMonth').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();if($('trendDetails').open)renderAdvancedAnalytics();});
   $('todayBtn').addEventListener('click',()=>{selectedDay=todayKey();visibleMonth=new Date();visibleMonth.setDate(1);renderAll();});
-  $('exportBtn').addEventListener('click',()=>{
+  async function stringifyBackupPayload(payload, onStage) {
+    if (typeof Worker === 'undefined' || typeof Blob === 'undefined' || typeof URL.createObjectURL !== 'function') {
+      onStage('JSONを生成しています', null);
+      await yieldToPaint();
+      return JSON.stringify(payload, null, 2);
+    }
+    const workerSource = `self.onmessage = event => {
+      try {
+        const json = JSON.stringify(event.data, null, 2);
+        self.postMessage({ ok:true, json });
+      } catch (error) {
+        self.postMessage({ ok:false, message:String(error && error.message || error) });
+      }
+    };`;
+    let worker = null, workerUrl = '';
     try {
+      onStage('JSONをバックグラウンドで生成しています', null);
+      workerUrl = URL.createObjectURL(new Blob([workerSource], { type:'text/javascript' }));
+      worker = new Worker(workerUrl);
+      return await new Promise((resolve, reject) => {
+        const timeout = window.setTimeout(() => reject(new Error('JSON生成Workerが時間内に応答しませんでした。')), 90000);
+        worker.onmessage = event => {
+          window.clearTimeout(timeout);
+          if (event.data?.ok) resolve(event.data.json);
+          else reject(new Error(event.data?.message || 'JSONを生成できませんでした。'));
+        };
+        worker.onerror = event => { window.clearTimeout(timeout); reject(new Error(event.message || 'JSON生成Workerでエラーが発生しました。')); };
+        worker.postMessage(payload);
+      });
+    } catch (_) {
+      // Fall back for browsers that disallow Blob workers.
+      onStage('JSONを生成しています', null);
+      await yieldToPaint();
+      return JSON.stringify(payload, null, 2);
+    } finally {
+      if (worker) worker.terminate();
+      if (workerUrl) URL.revokeObjectURL(workerUrl);
+    }
+  }
+  $('exportBtn').addEventListener('click', async ()=>{
+    const button=$('exportBtn');
+    button.disabled=true;
+    const loadingToken=startLoading('JSONを書き出しています','バックアップデータを準備しています',4);
+    try {
+      await yieldToPaint();
+      updateLoading(loadingToken, `${data.sessions.length.toLocaleString('ja-JP')} 件の記録をバックアップ用に整理しています`, 22);
+      if (data.sessions.length > 1000) await new Promise(resolve => window.setTimeout(resolve, 190));
       const payload = buildBackupPayload();
-      const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json;charset=utf-8' });
+      updateLoading(loadingToken, 'JSONファイルを生成しています', 48);
+      const json = await stringifyBackupPayload(payload, (detail, percent) => updateLoading(loadingToken, detail, percent));
+      updateLoading(loadingToken, 'ダウンロードファイルを準備しています', 91);
+      const blob = new Blob([json], { type:'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -3844,35 +4489,109 @@
       a.click();
       a.remove();
       window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+      updateLoading(loadingToken, '書き出しが完了しました', 100);
       showToast('記録・ラベル・日課と履歴・各種設定をJSONに保存しました');
     } catch (error) {
       showToast(error?.message || 'JSONを書き出せませんでした。');
+    } finally {
+      finishLoading(loadingToken);
+      button.disabled=false;
     }
   });
+  const LARGE_JSON_WORKER_THRESHOLD = 768 * 1024;
+  function parseJsonText(text) {
+    try { return JSON.parse(text); }
+    catch { throw new Error('JSONの書式が壊れているか、途中で切れています。'); }
+  }
+  async function parseJsonFile(file, onProgress = () => {}) {
+    if (file.size <= LARGE_JSON_WORKER_THRESHOLD || typeof Worker === 'undefined' || typeof Blob === 'undefined' || typeof URL.createObjectURL !== 'function') {
+      onProgress(22, 'JSONファイルを読み込んでいます');
+      const text = await file.text();
+      onProgress(72, 'JSONの内容を解析しています');
+      return parseJsonText(text);
+    }
+    const workerSource = `self.onmessage = event => {
+      const file = event.data;
+      const reader = new FileReader();
+      reader.onprogress = progress => {
+        if (progress.lengthComputable) self.postMessage({ progress: Math.round(8 + (progress.loaded / progress.total) * 60), detail:'JSONファイルを読み込んでいます' });
+      };
+      reader.onerror = () => self.postMessage({ ok:false, readFailure:true, message:'JSONファイルを読み込めませんでした。' });
+      reader.onload = () => {
+        self.postMessage({ progress:72, detail:'JSONの内容を解析しています' });
+        let value;
+        try { value = JSON.parse(String(reader.result || '')); }
+        catch { self.postMessage({ ok:false, invalidJson:true }); return; }
+        try { self.postMessage({ ok:true, value }); }
+        catch (error) { self.postMessage({ ok:false, cloneFailure:true, message:String(error && error.message || error) }); }
+      };
+      reader.readAsText(file);
+    };`;
+    let worker = null;
+    let workerUrl = '';
+    let workerTimeoutId = 0;
+    let result = null;
+    try {
+      workerUrl = URL.createObjectURL(new Blob([workerSource], { type:'text/javascript' }));
+      worker = new Worker(workerUrl);
+      result = await new Promise((resolve, reject) => {
+        workerTimeoutId = window.setTimeout(() => reject(new Error('JSON解析Workerが時間内に応答しませんでした。')), 45000);
+        worker.onmessage = event => {
+          if (Number.isFinite(event.data?.progress)) { onProgress(event.data.progress, event.data.detail || 'JSONを読み込んでいます'); return; }
+          window.clearTimeout(workerTimeoutId); workerTimeoutId=0; resolve(event.data);
+        };
+        worker.onerror = event => { window.clearTimeout(workerTimeoutId); workerTimeoutId=0; reject(new Error(event.message || 'JSON解析Workerでエラーが発生しました。')); };
+        worker.postMessage(file);
+      });
+    } catch (_) {
+      // Blob Workers may be blocked by a host policy or an older browser.
+      // Fall back to the compatible asynchronous File.text() path below.
+      result = null;
+    } finally {
+      if(workerTimeoutId) window.clearTimeout(workerTimeoutId);
+      if (worker) worker.terminate();
+      if (workerUrl) URL.revokeObjectURL(workerUrl);
+    }
+    if (result?.invalidJson) throw new Error('JSONの書式が壊れているか、途中で切れています。');
+    if (result?.ok) return result.value;
+    return parseJsonText(await file.text());
+  }
   $('importBtn').addEventListener('click',()=>$('importFile').click());
   $('importFile').addEventListener('change',async e=>{
     const file=e.target.files?.[0];
     if(!file)return;
+    const importButton=$('importBtn');
+    importButton.disabled=true;
     let importCommitted = false;
+    let activeLoadingToken=startLoading('JSONを読み込んでいます','ファイルを読み込んでいます',4);
+    const loadingToken=activeLoadingToken;
     try {
       if (file.size > MAX_IMPORT_BYTES) throw new Error('JSONファイルが大きすぎます（上限25MB）。');
-      const text = await file.text();
-      let parsed;
-      try { parsed = JSON.parse(text); }
-      catch { throw new Error('JSONの書式が壊れているか、途中で切れています。'); }
+      await yieldToPaint();
+      const parsed = await parseJsonFile(file,(percent,detail)=>updateLoading(loadingToken,detail,percent));
+      updateLoading(loadingToken,'バックアップの構造と記録内容を確認しています',80);
+      await yieldToPaint();
+      if (parsed?.data?.sessions?.length > 1000) await new Promise(resolve => window.setTimeout(resolve, 190));
       const staged = parseBackupPayload(parsed);
       const sessionCount = staged.sessions.length;
       const labelCount = staged.labels.length;
       const subLabelCount = staged.labels.reduce((sum,label)=>sum+label.subLabels.length,0);
       const routineCount = staged.routines.items.length;
       const summary = `ラベル ${labelCount}個／サブラベル ${subLabelCount}個／記録 ${sessionCount}件／日課 ${routineCount}件`;
+      updateLoading(loadingToken,'読み込み内容を確認しています',96);
+      finishLoading(loadingToken);
       if (!confirm(`JSONの内容で現在のデータを置き換えます。\n\n読み込む内容：${summary}\n\n現在の記録は置き換わります。先にバックアップを保存することをおすすめします。続けますか？`)) return;
-
+      const saveToken=startLoading('JSONを反映しています','保存内容を書き込んでいます',94);
+      activeLoadingToken=saveToken;
+      await yieldToPaint();
       // Write the fully validated candidate before swapping in-memory state.
       // If storage is full or unavailable, the current app state remains untouched.
       persistDataSnapshot(staged);
       importCommitted = true;
+      updateLoading(saveToken,'画面と分析データを更新しています',98);
       data = staged;
+      invalidateDataCaches();
+      resetActiveSessionCache();
       selectedLabelId = data.settings.selectedLabelId || data.labels[0]?.id || '';
       selectedSubLabelId = data.settings.selectedSubLabelId || '';
       autoStopScope = data.settings.autoStopScope || 'default';
@@ -3885,20 +4604,95 @@
       save();
       renderAll();
       scheduleAutoStop();
+      updateLoading(saveToken,'読み込みが完了しました',100);
       showToast(`JSONを読み込みました（${summary}）`);
+      finishLoading(saveToken);
     } catch(error) {
       const detail = error?.message || 'ファイルの形式や内容を確認してください。';
       alert(importCommitted
         ? `JSONデータは保存されましたが、画面の更新中に問題が発生しました。ページを再読み込みしてください。\n${detail}`
         : `JSONを読み込めませんでした。\n${detail}\n\n現在のデータは変更していません。`);
     } finally {
+      finishLoading(activeLoadingToken);
+      importButton.disabled=false;
+      e.target.value='';
+    }
+  });
+  $('mergeSessionsBtn').addEventListener('click',()=>$('mergeSessionsFile').click());
+  $('mergeSessionsFile').addEventListener('change',async e=>{
+    const file=e.target.files?.[0];
+    if(!file)return;
+    const button=$('mergeSessionsBtn');
+    button.disabled=true;
+    let committed=false;
+    let activeLoadingToken=startLoading('別端末のデータを読み込んでいます','JSONファイルを読み込んでいます',4);
+    const loadingToken=activeLoadingToken;
+    try {
+      if(file.size>MAX_IMPORT_BYTES) throw new Error('JSONファイルが大きすぎます（上限25MB）。');
+      await yieldToPaint();
+      const parsed=await parseJsonFile(file,(percent,detail)=>updateLoading(loadingToken,detail,percent));
+      // Respect an already-expired local auto-stop before considering the
+      // cross-device recovery rule. A scheduled stop always takes precedence.
+      updateLoading(loadingToken,'記録の重複とラベルを照合しています',76);
+      if (processAutoStopExpiry()) renderAll();
+      syncRuntimeSettings();
+      const plan=await buildSessionMergePlan(parsed,(percent,detail)=>updateLoading(loadingToken,detail,percent));
+      if(!plan.added) {
+        const details=[`重複 ${plan.duplicateCount}件`, `実行中・一時停止中のため対象外 ${plan.activeSkipped}件`].join('／');
+        showToast(`追加できる新しいセッションはありません（${details}）`);
+        return;
+      }
+      const summary=[
+        `追加する完了済みセッション：${plan.added}件`,
+        `重複として除外：${plan.duplicateCount}件`,
+        `実行中・一時停止中で対象外：${plan.activeSkipped}件`,
+        `追加するラベル：${plan.labelsAdded}個`,
+        `追加するサブラベル：${plan.subLabelsAdded}個`,
+        plan.autoClosedActive ? `特例：この端末の「${labelPath(plan.autoClosedActive.labelName, plan.autoClosedActive.subLabelName)}」を ${fmtDateLong(todayKey(new Date(plan.autoClosedActive.endedAt)))} ${fmtTime(plan.autoClosedActive.endedAt)} で自動終了` : '',
+        plan.autoClosedActive ? `切り忘れとして除外する時間：約 ${fmtDuration(plan.autoClosedActive.discardedAfterCutoff)}` : '',
+        plan.idConflictCount ? `同じIDで内容が異なる記録：${plan.idConflictCount}件（この端末の内容を維持）` : ''
+      ].filter(Boolean).join('\n');
+      const activeMergeNotice = plan.autoClosedActive
+        ? `この端末で計測中の「${labelPath(plan.autoClosedActive.labelName, plan.autoClosedActive.subLabelName)}」は、別端末の最初のセッション開始時刻で終了します。その時刻より後の計測区間は破棄されます。`
+        : 'この端末の計測中セッションは変更しません。';
+      finishLoading(loadingToken);
+      if(!confirm(`別端末の記録を現在のデータに合成します。\n\nファイル：${file.name}\n\n${summary}\n\n${activeMergeNotice}\n日課・チェック履歴・テーマ・分析設定はこの端末の内容を維持します。合成を実行しますか？`)) return;
+      const saveToken=startLoading('別端末の記録を合成しています','データを保存しています',96);
+      activeLoadingToken=saveToken;
+      await yieldToPaint();
+      // Persist the complete candidate before swapping in-memory state. A failed
+      // storage write leaves current sessions, labels and runtime selection intact.
+      persistDataSnapshot(plan.candidate);
+      data=plan.candidate;
+      invalidateDataCaches();
+      resetActiveSessionCache();
+      committed=true;
+      updateLoading(saveToken,'画面と分析データを更新しています',99);
+      renderAll();
+      scheduleAutoStop();
+      const autoClosedText = plan.autoClosedActive
+        ? `／計測中の「${labelPath(plan.autoClosedActive.labelName, plan.autoClosedActive.subLabelName)}」を ${fmtTime(plan.autoClosedActive.endedAt)} で自動終了`
+        : '';
+      const doneText=`別端末の記録を合成しました（${plan.added}件追加／${plan.duplicateCount}件重複除外${autoClosedText}）`;
+      updateLoading(saveToken,'合成が完了しました',100);
+      showToast(doneText);
+      finishLoading(saveToken);
+    } catch(error) {
+      const detail=error?.message || 'ファイルの内容を確認してください。';
+      alert(committed
+        ? `記録は保存されましたが、画面更新中に問題が発生しました。ページを再読み込みしてください。\n${detail}`
+        : `合成できませんでした。\n${detail}\n\n現在のデータは変更していません。`);
+    } finally {
+      finishLoading(activeLoadingToken);
+      button.disabled=false;
       e.target.value='';
     }
   });
   document.querySelectorAll('select').forEach(decorateSelect);
   processAutoStopExpiry();
-  buildClockTicks();renderAll();
+  buildClockTicks();
   if (startupMigrationPending) save();
+  renderAll();
   if (startupDataWarning) showToast(startupDataWarning);
   // Paint the readout in sync with the display refresh rate. Elapsed time is
   // always derived from persisted wall-clock timestamps, so tab suspension is safe.
@@ -3910,15 +4704,28 @@
       if (autoStopped) showToast('設定した時刻に自動終了しました');
       renderTimer();
       syncTimerFrames();
-      if (getActive()?.status === 'running') { renderOverview(); renderCalendar(); }
+      if (getActive()?.status === 'running') { renderCalendar(); if(selectedDay===todayKey()) renderOverview(); lastStatsRefreshMinute=Math.floor(Date.now()/60000); }
       drawClock();
       scheduleAutoStop();
     }
   });
+  let lastStatsRefreshMinute=Math.floor(Date.now()/60000);
   setInterval(()=>{
-    const autoStopped = processAutoStopExpiry();
-    if (autoStopped) { renderAll(); showToast('設定した時刻に自動終了しました'); }
-    else if(getActive()?.status==='running'){renderOverview();renderCalendar();}
+    const now=Date.now();
+    const autoStopped = processAutoStopExpiry(now);
+    if (autoStopped) { renderAll(); showToast('設定した時刻に自動終了しました'); lastStatsRefreshMinute=Math.floor(now/60000); }
+    else if(getActive()?.status==='running') {
+      const minute=Math.floor(now/60000);
+      // The timer readout is already updated by requestAnimationFrame. Expensive
+      // day totals, 24-hour breakdown and calendar cells only need minute precision.
+      if(minute!==lastStatsRefreshMinute) {
+        lastStatsRefreshMinute=minute;
+        const current=new Date(now);
+        if(visibleMonth.getFullYear()===current.getFullYear() && visibleMonth.getMonth()===current.getMonth()) renderCalendar();
+        if(selectedDay===todayKey(current)) renderOverview();
+        if($('trendDetails')?.open) renderAdvancedAnalytics();
+      }
+    }
     drawClock();
   },1000);
   if('serviceWorker' in navigator && location.protocol!=='file:') window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));

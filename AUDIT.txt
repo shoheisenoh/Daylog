@@ -1,0 +1,30 @@
+DAYLOG v83 — Stability / Compatibility Audit
+Verification date: 2026-11-26
+
+STATIC VALIDATION
+- Main inline JavaScript: Node syntax check passed.
+- Service worker JavaScript: Node syntax check passed.
+- PWA ZIP: unzip -t passed; 19 files, no archive errors.
+- PWA index.html is byte-identical to the standalone HTML.
+- Manifest JSON parsed successfully; all four manifest icon references exist.
+- All 14 service-worker app-shell asset references exist.
+- PNG assets decoded successfully and their dimensions match their names (180, 192 and 512 px variants).
+
+CHROMIUM AUTOMATION — PASSED
+- App startup, timer start/stop and v6 persistence; no page errors or console errors.
+- JSON export through Blob Worker; exported backup structure and formatVersion validated.
+- Large JSON import (>768 KiB) through Worker FileReader + JSON.parse path.
+- v5 backup import, including missing routines / optional settings, normalizes to v6.
+- Worker-disabled fallback: JSON export and large-file import via File.text() both succeeded.
+- Invalid JSON is rejected and leaves the saved snapshot unchanged.
+- Simulated QuotaExceededError during import leaves the existing saved snapshot unchanged.
+- Cross-device merge adds a new completed session; duplicate merge and conflicting duplicate ID preserve local data.
+- Analysis with 18,000 sessions updated progress through completion; the loading overlay closed afterward.
+- Dark theme selection and prefers-reduced-motion behavior passed.
+- 390 px mobile viewport: document/body width remained within the viewport; no horizontal overflow.
+
+TEST ENVIRONMENT / LIMITATIONS
+- Chromium 144.0.7559.96, headless, Playwright.
+- Application was loaded with set_content in an isolated browser document and a simulated localStorage implementation. Blob Workers were available and tested. This is not equivalent to installing the PWA from a production HTTPS origin.
+- Real service-worker installation, offline navigation, Safari/iOS, Firefox/WebKit and physical Android/iOS devices were not tested.
+- No mandatory runtime-code changes were identified by these checks. The v83 application code is retained unchanged; this release updates only the accompanying audit / compatibility notes.
