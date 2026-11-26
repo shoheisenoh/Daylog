@@ -1,4 +1,4 @@
-DAYLOG v83 — Compatibility and Stability
+DAYLOG v84 — Compatibility and Stability
 Verification date: 2026-11-26
 
 DATA AND STORAGE
@@ -29,3 +29,31 @@ BROWSER COVERAGE
 - Automated UI/logic checks: Chromium 144.0.7559.96 (headless), using Playwright. The page was loaded in an isolated browser document with a simulated localStorage implementation; this verifies application logic but is not a full HTTPS/PWA-origin test.
 - Responsive layout was checked at 390 px viewport width; no horizontal overflow was observed.
 - Safari/iOS, Firefox, WebKit and Android physical devices were not tested. Blob Worker fallback is provided for browsers that disallow or do not implement Workers.
+
+
+ANALYSIS LABEL COLORS
+- Selected analysis for one label or one of its sublabels uses the configured parent-label color in the period chart and hourly bars.
+- Multiple selected sublabels under one parent label also use that parent color.
+- When different labels are combined, the aggregate chart uses a neutral accent; its legend identifies each contributing label with its configured color.
+- Multi-series label lines use the configured label color; sublabel series inherit their parent label color. Unrecorded time and tracked-total series retain distinct fixed colors.
+- Changing a label color invalidates the analysis view and updates chart/legend colors. No storage schema change.
+
+
+ANALYSIS LABEL COLORS (v84)
+- Selected analysis for one label or one of its sublabels uses the configured parent-label color in the period chart and hourly bars.
+- Multiple selected sublabels under the same parent label use that parent color.
+- When different labels are combined, the aggregate chart uses a neutral accent; its legend identifies each contributing label with its configured color.
+- Multi-series label lines use the configured label color; sublabel series inherit their parent label color. Unrecorded time and tracked-total series retain distinct fixed colors.
+- Changing a label color invalidates the analysis view and updates chart/legend colors. No storage schema change.
+
+
+DAYLOG v85 — ADDITIONAL CHECKS
+- v6 JSON export/import round-trip: passed.
+- v5 backup without routines: imported and normalized into v6 with routines.items and routines.checks initialized.
+- Malformed JSON: rejected without changing the stored snapshot.
+- Simulated storage quota exception: existing stored snapshot retained.
+- Timer lifecycle persisted a completed session after a duration greater than one second.
+- Analysis selected-label graph and legend used the configured label color.
+- Responsive widths 390 / 768 / 1280 CSS px passed without horizontal overflow in Chromium.
+- PWA cache ID is daylog-stability-v85; the previous v84 cache is included in the explicit legacy cleanup set.
+- Runtime service-worker installation/offline behavior and physical-device browser compatibility remain unverified in this environment.

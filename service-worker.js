@@ -1,4 +1,4 @@
-const CACHE_NAME = 'daylog-progress-v83';
+const CACHE_NAME = 'daylog-stability-v85';
 const CACHE_PREFIX = 'daylog-complete-';
 // Older DAYLOG builds used different names. Delete only these known cache IDs;
 // Cache Storage is origin-wide, so a broad 'daylog-' prefix could affect another app.
@@ -32,7 +32,9 @@ const LEGACY_DAYLOG_CACHES = new Set([
   'daylog-analysis-definition-v79',
   'daylog-custom-delete-confirm-v80',
   'daylog-unrecorded-in-label-v81',
-  'daylog-soft-fade-v82'
+  'daylog-soft-fade-v82',
+  'daylog-progress-v83',
+  'daylog-analysis-label-colors-v84'
 ]);
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest',

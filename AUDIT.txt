@@ -1,4 +1,4 @@
-DAYLOG v83 — Stability / Compatibility Audit
+DAYLOG v84 — Stability / Compatibility Audit
 Verification date: 2026-11-26
 
 STATIC VALIDATION
@@ -28,3 +28,52 @@ TEST ENVIRONMENT / LIMITATIONS
 - Application was loaded with set_content in an isolated browser document and a simulated localStorage implementation. Blob Workers were available and tested. This is not equivalent to installing the PWA from a production HTTPS origin.
 - Real service-worker installation, offline navigation, Safari/iOS, Firefox/WebKit and physical Android/iOS devices were not tested.
 - No mandatory runtime-code changes were identified by these checks. The v83 application code is retained unchanged; this release updates only the accompanying audit / compatibility notes.
+
+
+ANALYSIS LABEL-COLOR CHECKS
+- Selected single-label graph color matches the configured label color.
+- Selected single-sublabel graph and hourly bars inherit the parent-label color.
+- Multiple selected items from one label use that parent-label color.
+- Mixed-label aggregate retains a neutral graph color while the legend shows each contributing label color.
+- Multi-series label and sublabel colors follow their label/parent-label colors.
+- Label-color changes alter the analysis redraw signature.
+- Storage key and DATA_VERSION remain unchanged (daylog.data.v3 / v6).
+
+
+ANALYSIS LABEL-COLOR CHECKS (v84)
+- Chromium headless UI test: selected-label line, area, legend and hourly bars match the selected label color.
+- Changing the label color while the analysis panel is open redraws the chart and legend with the new color.
+- A selected sublabel series inherits the parent label color.
+- Selecting a parent label and a sublabel from the same parent retains the parent color and a single parent-label legend key.
+- Combining different labels uses a neutral aggregate line and displays each contributing label's configured color in the legend.
+- Multi-series overlay displays each label with its own configured color.
+- No browser page errors occurred during these v84 checks. Test document used set_content and a localStorage shim; this is not a production HTTPS/PWA-origin test.
+- Storage key remains daylog.data.v3 and DATA_VERSION remains 6.
+
+
+DAYLOG v85 — ADDITIONAL STABILITY VERIFICATION
+Verification date: 2026-11-26
+
+BROWSER REGRESSION TESTS — PASSED
+- Chromium UI startup and timer start/stop: a session longer than one second persisted as one completed (done) session in v6 storage.
+- Analysis selected-label flow: legend text and computed color matched the configured label color (#879978 / rgb(135, 153, 120)); graph rendered and loading overlay closed.
+- JSON v6 export produced app=DAYLOG, format=daylog-backup, formatVersion=6, with session data.
+- JSON v6 import restored the recorded session.
+- JSON v5 import without the optional routines object normalized to v6 and supplied an empty routines {items, checks} shape.
+- Invalid JSON was rejected and the saved snapshot remained byte-identical.
+- Simulated localStorage QuotaExceededError during import left the existing saved snapshot byte-identical.
+- Responsive viewport widths 390, 768 and 1280 CSS px: document and body widths did not exceed the viewport.
+- No page errors or console errors during the above browser run.
+
+PWA CACHE UPDATE
+- Service worker cache name bumped to daylog-stability-v85.
+- Previous v84 cache ID daylog-analysis-label-colors-v84 added to the exact legacy-cache cleanup set.
+- Cache cleanup is narrowly scoped to known DAYLOG cache IDs; unrelated origin caches are not targeted.
+- Main HTML and app data logic are unchanged from v84.
+
+TEST HARNESS / LIMITATIONS
+- Chromium headless with Playwright; app HTML loaded into an isolated browser document. localStorage, confirm and alert were shimmed for deterministic regression tests.
+- Responsive rendering and application logic were exercised, but this is not a production HTTPS-origin PWA installation.
+- Browser network navigation to a local server was blocked by the execution environment, so live service-worker install, activate and offline navigation could not be exercised end-to-end. Service-worker source syntax, cache IDs and all app-shell paths were statically checked.
+- Safari/iOS, Firefox/WebKit and physical Android/iOS devices were not tested.
+- No changes to application data schema or timer/analysis/import logic were needed.

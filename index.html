@@ -3284,7 +3284,7 @@
     const host=$('analysisLabelChoices');
     if(!host) return;
     const catalog=getAnalysisLabelCatalog();
-    const signature=JSON.stringify(catalog.map(label=>[label.id,label.name,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
+    const signature=JSON.stringify(catalog.map(label=>[label.id,label.name,label.color,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
     analysisLabelsSignature=signature;
     host.replaceChildren();
     if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);}
@@ -3465,22 +3465,39 @@
     if(mode==='compare') total=periodTracked;
     return {days,total,trackedTotal:periodTracked,unrecordedTotal:periodUnrecorded,availableTotal:periodAvailable,sessions,activeDays,byActivity,hourly,hourlyTracked,hourlyUnrecorded,hourlyAvailable};
   }
+  function getAnalysisTokenInfo(token, catalog = getAnalysisLabelCatalog()) {
+    if(token==='@tracked') return {token,name:'記録済み全体',color:'#526b72',kind:'tracked'};
+    if(token==='@unrecorded') return {token,name:'未記録時間',color:'#9d8979',kind:'unrecorded'};
+    if(token.startsWith('L:')) {
+      const label=catalog.find(item=>item.id===token.slice(2));
+      return {token,name:label?.name||'ラベル',color:safeColor(label?.color),kind:'label',labelId:token.slice(2)};
+    }
+    if(token.startsWith('S:')) {
+      const raw=token.slice(2), split=raw.indexOf('::'), labelId=raw.slice(0,split), subId=raw.slice(split+2);
+      const label=catalog.find(item=>item.id===labelId), sub=label?.subLabels.get(subId);
+      return {token,name:label&&sub?`${label.name} · ${sub.name}`:(sub?.name||'サブラベル'),color:safeColor(label?.color),kind:'sublabel',labelId,subId};
+    }
+    return null;
+  }
+  function getSelectedAnalysisColor(tokens) {
+    if(tokens.length===1) return getAnalysisTokenInfo(tokens[0])?.color || 'var(--accent-strong)';
+    if(tokens.length>1) {
+      const infos=tokens.map(token=>getAnalysisTokenInfo(token)).filter(Boolean);
+      if(infos.length===tokens.length && infos.every(item=>item.kind==='label'||item.kind==='sublabel')) {
+        const labelIds=new Set(infos.map(item=>item.labelId));
+        if(labelIds.size===1) return infos[0].color;
+      }
+    }
+    return 'var(--accent-strong)';
+  }
   function buildOverlaySeries(stats, tokens) {
-    const catalog=getAnalysisLabelCatalog();
-    const colors=['#879978','#c18f6c','#8e9eaa','#b6a5bd','#d2ad70','#c98f83','#9d8979','#7f968d'];
-    return tokens.map((token,index)=>{
-      if(token==='@tracked') return {token,name:'記録済み全体',color:'#526b72',values:stats.days.map(day=>day.trackedMs||0)};
-      if(token==='@unrecorded') return {token,name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.unrecordedMs||0)};
-      if(token.startsWith('L:')) {
-        const labelId=token.slice(2), label=catalog.find(item=>item.id===labelId);
-        return {token,name:label?.name||'ラベル',color:label?.color||colors[index%colors.length],values:stats.days.map(day=>intervalTotal(mergeTimeIntervals(day.intervals.filter(item=>item.labelId===labelId).map(item=>({start:item.start,end:item.end})))))};
-      }
-      if(token.startsWith('S:')) {
-        const raw=token.slice(2), split=raw.indexOf('::'), labelId=raw.slice(0,split), subId=raw.slice(split+2);
-        const label=catalog.find(item=>item.id===labelId), sub=label?.subLabels.get(subId);
-        const subIndex=label?[...label.subLabels.keys()].indexOf(subId):index;
-        return {token,name:label&&sub?`${label.name} · ${sub.name}`:(sub?.name||'サブラベル'),color:colors[(Math.max(0,catalog.indexOf(label))+Math.max(0,subIndex)+2)%colors.length],values:stats.days.map(day=>intervalTotal(mergeTimeIntervals(day.intervals.filter(item=>item.labelId===labelId&&item.subLabelId===subId).map(item=>({start:item.start,end:item.end})))))};
-      }
+    return tokens.map(token=>{
+      const info=getAnalysisTokenInfo(token);
+      if(!info) return null;
+      if(info.kind==='tracked') return {...info,values:stats.days.map(day=>day.trackedMs||0)};
+      if(info.kind==='unrecorded') return {...info,values:stats.days.map(day=>day.unrecordedMs||0)};
+      if(info.kind==='label') return {...info,values:stats.days.map(day=>intervalTotal(mergeTimeIntervals(day.intervals.filter(item=>item.labelId===info.labelId).map(item=>({start:item.start,end:item.end})))))};
+      if(info.kind==='sublabel') return {...info,values:stats.days.map(day=>intervalTotal(mergeTimeIntervals(day.intervals.filter(item=>item.labelId===info.labelId&&item.subLabelId===info.subId).map(item=>({start:item.start,end:item.end})))))};
       return null;
     }).filter(Boolean);
   }
@@ -3509,20 +3526,20 @@
       row.append(line,name);host.appendChild(row);
     });
   }
-  function analysisTargetSeries(stats, mode) {
+  function analysisTargetSeries(stats, mode, tokens = []) {
     if(mode==='compare') return [
       {name:'記録済み時間',color:'var(--accent-strong)',values:stats.days.map(day=>day.trackedMs)},
       {name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.unrecordedMs)}
     ];
     const name=mode==='unrecorded'?'未記録時間':mode==='selected'?'選択した項目':'記録済み時間';
-    const color=mode==='unrecorded'?'#9d8979':'var(--accent-strong)';
+    const color=mode==='unrecorded'?'#9d8979':mode==='selected'?getSelectedAnalysisColor(tokens):'var(--accent-strong)';
     return [{name,color,values:stats.days.map(day=>day.primaryMs)}];
   }
   function analysisFormatValue(ms, chartMode) {
     if(chartMode==='ratio') return `${(ms*100).toFixed(0)}%`;
     return fmtDuration(ms);
   }
-  function drawAnalysisChart(targetId, stats, mode, chartMode, prefix, seriesOverride = null) {
+  function drawAnalysisChart(targetId, stats, mode, chartMode, prefix, seriesOverride = null, tokens = []) {
     const svg=$(targetId);svg.replaceChildren();
     const width=640,height=214,left=43,right=626,top=17,bottom=168,plotH=bottom-top;
     if(!stats.days.length) return false;
@@ -3535,7 +3552,7 @@
       return {key:slice[0].key,endKey:slice[slice.length-1].key,dayMs:average('dayMs'),primaryMs:average('primaryMs'),trackedMs:average('trackedMs'),unrecordedMs:average('unrecordedMs')};
     });
     const chartStats={...stats,days:chartDays};
-    const series=seriesOverride ? seriesOverride.map(item=>({...item,values:bucketRanges.map(([start,end])=>item.values.slice(start,end).reduce((sum,value)=>sum+value,0)/Math.max(1,end-start))})) : analysisTargetSeries(chartStats,mode);
+    const series=seriesOverride ? seriesOverride.map(item=>({...item,values:bucketRanges.map(([start,end])=>item.values.slice(start,end).reduce((sum,value)=>sum+value,0)/Math.max(1,end-start))})) : analysisTargetSeries(chartStats,mode,tokens);
     const values=series.flatMap(item=>item.values.map((v,i)=>chartMode==='ratio'?v/Math.max(1,chartStats.days[i].dayMs)*100:v));
     const maxRaw=Math.max(1,...values);
     const maxValue=chartMode==='ratio'?100:(Math.ceil(maxRaw/(60*60*1000))*60*60*1000||60*60*1000);
@@ -3586,24 +3603,36 @@
   }
   function renderAnalysisLegend(targetId, mode, tokens = []) {
     const host=$(targetId);host.replaceChildren();
-    let selectedName='選択した項目';
-    if(mode==='selected'&&tokens.length) {
+    const appendItem=(name,color)=>{
+      const item=document.createElement('span');item.className='analysis-legend-item';
+      const dot=document.createElement('i');dot.className='analysis-legend-dot';dot.style.backgroundColor=color;
+      const label=document.createElement('span');label.textContent=name;item.append(dot,label);host.appendChild(item);
+    };
+    if(mode==='selected') {
       const catalog=getAnalysisLabelCatalog();
-      const names=tokens.map(token=>{
-        if(token==='@unrecorded') return '未記録時間';
-        if(token.startsWith('L:')) return catalog.find(item=>item.id===token.slice(2))?.name || 'ラベル';
-        if(token.startsWith('S:')) {
-          const raw=token.slice(2), split=raw.indexOf('::'), labelId=raw.slice(0,split), subId=raw.slice(split+2);
-          const label=catalog.find(item=>item.id===labelId), sub=label?.subLabels.get(subId);
-          return label&&sub?`${label.name} · ${sub.name}`:(sub?.name||label?.name||'サブラベル');
-        }
-        return '項目';
-      });
-      selectedName=names.length<=2?names.join(' ＋ '):`${names.length}項目の合算`;
+      const infos=tokens.map(token=>getAnalysisTokenInfo(token,catalog)).filter(Boolean);
+      const hasLabelSelection=infos.some(item=>item.kind==='label'||item.kind==='sublabel');
+      const distinctLabelIds=new Set(infos.filter(item=>item.labelId).map(item=>item.labelId));
+      const canUseOneLabelColor=hasLabelSelection && distinctLabelIds.size===1 && infos.every(item=>item.kind==='label'||item.kind==='sublabel');
+      if(canUseOneLabelColor) {
+        const labelId=[...distinctLabelIds][0], label=catalog.find(item=>item.id===labelId);
+        appendItem(label?.name||infos[0].name,infos[0].color);
+      } else if(tokens.length===1) {
+        const item=infos[0];if(item) appendItem(item.name,item.color);
+      } else if(tokens.length) {
+        appendItem('選択項目の合算','var(--accent-strong)');
+        const seen=new Set();
+        infos.forEach(item=>{
+          const key=item.kind==='label'||item.kind==='sublabel'?`label:${item.labelId}`:`${item.kind}:${item.token}`;
+          if(seen.has(key)) return;seen.add(key);
+          const labelName=item.kind==='label'||item.kind==='sublabel'?(catalog.find(label=>label.id===item.labelId)?.name||item.name):item.name;
+          appendItem(labelName,item.color);
+        });
+      }
+      return;
     }
-    const selectedUnrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
-    const items=mode==='compare'?[['記録済み時間','var(--accent-strong)'],['未記録時間','#9d8979']]:[[mode==='unrecorded'?'未記録時間':mode==='selected'?selectedName:'記録済み時間',mode==='unrecorded'||selectedUnrecordedOnly?'#9d8979':'var(--accent-strong)']];
-    items.forEach(([name,color])=>{const item=document.createElement('span');item.className='analysis-legend-item';const dot=document.createElement('i');dot.className='analysis-legend-dot';dot.style.backgroundColor=color;const label=document.createElement('span');label.textContent=name;item.append(dot,label);host.appendChild(item);});
+    const items=mode==='compare'?[['記録済み時間','var(--accent-strong)'],['未記録時間','#9d8979']]:[[mode==='unrecorded'?'未記録時間':'記録済み時間',mode==='unrecorded'?'#9d8979':'var(--accent-strong)']];
+    items.forEach(([name,color])=>appendItem(name,color));
   }
   function renderAnalysisKpis(targetId, current, previous, mode, comparisonName, tokens = []) {
     const target=$(targetId);target.replaceChildren();
@@ -3643,7 +3672,7 @@
         const trackedBar=document.createElement('i');trackedBar.className='analysis-hour-bar';trackedBar.style.height=`${tracked[hour]/maximum*100}%`;trackedBar.style.backgroundColor='var(--accent-strong)';
         const unrecordedBar=document.createElement('i');unrecordedBar.className='analysis-hour-bar';unrecordedBar.style.height=`${unrecorded[hour]/maximum*100}%`;unrecordedBar.style.backgroundColor='#9d8979';track.append(trackedBar,unrecordedBar);
       } else {
-        const bar=document.createElement('i');bar.className='analysis-hour-bar';bar.style.height=`${main[hour]/maximum*100}%`;bar.style.backgroundColor=mode==='unrecorded'||unrecordedOnly?'#9d8979':'var(--accent-strong)';track.appendChild(bar);
+        const bar=document.createElement('i');bar.className='analysis-hour-bar';bar.style.height=`${main[hour]/maximum*100}%`;bar.style.backgroundColor=mode==='unrecorded'||unrecordedOnly?'#9d8979':mode==='selected'?getSelectedAnalysisColor(tokens):'var(--accent-strong)';track.appendChild(bar);
       }
       const name=document.createElement('div');name.className='analysis-hour-name';name.textContent=hour%3===0?String(hour):'';
       const title=document.createElement('title');title.textContent=`${hour}時：${fmtDuration(mode==='compare'?available[hour]:main[hour])}`;col.append(value,track,name);col.title=title.textContent;host.appendChild(col);
@@ -3870,7 +3899,7 @@
     renderAnalysisKpis('periodTrendKpis',stats,previous,mode,range.compare?range.comparisonLabel:'全期間比較',tokens);
     const selectedUnrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
     const selectedSeries=selectedUnrecordedOnly?[{name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.primaryMs)}]:null;
-    const hasChart=drawAnalysisChart('periodTrendChart',stats,mode,chartMode,'period',selectedSeries);
+    const hasChart=drawAnalysisChart('periodTrendChart',stats,mode,chartMode,'period',selectedSeries,tokens);
     renderAnalysisLegend('periodTrendLegend',mode,tokens);
     renderAnalysisHourly('periodHourlyChart',stats,mode,tokens);
     renderAnalysisBreakdown('periodBreakdown',stats,mode,tokens);
@@ -3905,7 +3934,7 @@
     normalizeCustomRange();
     $('analysisLabelPicker').hidden=analysisPrefs.mode!=='selected';
     $('analysisOverlayPicker').hidden=analysisPrefs.mode!=='multi';
-    const signature=JSON.stringify(getAnalysisLabelCatalog().map(label=>[label.id,label.name,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
+    const signature=JSON.stringify(getAnalysisLabelCatalog().map(label=>[label.id,label.name,label.color,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
     if(signature!==analysisLabelsSignature) { renderAnalysisLabelChoices(); renderAnalysisOverlayChoices(); }
     const selectedCount=analysisPrefs.tokens.length;
     const mode=analysisPrefs.mode==='selected'&&selectedCount===0?'selected':analysisPrefs.mode;
