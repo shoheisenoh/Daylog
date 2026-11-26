@@ -1,59 +1,51 @@
-DAYLOG v84 — Compatibility and Stability
-Verification date: 2026-11-26
+DAYLOG v95 compatibility
 
-DATA AND STORAGE
-- DATA_VERSION: 6 (unchanged)
-- STORAGE_KEY: daylog.data.v3 (unchanged)
-- v5 and v6 backup files were tested. A v5 backup imports and normalizes to v6.
-- Labels, sessions, routines, check history, settings, analysis preferences and merge semantics retain their existing data shape and behavior.
-- No destructive migration or session rewrite is introduced.
-- Imports remain limited to 25 MiB. localStorage capacity varies by browser and device; quota errors are handled without replacing the saved snapshot.
+- Keeps v94 and earlier data format v6 and localStorage key daylog.data.v3.
+- Preserves any valid #RRGGBB label/session color during normalization and JSON import; no nearest-preset coercion.
+- Existing eight preset colors remain available; four purple-family presets are appended.
+- Imported/custom colors not in the preset list remain visible in the editor as a current-color swatch.
+- Light mode displays the original color. Dark mode changes only presentation and preserves hue for non-preset colors.
+- Existing routines, cycle stock, streaks, label/settings layout, JSON import, and PWA behavior are retained.
+- HTML standalone and PWA index.html are byte-identical.
 
-JSON / WORKER COMPATIBILITY
-- Files larger than 768 KiB use a short-lived Blob Worker for FileReader input progress and JSON parsing when Worker, Blob and object URLs are available.
-- If Worker creation or execution is unavailable, import falls back to File.text() and main-thread JSON.parse(). This fallback was tested with Worker disabled.
-- JSON output uses a short-lived Blob Worker for serialization when available, with JSON.stringify() fallback. Both paths were tested.
-- Worker is an optimization, not a requirement for JSON import/export.
-
-ANALYSIS / MERGE
-- Analysis aggregation yields between session and day batches; progress tracks completed work. A fixture with 18,000 sessions completed and closed the loading overlay correctly.
-- Cross-device merge yields during duplicate checks, label mapping and local-session copying. Unique imports, duplicate imports and conflicting duplicate IDs were tested.
-- Import and merge save the fully validated candidate before replacing in-memory state.
-
-PWA REQUIREMENTS
-- The PWA uses a service worker and therefore must be hosted in a secure context (HTTPS; localhost is generally treated as secure by browsers).
-- Opening the standalone HTML via file:// does not install or exercise the PWA service worker.
-- The manifest, app-shell file references and icon assets were statically validated. Runtime service-worker installation and offline navigation were not exercised in this environment.
-
-BROWSER COVERAGE
-- Automated UI/logic checks: Chromium 144.0.7559.96 (headless), using Playwright. The page was loaded in an isolated browser document with a simulated localStorage implementation; this verifies application logic but is not a full HTTPS/PWA-origin test.
-- Responsive layout was checked at 390 px viewport width; no horizontal overflow was observed.
-- Safari/iOS, Firefox, WebKit and Android physical devices were not tested. Blob Worker fallback is provided for browsers that disallow or do not implement Workers.
+Any color already overwritten by an older build cannot be inferred automatically; restore it by importing a backup that still contains its original HEX value.
 
 
-ANALYSIS LABEL COLORS
-- Selected analysis for one label or one of its sublabels uses the configured parent-label color in the period chart and hourly bars.
-- Multiple selected sublabels under one parent label also use that parent color.
-- When different labels are combined, the aggregate chart uses a neutral accent; its legend identifies each contributing label with its configured color.
-- Multi-series label lines use the configured label color; sublabel series inherit their parent label color. Unrecorded time and tracked-total series retain distinct fixed colors.
-- Changing a label color invalidates the analysis view and updates chart/legend colors. No storage schema change.
+DAYLOG v97 responsive toast
+
+- Uses responsive wrapping for bottom operation notices at viewport widths <=650px.
+- Keeps the desktop toast layout and existing message behavior.
+- Does not change stored data, JSON format, or application features.
+- PWA cache name: daylog-toast-wrap-v97.
 
 
-ANALYSIS LABEL COLORS (v84)
-- Selected analysis for one label or one of its sublabels uses the configured parent-label color in the period chart and hourly bars.
-- Multiple selected sublabels under the same parent label use that parent color.
-- When different labels are combined, the aggregate chart uses a neutral accent; its legend identifies each contributing label with its configured color.
-- Multi-series label lines use the configured label color; sublabel series inherit their parent label color. Unrecorded time and tracked-total series retain distinct fixed colors.
-- Changing a label color invalidates the analysis view and updates chart/legend colors. No storage schema change.
+Calendar responsive display update v98: mobile day-total values use stacked short lines; desktop full formatting retained.
 
 
-DAYLOG v85 — ADDITIONAL CHECKS
-- v6 JSON export/import round-trip: passed.
-- v5 backup without routines: imported and normalized into v6 with routines.items and routines.checks initialized.
-- Malformed JSON: rejected without changing the stored snapshot.
-- Simulated storage quota exception: existing stored snapshot retained.
-- Timer lifecycle persisted a completed session after a duration greater than one second.
-- Analysis selected-label graph and legend used the configured label color.
-- Responsive widths 390 / 768 / 1280 CSS px passed without horizontal overflow in Chromium.
-- PWA cache ID is daylog-stability-v85; the previous v84 cache is included in the explicit legacy cleanup set.
-- Runtime service-worker installation/offline behavior and physical-device browser compatibility remain unverified in this environment.
+DAYLOG v100 routine summary progress
+
+- Collapsed daily-routine summary adds done/total, percentage, and a compact progress bar.
+- Periodic/cycle stock is excluded from daily completion calculations.
+- No daily tasks: compact bar is hidden; cycle tasks remain independently available.
+- Existing v6 backup data and all stored task/check records remain compatible.
+- Standalone HTML and PWA index.html are byte-identical.
+
+
+DAYLOG v103
+- UI-only styling update; data format v6 and localStorage key daylog.data.v3 are unchanged.
+- The routine options disclosure adopts the nested palette and disclosure affordance used by label sublabel settings.
+- Standalone HTML and PWA index.html are byte-identical.
+
+
+DAYLOG v104
+- UI-only CSS adjustment. Data format v6 and localStorage key daylog.data.v3 are unchanged.
+- Routine add options summary now matches the label sublabel disclosure summary size and typography.
+- Standalone HTML and PWA index.html are byte-identical.
+
+
+DAYLOG v108
+- Keeps data format v6, localStorage key `daylog.data.v3`, routine reset processing and JSON backup format unchanged.
+- Adds presentation-only dark-theme styling to the daily routine add button. Light-theme button styling remains unchanged.
+- Extends time-wheel flick momentum while retaining loop normalization and final row snapping.
+- PWA cache name: `daylog-routine-apple-scroll-v108`; v107 cache is registered as a known legacy cache.
+- Standalone HTML and PWA `index.html` are byte-identical.

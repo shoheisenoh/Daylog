@@ -427,18 +427,22 @@
   .button-with-icon { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
   .button-with-icon .ui-icon { width: 14px; height: 14px; }
   /* Daily routine checklist: separate from timer sessions, included in local backup data. */
-  .routine-wrap { margin: 0 0 27px; }
+  /* 小さな視覚的区切り：自動終了パネルと毎日の日課の間 */
+  .routine-wrap { margin: 10px 0 27px; }
   .routine-disclosure { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
   .routine-disclosure > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 58px; padding: 0 16px; cursor: pointer; list-style: none; user-select: none; }
   .routine-disclosure > summary::-webkit-details-marker { display: none; }
-  .routine-summary-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .routine-summary-main { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
   .routine-summary-icon { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 10px; background: var(--accent-soft); color: var(--accent-strong); }
   .routine-summary-icon svg { width: 17px; height: 17px; }
-  .routine-summary-copy { display: grid; gap: 3px; min-width: 0; }
-  .routine-summary-copy strong { color: var(--ink); font-size: 12px; font-weight: 750; }
-  .routine-summary-copy small { color: var(--muted); font-size: 9px; }
+  .routine-summary-copy { display: grid; gap: 3px; min-width: 0; width: 0; flex: 1 1 auto; }
+  .routine-summary-copy strong { overflow: hidden; color: var(--ink); font-size: 12px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+  .routine-summary-copy small { overflow: hidden; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+  .routine-summary-progress-track { display: block; width: 100%; max-width: 190px; height: 4px; overflow: hidden; margin-top: 1px; border-radius: 99px; background: var(--surface-3); }
+  .routine-summary-progress-track[hidden] { display: none !important; }
+  .routine-summary-progress-fill { display: block; width: 0; min-width: 0; height: 100%; border-radius: inherit; background-color: #a86f50; background-color: var(--accent, #a86f50); transition: width .22s ease; }
   .routine-summary-side { display: flex; align-items: center; gap: 9px; flex: 0 0 auto; }
-  .routine-progress-count { color: var(--muted); font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .routine-progress-count { color: var(--muted); font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .routine-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
   .routine-disclosure[open] > summary { border-bottom: 1px solid var(--line); }
   .routine-disclosure[open] .routine-body { animation: picker-soft-open .16s ease-out both; }
@@ -448,7 +452,7 @@
   .routine-date { color: var(--muted); font-size: 10px; font-weight: 650; }
   .routine-progress-label { color: var(--accent-strong); font-size: 10px; font-weight: 750; }
   .routine-progress-track { height: 5px; overflow: hidden; border-radius: 99px; background: var(--surface-3); margin-bottom: 12px; }
-  .routine-progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--accent); transition: width .22s ease; }
+  .routine-progress-fill { display: block; width: 0; min-width: 0; height: 100%; border-radius: inherit; background-color: #a86f50; background-color: var(--accent, #a86f50); transition: width .22s ease; }
   .routine-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
   .routine-item { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 44px; padding: 5px 6px 5px 9px; border: 1px solid var(--line); border-radius: 11px; background: var(--bg); }
   .routine-item.is-done { background: color-mix(in srgb, var(--accent-soft) 45%, var(--bg)); }
@@ -470,11 +474,31 @@
   .routine-action[data-routine-move] svg { width: 14px; height: 14px; }
   .routine-empty { padding: 15px 10px; border: 1px dashed var(--line); border-radius: 11px; color: var(--muted); text-align: center; font-size: 10px; line-height: 1.6; }
   .routine-empty strong { display: block; margin-bottom: 3px; color: var(--ink); font-size: 11px; }
-  .routine-add-form { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 7px; margin-top: 12px; }
-  .routine-add-input { width: 100%; min-width: 0; height: 40px; padding: 0 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font-size: 11px; }
+  .routine-add-form { display: grid; grid-template-columns: minmax(0,1fr); gap: 9px; margin-top: 12px; }
+  .routine-add-input { width: 100%; min-width: 0; height: 42px; padding: 0 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font-size: 11px; transition: border-color .16s ease, box-shadow .16s ease, background .16s ease; }
   .routine-add-input::placeholder { color: var(--muted); opacity: .8; }
-  .routine-add-button { min-width: 64px; height: 40px; padding: 0 12px; border: 1px solid var(--accent-strong); border-radius: 10px; background: var(--accent-strong); color: #fff; font: inherit; font-size: 10px; font-weight: 750; }
-  .routine-add-button .ui-icon { width: 13px; height: 13px; }
+  .routine-add-button { width: 100%; min-width: 64px; height: 34px; min-height: 34px; padding: 0 10px; border: 1px solid var(--accent-strong); border-radius: 9px; background: var(--accent-strong); color: #fff; font: inherit; font-size: 11px; font-weight: 650; }
+  .routine-add-button .ui-icon { width: 14px; height: 14px; }
+  /* A softer clay button in dark mode, with readable warm-white text. */
+  [data-theme="dark"] .routine-add-button { border-color: color-mix(in srgb, var(--accent) 48%, var(--line)); background: color-mix(in srgb, var(--accent) 28%, var(--surface-2)); color: var(--ink); }
+  [data-theme="dark"] .routine-add-button:active:not(:disabled) { background: color-mix(in srgb, var(--accent) 38%, var(--surface-2)); }
+  [data-theme="dark"] .routine-add-button:focus-visible { outline-color: var(--accent); outline-offset: 3px; }
+  /* Keep the options disclosure at the same nested visual level as a label's sublabel editor. */
+  .routine-add-options { min-width: 0; overflow: hidden; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--bg) 75%, var(--surface)); }
+  .routine-add-options > summary { min-height: 37px; display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 700; cursor: pointer; list-style: none; }
+  .routine-add-options > summary::-webkit-details-marker { display: none; }
+  .routine-add-options > summary::after { content: ''; width: 7px; height: 7px; flex: 0 0 7px; margin: -4px 2px 0 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); transition: transform .18s ease; }
+  .routine-add-options[open] > summary::after { transform: rotate(225deg); }
+  .routine-add-options-hint { margin-left: auto; color: var(--muted); font-size: 9px; font-weight: 600; }
+  .routine-add-options-body { display: grid; gap: 11px; padding: 0 0 10px; }
+  .routine-add-options[open] .routine-add-options-body { animation: picker-soft-open .16s ease-out both; }
+  .routine-add-options-body label { display: grid; gap: 4px; color: var(--muted); font-size: 10px; font-weight: 700; }
+  .routine-add-options-body select, .routine-add-options-body input { width: 100%; min-width: 0; height: 37px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; font-size: 11px; }
+  .routine-add-cycle-fields { display: grid; gap: 8px; }
+  .routine-add-cycle-fields[hidden] { display: none !important; }
+  .routine-add-cycle-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .routine-add-cycle-preview { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
+  .routine-add-button:disabled { opacity: .45; cursor: default; }
   .routine-limit-note { margin: 8px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
   .routine-edit-form { display: flex; align-items: center; gap: 5px; flex: 1 1 auto; min-width: 0; }
   .routine-edit-input { width: 100%; min-width: 0; height: 34px; padding: 0 8px; border: 1px solid var(--accent); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 11px; }
@@ -482,6 +506,44 @@
   .routine-edit-save { border-color: var(--accent-strong); background: var(--accent-strong); color: #fff; }
   .routine-edit-save, .routine-edit-cancel { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
   .routine-edit-save .ui-icon, .routine-edit-cancel .ui-icon { width: 12px; height: 12px; }
+  .routine-item.is-cycle { display: block; padding: 12px; }
+  .routine-cycle-card { display: grid; gap: 9px; min-width: 0; width: 100%; }
+  .routine-cycle-head, .routine-cycle-stock-row, .routine-cycle-streak-row, .routine-cycle-bottom { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
+  .routine-cycle-title { min-width: 0; color: var(--ink); font-size: 11px; line-height: 1.45; font-weight: 750; overflow-wrap: anywhere; }
+  .routine-cycle-meta, .routine-cycle-next, .routine-cycle-scale, .routine-cycle-stock-caption { color: var(--muted); font-size: 9px; line-height: 1.5; }
+  .routine-cycle-stock-value { flex: 0 0 auto; text-align: right; color: var(--accent-strong); font-size: 16px; line-height: 1.1; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .routine-cycle-stock-caption { display: block; margin-top: 3px; font-size: 8px; font-weight: 600; }
+  .routine-cycle-track { display: block; position: relative; width: 100%; height: 12px; overflow: hidden; border-radius: 99px; background: var(--surface-3); isolation: isolate; }
+  .routine-cycle-goal-zone, .routine-cycle-buffer-zone, .routine-cycle-stock-fill { display: block; position: absolute; top: 0; bottom: 0; box-sizing: border-box; pointer-events: none; }
+  .routine-cycle-goal-zone { z-index: 0; left: 0; background: rgba(168,111,80,.10); background: color-mix(in srgb, var(--accent) 10%, var(--surface-3)); }
+  .routine-cycle-buffer-zone { z-index: 0; background: rgba(196,154,99,.17); background: color-mix(in srgb, #c49a63 17%, var(--surface-3)); }
+  /* One continuous stock fill avoids paint-order gaps between the normal and buffer layers. */
+  .routine-cycle-stock-fill { z-index: 1; left: 0; height: 100%; min-width: 0; border-radius: 99px; background: linear-gradient(90deg, #87543a 0 var(--normal-share, 100%), #c49a63 var(--normal-share, 100%) 100%); background: linear-gradient(90deg, var(--accent-strong, #87543a) 0 var(--normal-share, 100%), #c49a63 var(--normal-share, 100%) 100%); }
+  .routine-cycle-success-mark, .routine-cycle-goal-mark { position: absolute; z-index: 2; top: -2px; bottom: -2px; width: 0; border-left: 1.5px dashed var(--ink); opacity: .72; pointer-events: none; }
+  .routine-cycle-goal-mark { border-left-style: solid; opacity: .82; }
+  .routine-cycle-scale { display: flex; align-items: center; justify-content: space-between; gap: 5px; font-size: 8px; }
+  .routine-cycle-legend { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--muted); font-size: 8px; }
+  .routine-cycle-legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .routine-cycle-legend i { width: 8px; height: 8px; border-radius: 3px; display: inline-block; }
+  .routine-cycle-streak-row { border-top: 1px solid var(--line); padding-top: 7px; color: var(--ink); font-size: 9px; font-weight: 700; }
+  .routine-cycle-status { flex: 0 0 auto; color: var(--accent-strong); font-size: 8px; font-weight: 750; }
+  .routine-cycle-status.is-low { color: #b57950; }
+  .routine-cycle-bottom { align-items: center; flex-wrap: wrap; }
+  .routine-cycle-record { min-height: 34px; padding: 0 12px; border: 1px solid var(--accent-strong); border-radius: 9px; background: var(--accent-strong); color: #fff; font: inherit; font-size: 9px; font-weight: 750; }
+  .routine-cycle-record:disabled { opacity: .45; cursor: default; }
+  .routine-cycle-actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; border-top: 1px solid var(--line); padding-top: 5px; }
+  .routine-edit-form-advanced label { display: grid; gap: 4px; color: var(--muted); font-size: 9px; font-weight: 650; }
+  .routine-edit-form-advanced input, .routine-edit-form-advanced select { width: 100%; min-width: 0; height: 36px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; font-size: 11px; }
+  .routine-edit-form-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .routine-edit-form-advanced { display: grid; gap: 8px; width: 100%; }
+  .routine-edit-form-advanced .routine-edit-name { width: 100%; }
+  .routine-edit-form-advanced .select-control, .routine-add-options-body .select-control { display: block; width: 100%; min-width: 0; }
+  .routine-edit-form-advanced .select-trigger, .routine-add-options-body .select-trigger { min-height: 37px; }
+  .routine-edit-form-fields { grid-template-columns: minmax(0,1fr); }
+  .routine-edit-cycle-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .routine-edit-cycle-fields[hidden] { display: none !important; }
+  .routine-edit-form-advanced .routine-edit-form-actions { display: flex; gap: 6px; }
+  .routine-edit-form-advanced .routine-edit-form-actions button { flex: 1 1 0; }
   @media (max-width: 360px) {
     .routine-disclosure > summary { padding: 0 12px; }
     .routine-body { padding: 12px; }
@@ -545,13 +607,60 @@
   .settings-hint { margin-left: auto; color: var(--muted); font-size: 10px; }
   .chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .22s cubic-bezier(.2,.7,.25,1), color .2s ease; }
   details[open] .chevron { transform: rotate(180deg); color: var(--accent-strong); }
-  .settings-body { padding: 17px 16px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; border-top: 1px solid var(--line); transform-origin: top center; }
+  .settings-body { padding: 14px 14px 16px; display: grid; grid-template-columns: minmax(0,1fr); gap: 12px; border-top: 1px solid var(--line); transform-origin: top center; }
+  .settings-subsection { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+  .settings-subsection > summary { min-height: 52px; padding: 0 13px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; }
+  .settings-subsection > summary::-webkit-details-marker { display: none; }
+  .settings-subsection > summary:active { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+  .settings-subsection[open] > summary { border-bottom: 1px solid var(--line); }
+  .settings-subsection-copy { display: grid; gap: 3px; min-width: 0; }
+  .settings-subsection-copy strong { color: var(--ink); font-size: 11px; font-weight: 750; }
+  .settings-subsection-copy small { color: var(--muted); font-size: 9px; line-height: 1.4; }
+  .settings-subsection-chevron { width: 16px; height: 16px; flex: 0 0 16px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
+  .settings-subsection[open] .settings-subsection-chevron { transform: rotate(180deg); color: var(--accent-strong); }
+  .settings-subsection-body { padding: 14px; }
+  .settings-subsection[open] .settings-subsection-body { animation: picker-soft-open .16s ease-out both; }
+  .settings-extra-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; padding: 8px 2px 2px; }
+  .routine-settings-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+  .routine-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; min-height: 48px; padding: 7px 8px 7px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .routine-settings-info { display: grid; gap: 3px; min-width: 0; flex: 1 1 auto; }
+  .routine-settings-info strong { color: var(--ink); font-size: 10px; font-weight: 700; overflow-wrap: anywhere; }
+  .routine-settings-info small { color: var(--muted); font-size: 9px; }
+  .routine-settings-row .routine-cycle-actions { flex: 0 0 auto; border: 0; padding: 0; }
   .settings[open] > .settings-body { animation: picker-soft-open .16s ease-out both; }
   .settings summary { transition: background-color .2s ease; }
   .settings summary:active { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   .settings { transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
   .settings[open] { border-color: var(--line); box-shadow: none; }
   .ambient-settings { display: grid; gap: 11px; }
+  .routine-reset-setting { display: grid; gap: 7px; max-width: 260px; }
+  .routine-reset-label { color: var(--muted); font-size: 10px; font-weight: 650; }
+  .routine-reset-time-wrap { width: 100%; min-width: 0; }
+  .routine-time-picker { width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+  .routine-time-picker-trigger { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 44px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; transition: border-color .16s ease, background-color .16s ease; }
+  .routine-time-picker-trigger:active { background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
+  .routine-time-picker-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .routine-time-picker-trigger-copy { display: grid; gap: 2px; min-width: 0; }
+  .routine-time-picker-caption { color: var(--muted); font-size: 9px; font-weight: 650; }
+  .routine-time-picker-value { color: var(--ink); font-size: 19px; line-height: 1.1; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: .06em; }
+  .routine-time-picker-hint { color: var(--muted); font-size: 9px; font-weight: 600; white-space: nowrap; }
+  .routine-time-picker-chevron { width: 17px; height: 17px; flex: 0 0 17px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
+  .routine-time-picker.is-open .routine-time-picker-chevron { transform: rotate(180deg); color: var(--accent-strong); }
+  .routine-time-picker-panel { margin-top: 8px; padding: 9px 8px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); animation: picker-soft-open .16s ease-out both; }
+  .routine-time-picker-panel[hidden] { display: none !important; }
+  .routine-time-wheel-group { display: grid; grid-template-columns: minmax(0,1fr) 18px minmax(0,1fr); align-items: end; gap: 5px; }
+  .routine-time-wheel-unit { min-width: 0; display: grid; gap: 5px; }
+  .routine-time-wheel-caption { color: var(--muted); font-size: 9px; font-weight: 700; text-align: center; }
+  .routine-time-wheel-window { position: relative; height: 180px; min-width: 0; overflow: hidden; border-radius: 10px; }
+  .routine-time-wheel-scroll { position: relative; box-sizing: border-box; width: 100%; height: 180px; overflow: hidden; padding-block: 72px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); scrollbar-width: none; outline: none; touch-action: none; user-select: none; cursor: grab; }
+  .routine-time-wheel-scroll:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 48%, transparent); }
+  .routine-time-wheel-option { display: flex; align-items: center; justify-content: center; height: 36px; min-height: 36px; color: var(--muted); font-size: 13px; line-height: 1; font-weight: 600; font-variant-numeric: tabular-nums; user-select: none; cursor: pointer; opacity: .62; transition: color .1s ease, font-size .1s ease, font-weight .1s ease, opacity .1s ease; }
+  .routine-time-wheel-option.is-active { color: var(--accent-strong); font-size: 17px; font-weight: 850; opacity: 1; }
+  .routine-time-wheel-colon { align-self: center; padding-top: 22px; color: var(--muted); font-size: 22px; line-height: 1; font-weight: 750; text-align: center; }
+  .routine-time-wheel-selection { position: absolute; z-index: 1; top: 72px; right: 4px; left: 4px; height: 36px; border: 1px solid color-mix(in srgb, var(--accent) 52%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--accent-soft) 72%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent); pointer-events: none; }
+  .routine-time-wheel-fade { position: absolute; z-index: 2; inset: 0; border-radius: 10px; background: linear-gradient(to bottom, color-mix(in srgb, var(--surface) 90%, transparent), transparent 28%, transparent 72%, color-mix(in srgb, var(--surface) 90%, transparent)); pointer-events: none; }
+  .routine-time-wheel-scroll.is-dragging { cursor: grabbing; }
+  @media (prefers-reduced-motion: reduce) { .routine-time-picker-panel { animation: none; } .routine-time-picker-chevron { transition: none; } }
   .ambient-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 39px; cursor: pointer; }
   .ambient-toggle-copy { min-width: 0; display: grid; gap: 3px; }
   .ambient-toggle-copy strong { color: var(--ink); font-size: 11px; font-weight: 650; }
@@ -583,6 +692,8 @@
   .label-options-count { margin-left: auto; color: var(--muted); font-size: 9px; font-weight: 600; }
   .label-options-content { display: grid; gap: 11px; padding: 0 0 10px; }
   .label-options-disclosure[open] .label-options-content { animation: picker-soft-open .16s ease-out both; }
+  /* Match the routine options summary to the label sublabel disclosure summary. */
+  .settings .routine-add-options > summary { min-height: 37px; padding: 0 16px; color: var(--muted); font-size: 10px; font-weight: 700; }
   .label-options-section { display: grid; gap: 7px; }
   .label-options-heading { color: var(--muted); font-size: 10px; font-weight: 700; }
   .sublabel-editor { display: grid; gap: 7px; }
@@ -601,6 +712,11 @@
   .data-merge-action { display: flex; align-items: center; margin-top: 8px; }
   .data-merge-action .small-action { min-height: 36px; }
   .small-action { min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); color: var(--ink); font-size: 10px; font-weight: 650; }
+  .file-picker-label { position: relative; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; cursor: pointer; overflow: hidden; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .file-picker-label:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .file-picker-label.is-disabled { opacity: .55; cursor: wait; }
+  .file-picker-overlay { position: absolute; inset: 0; z-index: 2; display: block; box-sizing: border-box; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: .001; cursor: pointer; touch-action: manipulation; -webkit-appearance: none; appearance: none; }
+  .file-picker-overlay:disabled { cursor: wait; }
   .small-action.primary { border-color: var(--accent); background: var(--accent); color: white; }
   .setting-note { margin: 9px 0 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
   .overview { margin-bottom: 27px; }
@@ -677,13 +793,15 @@
   .month-btn:disabled, .day-cell:disabled { opacity: .28; cursor: default; }
   .calendar-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 5px; }
   .weekday { padding: 7px 0 5px; color: var(--muted); font-size: 9px; font-weight: 700; text-align: center; }
-  .day-cell { min-height: 64px; padding: 7px 4px 5px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 1px solid transparent; border-radius: 9px; background: var(--bg); color: var(--ink); text-align: center; }
+  .day-cell { width: 100%; min-width: 0; box-sizing: border-box; min-height: 64px; padding: 7px 4px 5px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 1px solid transparent; border-radius: 9px; background: var(--bg); color: var(--ink); text-align: center; }
   .day-cell:hover { border-color: var(--line); }
   .day-cell.outside { opacity: .35; }
   .day-cell.selected { border-color: var(--accent); background: var(--accent-soft); }
   .day-cell.today .day-number { color: var(--accent-strong); font-weight: 850; }
   .day-number { font-size: 11px; font-weight: 570; }
-  .day-total { color: var(--muted); font-size: 8px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .day-total { display: block; min-width: 0; max-width: 100%; color: var(--muted); font-size: 8px; white-space: nowrap; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .day-total-full { display: inline; }
+  .day-total-short { display: none; }
   .day-dots { min-height: 4px; display: flex; gap: 3px; }
   .day-dots i { width: 4px; height: 4px; display: block; border-radius: 50%; }
   .calendar-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
@@ -715,6 +833,8 @@
   .analysis-settings-body { padding: 0 12px 12px; }
   .analysis-controls { padding: 14px 0 4px; border-bottom: 1px solid var(--line); }
   .analysis-control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .analysis-import-row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 10px; margin: 10px 0 2px; }
+  .analysis-import-note { color: var(--muted); font-size: 9px; line-height: 1.5; }
   .analysis-period-row { display: grid; grid-template-columns: minmax(0,1fr); gap: 9px; margin-bottom: 10px; }
   /* Custom period: fully app-rendered calendar controls (no native input[type=date]). */
   .analysis-period-row,
@@ -797,6 +917,8 @@
   .analysis-axis-value { fill: var(--muted); font-size: 9px; text-anchor: end; }
   .analysis-series-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
   .analysis-series-area { opacity: .1; }
+  .analysis-composition-area { opacity: .82; }
+  .analysis-composition-boundary { opacity: .94; }
   .analysis-series-point { stroke: var(--surface); stroke-width: 1.5; }
   .analysis-series-bar { rx: 2; }
   .analysis-legend { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 7px; }
@@ -828,7 +950,7 @@
     .analysis-hourly { gap: 2px; }
     .analysis-hour-value { font-size: 6px; }
   }
-  @media (prefers-reduced-motion: reduce) { .trend-chevron, .analysis-settings-chevron { transition: none; } .trend-body, .overview.day-change-in, .settings[open] > .settings-body, .auto-stop-disclosure[open] .auto-stop-content, .routine-disclosure[open] .routine-body, .records-disclosure[open] .record-list, .analysis-settings-disclosure[open] .analysis-settings-body, .label-options-disclosure[open] .label-options-content { animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) { .trend-chevron, .analysis-settings-chevron, .settings-subsection-chevron { transition: none; } .trend-body, .overview.day-change-in, .settings[open] > .settings-body, .settings-subsection[open] .settings-subsection-body, .auto-stop-disclosure[open] .auto-stop-content, .routine-disclosure[open] .routine-body, .records-disclosure[open] .record-list, .analysis-settings-disclosure[open] .analysis-settings-body, .label-options-disclosure[open] .label-options-content { animation: none !important; } }
 
   .footer { padding-top: 22px; color: var(--muted); font-size: 9px; letter-spacing: .1em; text-align: center; }
   .loading-overlay { position: fixed; inset: 0; z-index: 1100; display: grid; place-items: center; padding: 22px 16px calc(22px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--bg) 72%, transparent); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); }
@@ -863,6 +985,28 @@
   @media (prefers-reduced-motion: reduce) { .confirm-dialog { animation: none; } .confirm-dialog-button { transition: none; } }
   .toast { position: fixed; z-index: 20; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); padding: 10px 16px; border-radius: 99px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); font-size: 11px; opacity: 0; pointer-events: none; transform: translate(-50%,14px); transition: .2s ease; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translate(-50%,0); }
+  /* On narrow screens, let operation notices use the available width and wrap. */
+  @media (max-width: 650px) {
+    .toast {
+      left: 12px;
+      right: 12px;
+      left: max(12px, env(safe-area-inset-left, 0px));
+      right: max(12px, env(safe-area-inset-right, 0px));
+      width: auto;
+      min-width: 0;
+      max-width: none;
+      box-sizing: border-box;
+      padding: 10px 14px;
+      border-radius: 14px;
+      line-height: 1.55;
+      text-align: center;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      transform: translateY(14px);
+    }
+    .toast.show { transform: translateY(0); }
+  }
   .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
   @media (max-width: 650px) {
     .app-shell { width: min(100% - 24px, 520px); padding-top: 18px; }
@@ -875,7 +1019,7 @@
     .btn-primary { min-width: 128px; }
     .label-picker { flex-basis: 126px; width: 126px; }
     .timer-label-trigger { height: 41px; padding: 0 10px; }
-    .settings-body { grid-template-columns: 1fr; gap: 18px; }
+    .settings-body { grid-template-columns: 1fr; gap: 12px; } .settings-extra-grid { grid-template-columns: 1fr; gap: 18px; }
     .auto-stop-fields { grid-template-columns: minmax(0,1fr); }
     .auto-stop-review-row { grid-template-columns: 1fr; }
     .summary-card { padding: 14px; }
@@ -884,8 +1028,12 @@
     .summary-value { font-size: 23px; }
     .calendar-card { padding: 14px 10px; }
     .calendar-grid { gap: 3px; }
-    .day-cell { min-height: 57px; padding-top: 6px; gap: 3px; }
-    .weekday, .day-total { font-size: 8px; }
+    .day-cell { min-height: 57px; padding: 6px 2px 4px; gap: 3px; }
+    .weekday { font-size: 8px; }
+    .day-total { width: 100%; max-width: 100%; white-space: normal; overflow: hidden; font-size: 7px; line-height: 1.08; }
+    .day-total-full { display: none; }
+    .day-total-short { display: grid; justify-items: center; gap: 1px; max-width: 100%; font-size: 7px; line-height: 1.05; white-space: nowrap; }
+    .day-total-short span { display: block; max-width: 100%; white-space: nowrap; }
     .section-side-note { font-size: 9px; }
   }
   @media (max-width: 360px) {
@@ -893,6 +1041,7 @@
     .timer-controls { gap: 7px; }
     .btn { padding: 0 13px; font-size: 11px; }
     .day-cell { min-height: 53px; }
+    .day-total-short { font-size: 6.5px; letter-spacing: -.02em; }
   }
 
   /* Soft Motion: quiet feedback, stable digits, no bouncing or sliding. */
@@ -1112,81 +1261,160 @@
       <div class="auto-stop-review-actions"><button class="small-action" id="confirmAutoStopReview" type="button">この時刻で確定</button></div>
     </section>
 
-    <div class="settings-wrap">
-      <details class="settings" id="settingsPanel">
-        <summary>
-          <span class="settings-title"><svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>設定</span>
-          <span class="settings-hint">ラベル・テーマ・データ</span>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
-        </summary>
-        <div class="settings-body">
-          <section>
-            <h3 class="setting-group-title">ラベルをカスタム</h3>
-            <div class="label-list" id="labelEditor"></div>
-            <button class="add-label-btn button-with-icon" id="addLabelBtn" type="button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>ラベルを追加</span></button>
-            <p class="setting-note">色はテンプレートから選べます。ラベル左側の「↑」「↓」ボタンで順番を変更できます。自動終了とサブラベルは各ラベルの折りたたみにまとめています。</p>
-          </section>
-          <section>
-            <h3 class="setting-group-title">表示テーマ</h3>
-            <label class="visually-hidden" for="themeSelect">テーマ</label>
-            <select class="setting-select" id="themeSelect">
-              <option value="light">ライト — オートミール</option>
-              <option value="dark">ダーク — フォレスト</option>
-              <option value="system">システム設定に合わせる</option>
-            </select>
-            <h3 class="setting-group-title" style="margin-top:20px">タイマー背景</h3>
-            <div class="ambient-settings">
-              <label class="ambient-toggle-row" for="ambientEnabled">
-                <span class="ambient-toggle-copy"><strong>木漏れ日と揺れる枝葉</strong><small>枝葉の影・木漏れ日・穏やかな雲の明暗変化を再生します。明暗の変化量は「アニメーションの豊かさ」に連動します。</small></span>
-                <span class="ambient-switch"><input id="ambientEnabled" type="checkbox" checked><span class="ambient-switch-track" aria-hidden="true"></span></span>
-              </label>
-              <div class="ambient-strength-row"><label for="ambientStrength">アニメーションの豊かさ</label>
-                <select class="setting-select" id="ambientStrength">
-                  <option value="subtle">控えめ</option>
-                  <option value="balanced">標準</option>
-                  <option value="rich">豊か</option>
-                </select>
-              </div>
-              <label class="ambient-toggle-row" for="ambientFollowLabel">
-                <span class="ambient-toggle-copy"><strong>ラベルカラーに連動</strong><small>選択中のラベルに合わせて、水面の色合いと木漏れ日の印象を変えます。</small></span>
-                <span class="ambient-switch"><input id="ambientFollowLabel" type="checkbox" checked><span class="ambient-switch-track" aria-hidden="true"></span></span>
-              </label>
-            </div>
-            <h3 class="setting-group-title" style="margin-top:20px">データのバックアップ</h3>
-            <div class="data-actions">
-              <button class="small-action primary" id="exportBtn" type="button">JSONを書き出す</button>
-              <button class="small-action" id="importBtn" type="button">JSONを読み込む</button>
-              <input class="visually-hidden" id="importFile" type="file" accept=".json,application/json">
-            </div>
-            <div class="data-merge-action">
-              <button class="small-action button-with-icon" id="mergeSessionsBtn" type="button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7h10M7 17h10M7 7l3-3M7 7l3 3M17 17l-3-3M17 17l-3 3"/><path d="M12 7v10"/></svg><span>別端末と合成</span></button>
-              <input class="visually-hidden" id="mergeSessionsFile" type="file" accept=".json,application/json">
-            </div>
-            <p class="setting-note">「JSONを読み込む」は現在のデータを置き換えます。「別端末と合成」は、相手端末の完了済みセッションを現在の記録へ追加します。同じ記録IDは重複登録せず、必要なラベル・サブラベルだけを補います。別端末の最初のセッションが、この端末で計測中の時間区間の途中から始まっている場合は、切り忘れと判断してこの端末の計測をその開始時刻で終了します。終了時刻より後の区間は破棄されるため、確定前に内容を確認してください。日課・テーマ・分析設定はこの端末の内容を維持します。</p>
-          </section>
-        </div>
-      </details>
-    </div>
-
     <div class="routine-wrap">
       <details class="routine-disclosure" id="routineDetails">
         <summary aria-controls="routineBody" aria-expanded="false">
           <span class="routine-summary-main">
             <span class="routine-summary-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
-            <span class="routine-summary-copy"><strong>毎日の日課</strong><small id="routineSummaryHint">日々のルーティンをチェックリストで管理</small></span>
+            <span class="routine-summary-copy"><strong>毎日の日課</strong><small id="routineSummaryHint">毎日タスクなし</small><span class="routine-summary-progress-track" id="routineSummaryProgressTrack" role="progressbar" aria-label="今日の日課達成率" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0件完了、0件中" hidden><span class="routine-summary-progress-fill" id="routineSummaryProgressFill"></span></span></span>
           </span>
-          <span class="routine-summary-side"><span class="routine-progress-count" id="routineSummaryCount">0 / 0</span><svg class="routine-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+          <span class="routine-summary-side"><span class="routine-progress-count" id="routineSummaryCount">日課なし</span><svg class="routine-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="routine-body" id="routineBody">
           <div class="routine-date-row"><span class="routine-date" id="routineDateLabel">今日の日課</span><span class="routine-progress-label" id="routineProgressLabel">0% 完了</span></div>
           <div class="routine-progress-track" role="progressbar" id="routineProgressTrack" aria-label="今日の日課の達成率" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="routine-progress-fill" id="routineProgressFill"></div></div>
           <ul class="routine-list" id="routineList" aria-label="毎日の日課一覧"></ul>
+
+        </div>
+      </details>
+    </div>
+
+    <div class="settings-wrap">
+      <details class="settings" id="settingsPanel">
+        <summary aria-expanded="false">
+          <span class="settings-title"><svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>設定</span>
+          <span class="settings-hint">ラベル・日課・表示・データ</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="settings-body">
+          <details class="settings-subsection" id="labelSettingsDetails">
+            <summary aria-expanded="false">
+              <span class="settings-subsection-copy"><strong>ラベル</strong><small>名前・色・サブラベル・自動終了を管理</small></span>
+              <svg class="settings-subsection-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="settings-subsection-body">
+              <h3 class="setting-group-title">ラベルをカスタム</h3>
+              <div class="label-list" id="labelEditor"></div>
+              <button class="add-label-btn button-with-icon" id="addLabelBtn" type="button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>ラベルを追加</span></button>
+              <p class="setting-note">色はテンプレートから選べます。ラベル左側の「↑」「↓」ボタンで順番を変更できます。自動終了とサブラベルは各ラベルの折りたたみにまとめています。</p>
+            </div>
+          </details>
+
+          <details class="settings-subsection" id="routineSettingsDetails">
+            <summary aria-expanded="false">
+              <span class="settings-subsection-copy"><strong>日課</strong><small>タスクの追加・編集・並べ替え・リセット時刻を管理</small></span>
+              <svg class="settings-subsection-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="settings-subsection-body">
+              <h3 class="setting-group-title">登録済みの日課</h3>
+              <ul class="routine-settings-list" id="routineSettingsList" aria-label="日課の設定一覧"></ul>
+              <h3 class="setting-group-title" style="margin-top:18px">日課を追加</h3>
           <form class="routine-add-form" id="routineAddForm" autocomplete="off">
-            <label class="visually-hidden" for="routineAddInput">追加する日課</label>
-            <input class="routine-add-input" id="routineAddInput" type="text" maxlength="80" placeholder="日課を追加（例：朝のストレッチ）">
+            <label class="visually-hidden" for="routineAddInput">追加する日課の名前</label>
+            <input class="routine-add-input" id="routineAddInput" type="text" maxlength="80" placeholder="日課の名前（例：朝のストレッチ）" required>
+            <details class="routine-add-options" id="routineAddOptions">
+              <summary><span>オプション</span><span class="routine-add-options-hint" id="routineAddOptionsHint">毎日タスク</span></summary>
+              <div class="routine-add-options-body">
+                <label for="routineAddKind">タスクの種類
+                  <select id="routineAddKind" aria-label="タスクの種類">
+                    <option value="daily">毎日タスク（チェック式）</option>
+                    <option value="cycle">周期タスク（ストック式）</option>
+                  </select>
+                </label>
+                <div class="routine-add-cycle-fields" id="routineAddCycleFields" hidden>
+                  <div class="routine-add-cycle-grid">
+                    <label for="routineCycleAddDays">周期（日）<input id="routineCycleAddDays" type="number" min="1" max="365" step="1" value="3" inputmode="numeric"></label>
+                    <label for="routineCycleAddCount">目標回数<input id="routineCycleAddCount" type="number" min="1" max="60" step="1" value="2" inputmode="numeric"></label>
+                  </div>
+                  <p class="routine-add-cycle-preview" id="routineCycleAddPreview">3日間に2回 · 36時間ごとに1回分減少。初期ストックは2回、最大は3回です。</p>
+                </div>
+              </div>
+            </details>
             <button class="routine-add-button button-with-icon" id="routineAddButton" type="submit"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>追加</span></button>
           </form>
-          <p class="routine-limit-note">チェック状態は日付ごとに保存され、毎日新しいチェックリストになります。日課そのものは翌日以降も引き継がれます。</p>
+              <p class="routine-limit-note">日課の追加・種類変更・周期変更・並べ替え・削除は、この設定内から行います。毎日のチェックや周期タスクの実行記録は、上の日課欄から行えます。</p>
+              <h3 class="setting-group-title" style="margin-top:20px">毎日タスクのリセット</h3>
+              <div class="routine-reset-setting">
+                <div class="routine-reset-label">毎日タスクのリセット時刻</div>
+                <div class="routine-reset-time-wrap">
+                  <div class="routine-time-picker" id="routineResetTimePicker">
+                    <button class="routine-time-picker-trigger" id="routineResetTimeToggle" type="button" aria-expanded="false" aria-controls="routineResetTimeWheelPanel" aria-label="リセット時刻を変更。現在05:00">
+                      <span class="routine-time-picker-trigger-copy">
+                        <span class="routine-time-picker-caption">現在のリセット時刻</span>
+                        <span class="routine-time-picker-value" id="routineResetTimeDisplay" aria-live="polite">05:00</span>
+                      </span>
+                      <span class="routine-time-picker-hint">タップして変更</span>
+                      <svg class="routine-time-picker-chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="routine-time-picker-panel" id="routineResetTimeWheelPanel" hidden>
+                      <div class="routine-time-wheel-group" aria-label="リセット時刻を選択">
+                        <div class="routine-time-wheel-unit">
+                          <span class="routine-time-wheel-caption">時</span>
+                          <div class="routine-time-wheel-window">
+                            <div class="routine-time-wheel-scroll" id="routineResetHourWheel" role="listbox" tabindex="0" aria-label="時を選択" aria-describedby="routineResetTimeHelp"></div>
+                            <div class="routine-time-wheel-selection" aria-hidden="true"></div>
+                            <div class="routine-time-wheel-fade" aria-hidden="true"></div>
+                          </div>
+                        </div>
+                        <span class="routine-time-wheel-colon" aria-hidden="true">:</span>
+                        <div class="routine-time-wheel-unit">
+                          <span class="routine-time-wheel-caption">分</span>
+                          <div class="routine-time-wheel-window">
+                            <div class="routine-time-wheel-scroll" id="routineResetMinuteWheel" role="listbox" tabindex="0" aria-label="分を選択" aria-describedby="routineResetTimeHelp"></div>
+                            <div class="routine-time-wheel-selection" aria-hidden="true"></div>
+                            <div class="routine-time-wheel-fade" aria-hidden="true"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <input id="routineResetTime" type="hidden" value="05:00">
+                </div>
+                <p class="setting-note" id="routineResetTimeHelp">この時刻を1日の区切りとして、毎日タスクのチェックを新しい状態に切り替えます。時刻をタップすると時・分のホイールが開き、上下にスライドして設定できます。ホイールは端で止まらず循環します。選択した時刻は自動で保存されます。初期設定は午前5:00です。アプリを閉じている間に時刻を過ぎた場合も、次回起動時に反映されます。</p>
+              </div>
+            </div>
+          </details>
+
+          <div class="settings-extra-grid">
+            <section>
+              <h3 class="setting-group-title">表示テーマ</h3>
+              <label class="visually-hidden" for="themeSelect">テーマ</label>
+              <select class="setting-select" id="themeSelect">
+                <option value="light">ライト — オートミール</option>
+                <option value="dark">ダーク — フォレスト</option>
+                <option value="system">システム設定に合わせる</option>
+              </select>
+              <h3 class="setting-group-title" style="margin-top:20px">タイマー背景</h3>
+              <div class="ambient-settings">
+                <label class="ambient-toggle-row" for="ambientEnabled">
+                  <span class="ambient-toggle-copy"><strong>木漏れ日と揺れる枝葉</strong><small>枝葉の影・木漏れ日・穏やかな雲の明暗変化を再生します。明暗の変化量は「アニメーションの豊かさ」に連動します。</small></span>
+                  <span class="ambient-switch"><input id="ambientEnabled" type="checkbox" checked><span class="ambient-switch-track" aria-hidden="true"></span></span>
+                </label>
+                <div class="ambient-strength-row"><label for="ambientStrength">アニメーションの豊かさ</label>
+                  <select class="setting-select" id="ambientStrength">
+                    <option value="subtle">控えめ</option>
+                    <option value="balanced">標準</option>
+                    <option value="rich">豊か</option>
+                  </select>
+                </div>
+                <label class="ambient-toggle-row" for="ambientFollowLabel">
+                  <span class="ambient-toggle-copy"><strong>ラベルカラーに連動</strong><small>選択中のラベルに合わせて、水面の色合いと木漏れ日の印象を変えます。</small></span>
+                  <span class="ambient-switch"><input id="ambientFollowLabel" type="checkbox" checked><span class="ambient-switch-track" aria-hidden="true"></span></span>
+                </label>
+              </div>
+            </section>
+            <section>
+              <h3 class="setting-group-title">データのバックアップ</h3>
+              <div class="data-actions">
+                <button class="small-action primary" id="exportBtn" type="button">JSONを書き出す</button>
+                <label class="small-action file-picker-label">JSONを読み込む<input class="file-picker-overlay" id="importFile" type="file" accept=".json,application/json" aria-label="読み込むJSONファイルを選択"></label>
+              </div>
+              <div class="data-merge-action">
+                <label class="small-action button-with-icon file-picker-label" id="mergeSessionsBtn"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7h10M7 17h10M7 7l3-3M7 7l3 3M17 17l-3-3M17 17l-3 3"/><path d="M12 7v10"/></svg><span>別端末と合成</span><input class="file-picker-overlay" id="mergeSessionsFile" type="file" accept=".json,application/json" aria-label="合成するJSONファイルを選択"></label>
+              </div>
+              <p class="setting-note">「JSONを読み込む」は現在のデータを置き換えます。「別端末と合成」は、相手端末の完了済みセッションを現在の記録へ追加します。同じ記録IDは重複登録せず、必要なラベル・サブラベルだけを補います。別端末の最初のセッションが、この端末で計測中の時間区間の途中から始まっている場合は、切り忘れと判断してこの端末の計測をその開始時刻で終了します。終了時刻より後の区間は破棄されるため、確定前に内容を確認してください。日課・テーマ・分析設定はこの端末の内容を維持します。</p>
+            </section>
+          </div>
         </div>
       </details>
     </div>
@@ -1295,6 +1523,10 @@
               <option value="ratio">1日の時間割合（%）</option>
             </select></label>
           </div>
+          <div class="analysis-import-row">
+            <label class="small-action file-picker-label">JSONを読み込んで分析<input class="file-picker-overlay" id="analysisImportFile" type="file" accept=".json,application/json" aria-label="分析用のJSONバックアップを選択"></label>
+            <span class="analysis-import-note">バックアップを読み込むと、現在のアプリデータを置き換えます。</span>
+          </div>
           <div class="analysis-label-picker" id="analysisLabelPicker" hidden>
             <div class="analysis-picker-head"><div><strong>分析に含める項目</strong><span>選択した複数項目を合算して1本の推移にします。</span></div><div class="analysis-picker-actions"><button type="button" id="analysisSelectAll">すべて</button><button type="button" id="analysisClearAll">解除</button></div></div>
             <div class="analysis-label-choices" id="analysisLabelChoices"></div>
@@ -1363,6 +1595,36 @@
   const RECOVERY_STORAGE_KEY = 'daylog.recovery.v1';
   let startupDataWarning = '';
   let startupMigrationPending = false;
+  // Some browsers restrict localStorage on file:// standalone HTML documents.
+  // Keep JSON file import and analysis usable in that test mode with a clearly
+  // temporary in-memory fallback; normal HTTPS/localhost/PWA storage is untouched.
+  const appStorage = (() => {
+    try {
+      const nativeStorage = window.localStorage;
+      const probeKey = `${STORAGE_KEY}.availability-probe`;
+      nativeStorage.setItem(probeKey, '1');
+      nativeStorage.removeItem(probeKey);
+      return nativeStorage;
+    } catch (error) {
+      if (location.protocol === 'file:' || location.origin === 'null') {
+        const values = new Map();
+        startupDataWarning = 'HTML単体のテストモードです。ブラウザーの保存機能が制限されているため、読み込んだJSONはこのページを開いている間だけ保持されます。';
+        return {
+          getItem(key) { return values.has(String(key)) ? values.get(String(key)) : null; },
+          setItem(key, value) { values.set(String(key), String(value)); },
+          removeItem(key) { values.delete(String(key)); }
+        };
+      }
+      // Preserve the established storage-error behavior on normal app origins.
+      return {
+        getItem() { throw error; },
+        setItem() { throw error; },
+        removeItem() { throw error; }
+      };
+    }
+  })();
+  // Keep every existing swatch, then add distinct purple-family choices that
+  // were previously missing from the finite preset list.
   const LABEL_COLOR_TEMPLATES = [
     { name: 'セージ', color: '#879978' },
     { name: 'テラコッタ', color: '#c18f6c' },
@@ -1371,7 +1633,11 @@
     { name: 'ハニー', color: '#d2ad70' },
     { name: 'ダスティローズ', color: '#c98f83' },
     { name: 'モカ', color: '#9d8979' },
-    { name: 'ミストグリーン', color: '#7f968d' }
+    { name: 'ミストグリーン', color: '#7f968d' },
+    { name: 'ライラック', color: '#a58bbd' },
+    { name: 'バイオレット', color: '#8f79b8' },
+    { name: 'プラム', color: '#a17f9c' },
+    { name: 'インディゴ', color: '#7e89b8' }
   ];
   const DEFAULT_LABELS = [
     { id: 'focus', name: '学習', color: '#879978' },
@@ -1403,26 +1669,65 @@
   const isPlainObject = value => !!value && typeof value === 'object' && !Array.isArray(value);
   const isFiniteNumber = value => typeof value === 'number' && Number.isFinite(value);
   const safeColorCache = new Map();
+  const HEX_COLOR_PATTERN = /^#[0-9a-f]{6}$/i;
+  // A valid saved HEX color is data, not a suggestion to snap to a preset.
+  // Preserve it exactly (normalized to lowercase); only malformed values use
+  // the established safe sage fallback.
   const safeColor = (c) => {
-    const cacheKey = typeof c === 'string' ? c.toLowerCase() : '';
+    const cacheKey = typeof c === 'string' ? c.trim().toLowerCase() : '';
     const cached = safeColorCache.get(cacheKey);
     if (cached) return cached;
-    const raw = /^#[0-9a-f]{6}$/i.test(typeof c === 'string' ? c : '') ? c.toLowerCase() : '#879978';
-    let resolved = raw;
-    if (!LABEL_COLOR_TEMPLATES.some(preset => preset.color === raw)) {
-      const rgb = raw.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
-      let nearest = LABEL_COLOR_TEMPLATES[0], nearestDistance = Infinity;
-      for (const preset of LABEL_COLOR_TEMPLATES) {
-        const channels = preset.color.match(/[0-9a-f]{2}/gi).map(v => parseInt(v, 16));
-        const distance = channels.reduce((sum, value, index) => sum + (value - rgb[index]) ** 2, 0);
-        if (distance < nearestDistance) { nearest = preset; nearestDistance = distance; }
-      }
-      resolved = nearest.color;
-    }
+    const resolved = HEX_COLOR_PATTERN.test(cacheKey) ? cacheKey : '#879978';
     safeColorCache.set(cacheKey, resolved);
-    if (safeColorCache.size > 64) safeColorCache.delete(safeColorCache.keys().next().value);
+    if (safeColorCache.size > 256) safeColorCache.delete(safeColorCache.keys().next().value);
     return resolved;
   };
+  // The eight v94 display colors remain unchanged for visual continuity.
+  // Any other valid HEX value receives a hue-preserving dark variant instead
+  // of falling back to sage. This covers custom colors and older palette values.
+  const DARK_LABEL_COLOR_MAP = Object.freeze({
+    '#879978':'#74866a', // sage
+    '#c18f6c':'#9d765a', // terracotta
+    '#8e9eaa':'#748996', // blue grey
+    '#b6a5bd':'#8e8098', // lavender
+    '#d2ad70':'#9a8055', // honey
+    '#c98f83':'#9d746b', // dusty rose
+    '#9d8979':'#827365', // mocha
+    '#7f968d':'#6f857b'  // mist green
+  });
+  const darkColorCache = new Map();
+  function relativeLuminance(hex) {
+    const values=[1,3,5].map(index=>parseInt(hex.slice(index,index+2),16)/255).map(v=>v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4);
+    return values[0]*0.2126+values[1]*0.7152+values[2]*0.0722;
+  }
+  function darkenPreservingHue(color) {
+    const cached=darkColorCache.get(color);
+    if(cached) return cached;
+    const rgb=[1,3,5].map(index=>parseInt(color.slice(index,index+2),16));
+    // Pull brighter colors toward a neutral dark base. Moving every RGB channel
+    // by the same factor toward equal channel values retains hue while reducing
+    // glare and saturation. Very dark colors are dimmed toward black instead.
+    const neutralBase=[32,32,32], baseHex='#202020', factor=0.74;
+    const sourceLum=relativeLuminance(color), baseLum=relativeLuminance(baseHex);
+    let output=sourceLum>baseLum
+      ? rgb.map((value,index)=>Math.round(neutralBase[index]+(value-neutralBase[index])*factor))
+      : rgb.map(value=>Math.round(value*factor));
+    let result='#'+output.map(value=>Math.max(0,Math.min(255,value)).toString(16).padStart(2,'0')).join('');
+    // Guarantee a lower-luminance result despite integer rounding. Pure black
+    // is the only valid color that cannot be made darker.
+    for(let attempt=0;attempt<12 && sourceLum>0 && relativeLuminance(result)>=sourceLum;attempt++) {
+      output=output.map(value=>Math.round(value*0.92));
+      result='#'+output.map(value=>Math.max(0,Math.min(255,value)).toString(16).padStart(2,'0')).join('');
+    }
+    darkColorCache.set(color,result);
+    if(darkColorCache.size>256) darkColorCache.delete(darkColorCache.keys().next().value);
+    return result;
+  }
+  function displayLabelColor(color) {
+    const canonical=safeColor(color);
+    if(document.documentElement.dataset.theme!=='dark') return canonical;
+    return DARK_LABEL_COLOR_MAP[canonical] || darkenPreservingHue(canonical);
+  }
   const clone = (v) => JSON.parse(JSON.stringify(v));
   const normalizeAutoStop = (value) => {
     const mode = ['duration','time'].includes(value?.mode) ? value.mode : 'off';
@@ -1479,12 +1784,27 @@
   };
   const MAX_ROUTINE_ITEMS = 60;
   const MAX_ROUTINE_DAYS = 730;
+  const MAX_ROUTINE_PERIOD_DAYS = 365;
+  const MAX_ROUTINE_TARGET_COUNT = 60;
+  const ROUTINE_DAY_MS = 86400000;
+  const maxRoutineStock = targetCount => Math.ceil(targetCount * 1.2);
+  const routineIntervalMs = (periodDays, targetCount) => periodDays * ROUTINE_DAY_MS / targetCount;
+  function mostRecentRoutineBoundary(date = new Date(), resetTime = '05:00') {
+    const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(resetTime || '05:00'));
+    const hour = match ? Number(match[1]) : 5;
+    const minute = match ? Number(match[2]) : 0;
+    const boundary = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour, minute, 0, 0);
+    if (date.getTime() < boundary.getTime()) boundary.setDate(boundary.getDate() - 1);
+    return boundary;
+  }
   function normalizeRoutineData(value, strict = false) {
-    if (value == null) return { items:[], checks:{} };
+    if (value == null) return { items:[], checks:{}, resetTime:'05:00' };
     if (!isPlainObject(value)) {
       if (strict) throw new Error('日課データの形式が正しくありません。');
-      return { items:[], checks:{} };
+      return { items:[], checks:{}, resetTime:'05:00' };
     }
+    const resetTime = typeof value.resetTime === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value.resetTime) ? value.resetTime : '05:00';
+    if (strict && value.resetTime != null && (typeof value.resetTime !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value.resetTime))) throw new Error('日課のリセット時刻が正しくありません。');
     const rawItems = Array.isArray(value.items) ? value.items : [];
     if (strict && !Array.isArray(value.items)) throw new Error('日課一覧が配列ではありません。');
     if (rawItems.length > MAX_ROUTINE_ITEMS) throw new Error(`日課は${MAX_ROUTINE_ITEMS}件まで登録できます。`);
@@ -1506,8 +1826,61 @@
         if (strict) throw new Error('日課の内容が空です。');
         continue;
       }
+      const kind = raw.kind == null ? 'daily' : raw.kind;
+      if (!['daily','cycle'].includes(kind)) {
+        if (strict) throw new Error('日課の種類が正しくありません。');
+        continue;
+      }
       seen.add(id);
-      items.push({ id, text });
+      if (kind === 'daily') {
+        items.push({ id, text, kind:'daily' });
+        continue;
+      }
+      const periodDays = Number(raw.periodDays);
+      const targetCount = Number(raw.targetCount);
+      const validPeriod = Number.isInteger(periodDays) && periodDays >= 1 && periodDays <= MAX_ROUTINE_PERIOD_DAYS;
+      const validTarget = Number.isInteger(targetCount) && targetCount >= 1 && targetCount <= MAX_ROUTINE_TARGET_COUNT;
+      if (strict && (!validPeriod || !validTarget)) throw new Error('周期タスクの期間または目標回数が正しくありません。');
+      const safePeriod = validPeriod ? periodDays : 3;
+      const safeTarget = validTarget ? targetCount : 2;
+      const maxStock = maxRoutineStock(safeTarget);
+      const rawTokens = Array.isArray(raw.stockTokens) ? raw.stockTokens : [];
+      if (strict && !Array.isArray(raw.stockTokens)) throw new Error('周期タスクのストック情報がありません。');
+      const tokenIds = new Set();
+      const stockTokens = [];
+      for (const token of rawTokens) {
+        if (!isPlainObject(token) || !Number.isFinite(token.expiresAt) || token.expiresAt <= 0) {
+          if (strict) throw new Error('周期タスクのストック情報が正しくありません。');
+          continue;
+        }
+        let tokenId = typeof token.id === 'string' && token.id ? token.id.slice(0,128) : makeId();
+        if (tokenIds.has(tokenId)) {
+          if (strict) throw new Error('周期タスクのストックIDが重複しています。');
+          tokenId = makeId();
+        }
+        tokenIds.add(tokenId);
+        stockTokens.push({ id:tokenId, expiresAt:token.expiresAt });
+      }
+      stockTokens.sort((a,b) => a.expiresAt - b.expiresAt);
+      if (stockTokens.length > maxStock && strict) throw new Error('周期タスクのストックが最大値を超えています。');
+      stockTokens.splice(maxStock);
+      if (raw.stockTokens == null && !strict) {
+        const now = Date.now();
+        const interval = routineIntervalMs(safePeriod, safeTarget);
+        for (let index=0; index<safeTarget; index++) stockTokens.push({ id:makeId(), expiresAt:now + interval * (index + 1) });
+      }
+      const historyRaw = isPlainObject(raw.streakHistory) ? raw.streakHistory : {};
+      if (strict && raw.streakHistory != null && !isPlainObject(raw.streakHistory)) throw new Error('周期タスクの連続成功履歴が正しくありません。');
+      const historyEntries = Object.entries(historyRaw).filter(([day,success]) => /^\d{4}-\d{2}-\d{2}$/.test(day) && typeof success === 'boolean').sort(([a],[b]) => a.localeCompare(b));
+      if (strict && historyEntries.length !== Object.keys(historyRaw).length) throw new Error('周期タスクの連続成功履歴に不正な日付があります。');
+      if (strict && historyEntries.length > MAX_ROUTINE_DAYS) throw new Error('周期タスクの連続成功履歴が上限を超えています。');
+      const streakHistory = Object.fromEntries(historyEntries.slice(-MAX_ROUTINE_DAYS));
+      const streakCurrent = Number.isInteger(raw.streakCurrent) && raw.streakCurrent >= 0 ? raw.streakCurrent : 0;
+      const streakBest = Number.isInteger(raw.streakBest) && raw.streakBest >= 0 ? raw.streakBest : streakCurrent;
+      if (strict && (!Number.isInteger(raw.streakCurrent) || raw.streakCurrent < 0 || !Number.isInteger(raw.streakBest) || raw.streakBest < 0)) throw new Error('周期タスクの連続記録数が正しくありません。');
+      const lastBoundaryAt = Number.isFinite(raw.lastBoundaryAt) && raw.lastBoundaryAt > 0 ? raw.lastBoundaryAt : mostRecentRoutineBoundary(new Date(), resetTime).getTime();
+      if (strict && (!Number.isFinite(raw.lastBoundaryAt) || raw.lastBoundaryAt <= 0)) throw new Error('周期タスクの判定時刻が正しくありません。');
+      items.push({ id, text, kind:'cycle', periodDays:safePeriod, targetCount:safeTarget, stockTokens, streakCurrent, streakBest, streakHistory, lastBoundaryAt });
     }
     const checks = {};
     const rawChecks = isPlainObject(value.checks) ? value.checks : {};
@@ -1526,22 +1899,29 @@
       }
       validCheckDays.push([day, dayChecks]);
     }
-    if (validCheckDays.length > MAX_ROUTINE_DAYS && strict) {
-      throw new Error('日課の履歴が上限を超えています。');
-    }
-    // ISO date keys sort chronologically. Keep the newest history regardless
-    // of the order in which a backup or old browser wrote its object keys.
+    if (validCheckDays.length > MAX_ROUTINE_DAYS && strict) throw new Error('日課の履歴が上限を超えています。');
     validCheckDays.sort(([a],[b]) => a.localeCompare(b));
     const retainedCheckDays = validCheckDays.slice(-MAX_ROUTINE_DAYS);
-    const validIds = new Set(items.map(item => item.id));
+    const validIds = new Set(items.filter(item => item.kind === 'daily').map(item => item.id));
     for (const [day, dayChecks] of retainedCheckDays) {
       const normalizedDay = {};
       for (const [id, checked] of Object.entries(dayChecks)) {
         if (checked === true && validIds.has(id)) normalizedDay[id] = true;
+        else if (strict && checked !== true) throw new Error('日課のチェック状態が正しくありません。');
       }
       if (Object.keys(normalizedDay).length) checks[day] = normalizedDay;
     }
-    return { items, checks };
+    if (value.resetTime == null) {
+      const now = new Date();
+      const boundary = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0);
+      const legacyToday = todayKey(now);
+      if (now.getTime() < boundary.getTime() && checks[legacyToday]) {
+        const activeRoutineDay = todayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1));
+        checks[activeRoutineDay] = { ...(checks[activeRoutineDay] || {}), ...checks[legacyToday] };
+        delete checks[legacyToday];
+      }
+    }
+    return { items, checks, resetTime };
   }
 
   function normalizeData(input, { strict = false } = {}) {
@@ -1933,7 +2313,7 @@
   function preserveBrokenStorage(raw) {
     try {
       if (typeof raw === 'string' && raw.length <= 1500000) {
-        localStorage.setItem(RECOVERY_STORAGE_KEY, JSON.stringify({ savedAt:new Date().toISOString(), raw }));
+        appStorage.setItem(RECOVERY_STORAGE_KEY, JSON.stringify({ savedAt:new Date().toISOString(), raw }));
       }
     } catch { /* Recovery copy is best-effort; never block app startup. */ }
   }
@@ -1957,9 +2337,23 @@
     if(!labelIds.has(settings.selectedLabelId)) return false;
     const selectedLabel=value.labels.find(label=>label.id===settings.selectedLabelId);
     if(settings.selectedSubLabelId && !selectedLabel?.subLabels.some(sub=>sub.id===settings.selectedSubLabelId)) return false;
-    if(!Array.isArray(value.routines.items)||value.routines.items.length>MAX_ROUTINE_ITEMS||!isPlainObject(value.routines.checks)) return false;
+    if(!Array.isArray(value.routines.items)||value.routines.items.length>MAX_ROUTINE_ITEMS||!isPlainObject(value.routines.checks)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(value.routines.resetTime||''))) return false;
     const routineIds=new Set();
-    for(const item of value.routines.items) if(!isPlainObject(item)||typeof item.id!=='string'||!item.id||routineIds.has(item.id)||typeof item.text!=='string'||!item.text||item.text.length>80) return false; else routineIds.add(item.id);
+    const dailyRoutineIds=new Set();
+    for(const item of value.routines.items) {
+      if(!isPlainObject(item)||typeof item.id!=='string'||!item.id||routineIds.has(item.id)||typeof item.text!=='string'||!item.text||item.text.length>80||!['daily','cycle'].includes(item.kind)) return false;
+      routineIds.add(item.id);
+      if(item.kind==='daily') dailyRoutineIds.add(item.id);
+      if(item.kind==='cycle') {
+        const maxStock=Number.isInteger(item.targetCount)&&item.targetCount>=1&&item.targetCount<=MAX_ROUTINE_TARGET_COUNT?maxRoutineStock(item.targetCount):0;
+        if(!Number.isInteger(item.periodDays)||item.periodDays<1||item.periodDays>MAX_ROUTINE_PERIOD_DAYS||!Number.isInteger(item.targetCount)||item.targetCount<1||item.targetCount>MAX_ROUTINE_TARGET_COUNT||!Array.isArray(item.stockTokens)||item.stockTokens.length>maxStock||!Number.isInteger(item.streakCurrent)||item.streakCurrent<0||!Number.isInteger(item.streakBest)||item.streakBest<0||!isPlainObject(item.streakHistory)||!Number.isFinite(item.lastBoundaryAt)||item.lastBoundaryAt<=0) return false;
+        const tokenIds=new Set();
+        for(const token of item.stockTokens) if(!isPlainObject(token)||typeof token.id!=='string'||!token.id||tokenIds.has(token.id)||!Number.isFinite(token.expiresAt)||token.expiresAt<=0) return false; else tokenIds.add(token.id);
+        const streakDays=Object.entries(item.streakHistory);
+        if(streakDays.length>MAX_ROUTINE_DAYS) return false;
+        for(const [day,success] of streakDays) if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||typeof success!=='boolean') return false;
+      }
+    }
     const checkDays=Object.entries(value.routines.checks);
     if(checkDays.length>MAX_ROUTINE_DAYS) return false;
     for(const [day,checks] of checkDays) {
@@ -1967,7 +2361,7 @@
       if(!match||!isPlainObject(checks)) return false;
       const y=Number(match[1]),m=Number(match[2]),d=Number(match[3]),date=new Date(y,m-1,d);
       if(date.getFullYear()!==y||date.getMonth()!==m-1||date.getDate()!==d) return false;
-      for(const [id,checked] of Object.entries(checks)) if(checked!==true||!routineIds.has(id)) return false;
+      for(const [id,checked] of Object.entries(checks)) if(checked!==true||!dailyRoutineIds.has(id)) return false;
     }
     const sessionIds=new Set();let activeCount=0;
     for(const session of value.sessions) {
@@ -1992,7 +2386,7 @@
   function loadData() {
     let raw = null;
     try {
-      raw = localStorage.getItem(STORAGE_KEY);
+      raw = appStorage.getItem(STORAGE_KEY);
       if (!raw) return initialData();
       let parsed;
       try { parsed = JSON.parse(raw); }
@@ -2093,7 +2487,7 @@
   function persistDataSnapshot(candidate) {
     const serialized = JSON.stringify(candidate);
     try {
-      localStorage.setItem(STORAGE_KEY, serialized);
+      appStorage.setItem(STORAGE_KEY, serialized);
     } catch (error) {
       const quotaExceeded = error?.name === 'QuotaExceededError' || error?.code === 22 || error?.code === 1014;
       if (quotaExceeded) {
@@ -2283,11 +2677,12 @@
       });
     }
   }
-  function showConfirmDialog(message, title = '削除しますか？') {
+  function showConfirmDialog(message, title = '削除しますか？', acceptLabel = '削除する') {
     if (confirmDialogResolver) return Promise.resolve(false);
     const overlay = $('appConfirmDialog');
     $('confirmDialogTitle').textContent = title;
     $('confirmDialogMessage').textContent = message;
+    $('confirmDialogAccept').textContent = acceptLabel;
     confirmDialogPreviousFocus = document.activeElement;
     overlay.hidden = false;
     overlay.setAttribute('aria-hidden', 'false');
@@ -2488,7 +2883,7 @@
     const followLabel = settings.ambientFollowLabel !== false;
     const active = getActive();
     const label = active ? findLabel(active.labelId) : findLabel(selectedLabelId);
-    const chosenColor = currentLabelColor || safeColor(label?.color || active?.labelColor || '#a86f50');
+    const chosenColor = currentLabelColor || displayLabelColor(label?.color || active?.labelColor || '#a86f50');
     card.classList.toggle('ambient-disabled', !enabled);
     card.dataset.ambientStrength = strength;
     card.style.setProperty('--ambient-color', followLabel ? chosenColor : 'var(--accent)');
@@ -2506,7 +2901,7 @@
     const timerCard = $('timerCard');
     const timerValue = $('timerValue');
     const tintLabel = active ? (findLabel(active.labelId) || { color: active.labelColor }) : (findLabel(selectedLabelId) || data.labels[0]);
-    const currentLabelColor = safeColor(tintLabel?.color || active?.labelColor || '#a86f50');
+    const currentLabelColor = displayLabelColor(tintLabel?.color || active?.labelColor || '#a86f50');
     timerCard.style.setProperty('--timer-label-color', currentLabelColor);
     applyTimerAmbient(currentLabelColor);
     $('timerLabelPicker').parentElement.classList.toggle('has-active', !!active);
@@ -2529,7 +2924,7 @@
     } else {
       const caption = $('timerCaption');
       caption.replaceChildren();
-      const labelDot = document.createElement('span'); labelDot.className = 'timer-caption-dot'; labelDot.style.backgroundColor = safeColor(findLabel(active.labelId)?.color || active.labelColor); labelDot.setAttribute('aria-hidden', 'true');
+      const labelDot = document.createElement('span'); labelDot.className = 'timer-caption-dot'; labelDot.style.backgroundColor = displayLabelColor(findLabel(active.labelId)?.color || active.labelColor); labelDot.setAttribute('aria-hidden', 'true');
       const labelText = document.createElement('span'); labelText.textContent = labelPath(active.labelName, active.subLabelName);
       caption.append(labelDot, labelText);
       $('timerSubtext').textContent = `開始時刻 ${fmtTime(active.createdAt)}`;
@@ -2896,12 +3291,17 @@
       remove.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg>';
       row.append(orderControls,nameInput,remove);
       const palette=document.createElement('div'); palette.className='label-palette'; palette.setAttribute('role','group'); palette.setAttribute('aria-label',`${label.name}の色テンプレート`);
-      LABEL_COLOR_TEMPLATES.forEach(preset=>{
+      const currentColor=safeColor(label.color);
+      const paletteOptions=[...LABEL_COLOR_TEMPLATES];
+      if(!paletteOptions.some(preset=>preset.color===currentColor)) {
+        paletteOptions.unshift({name:'現在の色',color:currentColor,isCurrent:true});
+      }
+      paletteOptions.forEach(preset=>{
         const swatch=document.createElement('button');
-        swatch.type='button'; swatch.className='palette-swatch'; swatch.style.backgroundColor=preset.color;
-        swatch.title=preset.name; swatch.setAttribute('aria-label',`${preset.name}を選択`); swatch.setAttribute('aria-pressed',String(label.color===preset.color));
+        swatch.type='button'; swatch.className='palette-swatch'; swatch.style.backgroundColor=displayLabelColor(preset.color);
+        swatch.title=`${preset.name} ${preset.color}`; swatch.setAttribute('aria-label',`${preset.name} ${preset.color}`); swatch.setAttribute('aria-pressed',String(currentColor===preset.color));
         swatch.addEventListener('click',()=>{
-          if(label.color===preset.color) return;
+          if(currentColor===preset.color) return;
           label.color=preset.color;
           data.sessions.filter(s=>s.labelId===label.id).forEach(s=>s.labelColor=label.color);
           save(); renderAll(); showToast(`${preset.name}に変更しました`);
@@ -3051,7 +3451,7 @@
     const addChoice=(name,subLabel)=>{
       const option=document.createElement('button'); option.type='button'; option.className='picker-option'; option.setAttribute('role','option');
       option.setAttribute('aria-selected',String((subLabel?.id||'')===selectedSubLabelId && label.id===selectedLabelId));
-      const dot=document.createElement('span'); dot.className='picker-option-dot'; dot.style.backgroundColor=safeColor(label.color); dot.setAttribute('aria-hidden','true');
+      const dot=document.createElement('span'); dot.className='picker-option-dot'; dot.style.backgroundColor=displayLabelColor(label.color); dot.setAttribute('aria-hidden','true');
       const text=document.createElement('span'); text.className='picker-option-name'; text.textContent=name;
       const check=document.createElementNS('http://www.w3.org/2000/svg','svg'); check.setAttribute('viewBox','0 0 24 24'); check.setAttribute('class','picker-option-check'); check.setAttribute('fill','none'); check.setAttribute('stroke','currentColor'); check.setAttribute('stroke-width','2'); check.setAttribute('aria-hidden','true');
       const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m5 12 4 4L19 6'); check.appendChild(path);
@@ -3084,7 +3484,7 @@
     const current=active ? (findLabel(active.labelId)||{name:active.labelName,color:active.labelColor}) : (findLabel(selectedLabelId)||data.labels[0]);
     const currentSub=active ? (active.subLabelName ? {name:active.subLabelName} : null) : findSubLabel(selectedLabelId,selectedSubLabelId);
     if(!currentSub && !active && selectedSubLabelId) selectedSubLabelId='';
-    const dot=document.createElement('span'); dot.className='picker-dot'; dot.setAttribute('aria-hidden','true'); dot.style.backgroundColor=safeColor(current?.color);
+    const dot=document.createElement('span'); dot.className='picker-dot'; dot.setAttribute('aria-hidden','true'); dot.style.backgroundColor=displayLabelColor(current?.color);
     const text=document.createElement('span'); text.className='picker-current'; text.textContent=labelPath(current?.name||'ラベルを選択',currentSub?.name||'');
     const chevron=document.createElementNS('http://www.w3.org/2000/svg','svg'); chevron.setAttribute('viewBox','0 0 24 24'); chevron.setAttribute('class','picker-chevron'); chevron.setAttribute('fill','none'); chevron.setAttribute('stroke','currentColor'); chevron.setAttribute('stroke-width','1.8'); chevron.setAttribute('aria-hidden','true');
     const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m7 10 5 5 5-5'); chevron.appendChild(path); trigger.append(dot,text,chevron);
@@ -3094,7 +3494,7 @@
       const option=document.createElement('button'); option.type='button'; option.className='picker-option'; option.setAttribute('role','option');
       option.setAttribute('aria-selected',String(label.id===selectedLabelId)); option.dataset.labelId=label.id;
       if(label.subLabels?.length) option.classList.add('has-sublabels');
-      const optionDot=document.createElement('span'); optionDot.className='picker-option-dot'; optionDot.style.backgroundColor=safeColor(label.color); optionDot.setAttribute('aria-hidden','true');
+      const optionDot=document.createElement('span'); optionDot.className='picker-option-dot'; optionDot.style.backgroundColor=displayLabelColor(label.color); optionDot.setAttribute('aria-hidden','true');
       const optionName=document.createElement('span'); optionName.className='picker-option-name'; optionName.textContent=label.name;
       option.append(optionDot,optionName);
       if(label.subLabels?.length){
@@ -3122,9 +3522,9 @@
     if(total<=0){$('stackedTrack').style.display='none';$('breakdownList').innerHTML='<div class="empty-state"><strong>まだ記録がありません</strong>タイマーを使うと、ここに内訳が表示されます。</div>';}
     else {
       $('stackedTrack').style.display='flex';
-      labelsUsed.forEach(item=>{const part=document.createElement('span');part.className='stacked-part';part.style.width=`${item.ms/total*100}%`;part.style.background=item.color;$('stackedTrack').appendChild(part);});
+      labelsUsed.forEach(item=>{const part=document.createElement('span');part.className='stacked-part';part.style.width=`${item.ms/total*100}%`;part.style.background=displayLabelColor(item.color);$('stackedTrack').appendChild(part);});
       const max=Math.max(...labelsUsed.map(x=>x.ms));
-      labelsUsed.forEach(item=>{const row=document.createElement('div');row.className='breakdown-row';row.innerHTML=`<div class="breakdown-name"><i class="color-dot" style="background:${item.color}"></i><span>${escapeHtml(item.name)}</span></div><div class="breakdown-time">${fmtDuration(item.ms)}</div><div class="breakdown-meter"><span style="width:${item.ms/max*100}%;background:${item.color}"></span></div>`;$('breakdownList').appendChild(row);});
+      labelsUsed.forEach(item=>{const row=document.createElement('div');row.className='breakdown-row';row.innerHTML=`<div class="breakdown-name"><i class="color-dot" style="background:${displayLabelColor(item.color)}"></i><span>${escapeHtml(item.name)}</span></div><div class="breakdown-time">${fmtDuration(item.ms)}</div><div class="breakdown-meter"><span style="width:${item.ms/max*100}%;background:${displayLabelColor(item.color)}"></span></div>`;$('breakdownList').appendChild(row);});
     }
     // Screen Time風の24時間チャート。各時間帯をラベル別に積み上げて表示する。
     const hourChart=$('hourChart'); hourChart.replaceChildren();
@@ -3137,7 +3537,7 @@
           const overlap=Math.max(0,Math.min(slice.endAt,window.end)-Math.max(slice.startAt,window.start));
           if(overlap<=0) continue;
           const key=slice.subLabelId ? `${slice.labelId}::${slice.subLabelId}` : (slice.labelId||slice.labelName);
-          const existing=parts.get(key)||{name:labelPath(slice.labelName,slice.subLabelName),color:slice.labelColor,ms:0};
+          const existing=parts.get(key)||{name:labelPath(slice.labelName,slice.subLabelName),color:displayLabelColor(slice.labelColor),ms:0};
           existing.ms+=overlap; parts.set(key,existing);
         }
       }
@@ -3153,7 +3553,7 @@
         stack.style.height=`${Math.min(100,hourCapacity>0?totalHour/hourCapacity*100:0)}%`;
         [...parts.values()].forEach(item=>{
           const part=document.createElement('span'); part.className='hour-stack-part';
-          part.style.height=`${item.ms/totalHour*100}%`; part.style.backgroundColor=safeColor(item.color);
+          part.style.height=`${item.ms/totalHour*100}%`; part.style.backgroundColor=displayLabelColor(item.color);
           part.setAttribute('aria-hidden','true'); stack.appendChild(part);
         });
         track.appendChild(stack);
@@ -3165,9 +3565,21 @@
     stats.slices.forEach(s=>{
       const row=document.createElement('div');row.className='record-row';
       const active=getActive()?.id===s.sessionId;
-      row.innerHTML=`<i class="record-marker" style="background:${s.labelColor}"></i><div class="record-main"><div class="record-name">${escapeHtml(labelPath(s.labelName,s.subLabelName))}${active?' · 計測中':''}</div><div class="record-time">${fmtTime(s.startAt)} — ${active && s.endAt>=Date.now()-1000?'進行中':fmtTime(s.endAt)}</div></div><div class="record-duration">${fmtDuration(s.endAt-s.startAt,true)}</div>`;
+      row.innerHTML=`<i class="record-marker" style="background:${displayLabelColor(s.labelColor)}"></i><div class="record-main"><div class="record-name">${escapeHtml(labelPath(s.labelName,s.subLabelName))}${active?' · 計測中':''}</div><div class="record-time">${fmtTime(s.startAt)} — ${active && s.endAt>=Date.now()-1000?'進行中':fmtTime(s.endAt)}</div></div><div class="record-duration">${fmtDuration(s.endAt-s.startAt,true)}</div>`;
       recordList.appendChild(row);
     });
+  }
+  function calendarDurationMarkup(ms) {
+    const safeMs = Math.max(0, Number(ms) || 0);
+    const minutes = Math.floor(safeMs / 60000);
+    const hours = Math.floor(minutes / 60);
+    const remainder = minutes % 60;
+    const full = fmtDuration(safeMs);
+    let shortParts;
+    if (minutes === 0) shortParts = [safeMs > 0 ? '1分未満' : '0分'];
+    else if (hours === 0) shortParts = [`${remainder}分`];
+    else shortParts = [`${hours}時間`, ...(remainder ? [`${remainder}分`] : [])];
+    return `<span class="day-total-full">${full}</span><span class="day-total-short">${shortParts.map(part => `<span>${part}</span>`).join('')}</span>`;
   }
   function renderCalendar() {
     const y=visibleMonth.getFullYear(), m=visibleMonth.getMonth();
@@ -3188,8 +3600,9 @@
       if(inMonth&&stats.total>0)recorded++;
       const future = key > todayValue;
       const btn=document.createElement('button');btn.type='button';btn.disabled=future;btn.className='day-cell'+(!inMonth?' outside':'')+(key===selectedDay?' selected':'')+(key===todayValue?' today':'');btn.setAttribute('aria-label',`${fmtDateLong(key)}、${fmtDuration(stats.total)}${future?'、未来の日付':''}`);btn.setAttribute('aria-pressed',String(key===selectedDay));
-      const dots=[...stats.byLabel.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>{const l=findLabel(id),s=stats.slices.find(x=>x.labelId===id);return `<i style="background:${l?.color||s?.labelColor||'#879978'}"></i>`;}).join('');
-      btn.innerHTML=`<span class="day-number">${date.getDate()}</span><span class="day-dots">${dots}</span><span class="day-total">${stats.total?fmtDuration(stats.total):'　'}</span>`;
+      const dots=[...stats.byLabel.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>{const l=findLabel(id),s=stats.slices.find(x=>x.labelId===id);return `<i style="background:${displayLabelColor(l?.color||s?.labelColor||'#879978')}"></i>`;}).join('');
+      const dayTotalMarkup = stats.total ? calendarDurationMarkup(stats.total) : '<span class="day-total-full">　</span><span class="day-total-short"><span>　</span></span>';
+      btn.innerHTML=`<span class="day-number">${date.getDate()}</span><span class="day-dots">${dots}</span><span class="day-total">${dayTotalMarkup}</span>`;
       btn.addEventListener('click',()=>{if(key>todayKey())return;selectDay(key,true);});grid.appendChild(btn);
     }
     $('monthRecorded').textContent=`今月の記録 ${recorded}日`;
@@ -3208,7 +3621,7 @@
   const ANALYSIS_PREF_KEY = 'daylog.analysis.v1';
   const analysisPrefs = (() => {
     try {
-      const saved = JSON.parse(localStorage.getItem(ANALYSIS_PREF_KEY) || '{}');
+      const saved = JSON.parse(appStorage.getItem(ANALYSIS_PREF_KEY) || '{}');
       const legacyUnrecordedMode = saved.mode === 'unrecorded';
       const savedTokens = Array.isArray(saved.tokens) ? saved.tokens.filter(x => typeof x === 'string') : [];
       const tokens = legacyUnrecordedMode && !savedTokens.includes('@unrecorded') ? [...savedTokens, '@unrecorded'] : savedTokens;
@@ -3225,7 +3638,7 @@
   })();
   let analysisLabelsSignature = '';
   function saveAnalysisPrefs() {
-    try { localStorage.setItem(ANALYSIS_PREF_KEY, JSON.stringify(analysisPrefs)); } catch { /* Optional preference only. */ }
+    try { appStorage.setItem(ANALYSIS_PREF_KEY, JSON.stringify(analysisPrefs)); } catch { /* Optional preference only. */ }
   }
   function analysisDayKeys(startDate, count, stopAtToday = true) {
     const today = todayKey();
@@ -3284,7 +3697,7 @@
     const host=$('analysisLabelChoices');
     if(!host) return;
     const catalog=getAnalysisLabelCatalog();
-    const signature=JSON.stringify(catalog.map(label=>[label.id,label.name,label.color,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
+    const signature=JSON.stringify([document.documentElement.dataset.theme,catalog.map(label=>[label.id,label.name,label.color,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])])]);
     analysisLabelsSignature=signature;
     host.replaceChildren();
     if(!catalog.length){const empty=document.createElement('div');empty.className='analysis-definition';empty.textContent='ラベルの記録がまだありません。';host.appendChild(empty);}
@@ -3292,7 +3705,7 @@
       const group=document.createElement('div');group.className='analysis-label-group';
       const parent=document.createElement('label');parent.className='analysis-check-row';
       const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.dataset.analysisToken=`L:${label.id}`;checkbox.checked=analysisPrefs.tokens.includes(`L:${label.id}`);
-      const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=label.color;
+      const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=displayLabelColor(label.color);
       const name=document.createElement('span');name.textContent=label.name;
       const scope=document.createElement('small');scope.textContent='ラベル全体';
       parent.append(checkbox,dot,name,scope);group.appendChild(parent);
@@ -3333,7 +3746,7 @@
       const group=document.createElement('div');group.className='analysis-label-group';
       const parent=document.createElement('label');parent.className='analysis-check-row';
       const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.dataset.overlayToken=`L:${label.id}`;checkbox.checked=analysisPrefs.overlayTokens.includes(checkbox.dataset.overlayToken);
-      const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=label.color;
+      const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=displayLabelColor(label.color);
       const name=document.createElement('span');name.textContent=label.name;
       const scope=document.createElement('small');scope.textContent='ラベル全体';
       parent.append(checkbox,dot,name,scope);group.appendChild(parent);
@@ -3470,12 +3883,12 @@
     if(token==='@unrecorded') return {token,name:'未記録時間',color:'#9d8979',kind:'unrecorded'};
     if(token.startsWith('L:')) {
       const label=catalog.find(item=>item.id===token.slice(2));
-      return {token,name:label?.name||'ラベル',color:safeColor(label?.color),kind:'label',labelId:token.slice(2)};
+      return {token,name:label?.name||'ラベル',color:displayLabelColor(label?.color),kind:'label',labelId:token.slice(2)};
     }
     if(token.startsWith('S:')) {
       const raw=token.slice(2), split=raw.indexOf('::'), labelId=raw.slice(0,split), subId=raw.slice(split+2);
       const label=catalog.find(item=>item.id===labelId), sub=label?.subLabels.get(subId);
-      return {token,name:label&&sub?`${label.name} · ${sub.name}`:(sub?.name||'サブラベル'),color:safeColor(label?.color),kind:'sublabel',labelId,subId};
+      return {token,name:label&&sub?`${label.name} · ${sub.name}`:(sub?.name||'サブラベル'),color:displayLabelColor(label?.color),kind:'sublabel',labelId,subId};
     }
     return null;
   }
@@ -3489,6 +3902,116 @@
       }
     }
     return 'var(--accent-strong)';
+  }
+  // Full recorded time uses the same label-colored composition as a
+  // multi-label selection. Colors are taken from the complete label catalog,
+  // including labels retained only on historical sessions.
+  function buildTrackedCompositionSeries(stats) {
+    const catalog=getAnalysisLabelCatalog();
+    if(!catalog.length || !stats?.days?.length) return null;
+    const activeIds=new Set();
+    stats.days.forEach(day=>day.byActivity.forEach(item=>{if(item.ms>0) activeIds.add(item.labelId);}));
+    const groups=catalog.filter(label=>activeIds.has(label.id)).map(label=>({
+      key:`label:${label.id}`,labelId:label.id,name:label.name,color:displayLabelColor(label.color)
+    }));
+    if(!groups.length) return null;
+    const valuesByGroup=groups.map(()=>[]);
+    stats.days.forEach(day=>{
+      const raw=groups.map(group=>[...day.byActivity.values()]
+        .filter(item=>item.labelId===group.labelId)
+        .reduce((sum,item)=>sum+Math.max(0,item.ms||0),0));
+      const rawTotal=raw.reduce((sum,value)=>sum+value,0);
+      const trackedTarget=Math.max(0,day.trackedMs||0);
+      groups.forEach((group,index)=>valuesByGroup[index].push(rawTotal>0?trackedTarget*raw[index]/rawTotal:0));
+    });
+    return groups.map((group,index)=>({...group,values:valuesByGroup[index]}));
+  }
+  function buildTrackedCompositionHourly(stats) {
+    const series=buildTrackedCompositionSeries(stats);
+    if(!series?.length) return null;
+    const groups=series.map(({key,labelId,name,color})=>({key,labelId,name,color}));
+    const totals=groups.map(()=>Array(24).fill(0));
+    for(const day of stats.days) {
+      const allTracked=mergeTimeIntervals(day.intervals.map(item=>({start:item.start,end:item.end})));
+      const groupIntervals=groups.map(group=>mergeTimeIntervals(day.intervals
+        .filter(item=>item.labelId===group.labelId)
+        .map(item=>({start:item.start,end:item.end}))));
+      const windows=getLocalHourWindows(day.key);
+      for(let hour=0;hour<24;hour++) {
+        const visible=windows[hour].map(window=>({start:window.start,end:Math.min(window.end,day.dayEnd)})).filter(window=>window.end>window.start);
+        if(!visible.length) continue;
+        const trackedTarget=intervalOverlapTotal(visible,allTracked);
+        const raw=groups.map((group,index)=>intervalOverlapTotal(visible,groupIntervals[index]));
+        const rawTotal=raw.reduce((sum,value)=>sum+value,0);
+        groups.forEach((group,index)=>{totals[index][hour]+=rawTotal>0?trackedTarget*raw[index]/rawTotal:0;});
+      }
+    }
+    const divisor=Math.max(1,stats.days.length);
+    return groups.map((group,index)=>({...group,values:totals[index].map(value=>value/divisor)}));
+  }
+  // A multi-label selection is rendered as a proportional stack, rather than
+  // assigning the whole aggregate a single neutral color.
+  function getSelectedCompositionMeta(tokens) {
+    if(!Array.isArray(tokens)||tokens.length<2) return null;
+    const infos=tokens.map(token=>getAnalysisTokenInfo(token));
+    if(infos.some(item=>!item||!['label','sublabel','unrecorded'].includes(item.kind))) return null;
+    const catalog=getAnalysisLabelCatalog();
+    const labelIds=[...new Set(infos.filter(item=>item.kind==='label'||item.kind==='sublabel').map(item=>item.labelId))];
+    const includeUnrecorded=infos.some(item=>item.kind==='unrecorded');
+    const groups=labelIds.map(labelId=>{
+      const label=catalog.find(item=>item.id===labelId);
+      const info=infos.find(item=>(item.kind==='label'||item.kind==='sublabel')&&item.labelId===labelId);
+      return {key:`label:${labelId}`,labelId,name:label?.name||info?.name||'ラベル',color:displayLabelColor(label?.color||info?.color)};
+    });
+    if(includeUnrecorded) groups.push({key:'@unrecorded',name:'未記録時間',color:'#9d8979',kind:'unrecorded'});
+    return groups.length>1 ? groups : null;
+  }
+  function buildSelectedCompositionSeries(stats,tokens) {
+    const groups=getSelectedCompositionMeta(tokens);
+    if(!groups) return null;
+    const includeUnrecorded=groups.some(item=>item.kind==='unrecorded');
+    const valuesByGroup=groups.map(()=>[]);
+    stats.days.forEach(day=>{
+      const raw=groups.map(group=>group.kind==='unrecorded'?0:[...day.byActivity.values()]
+        .filter(item=>item.labelId===group.labelId&&sessionMatchesAnalysis(item,tokens))
+        .reduce((sum,item)=>sum+Math.max(0,item.ms||0),0));
+      const rawTotal=raw.reduce((sum,value)=>sum+value,0);
+      const recordedTarget=Math.max(0,(day.selectedMs||0)-(includeUnrecorded?(day.unrecordedMs||0):0));
+      groups.forEach((group,index)=>{
+        const value=group.kind==='unrecorded'?(day.unrecordedMs||0):(rawTotal>0?recordedTarget*raw[index]/rawTotal:0);
+        valuesByGroup[index].push(value);
+      });
+    });
+    return groups.map((group,index)=>({...group,values:valuesByGroup[index]}));
+  }
+  function buildSelectedCompositionHourly(stats,tokens) {
+    const groups=getSelectedCompositionMeta(tokens);
+    if(!groups) return null;
+    const includeUnrecorded=groups.some(item=>item.kind==='unrecorded');
+    const totals=groups.map(()=>Array(24).fill(0));
+    for(const day of stats.days) {
+      const selectedIntervals=mergeTimeIntervals(day.intervals.filter(item=>sessionMatchesAnalysis(item,tokens)).map(item=>({start:item.start,end:item.end})));
+      const allTracked=mergeTimeIntervals(day.intervals.map(item=>({start:item.start,end:item.end})));
+      const groupIntervals=groups.map(group=>group.kind==='unrecorded'?[]:mergeTimeIntervals(day.intervals
+        .filter(item=>item.labelId===group.labelId&&sessionMatchesAnalysis(item,tokens))
+        .map(item=>({start:item.start,end:item.end}))));
+      const windows=getLocalHourWindows(day.key);
+      for(let hour=0;hour<24;hour++) {
+        const visible=windows[hour].map(window=>({start:window.start,end:Math.min(window.end,day.dayEnd)})).filter(window=>window.end>window.start);
+        if(!visible.length) continue;
+        const recordedTarget=intervalOverlapTotal(visible,selectedIntervals);
+        const available=intervalTotal(visible);
+        const unrecorded=Math.max(0,available-intervalOverlapTotal(visible,allTracked));
+        const raw=groups.map((group,index)=>group.kind==='unrecorded'?0:intervalOverlapTotal(visible,groupIntervals[index]));
+        const rawTotal=raw.reduce((sum,value)=>sum+value,0);
+        groups.forEach((group,index)=>{
+          const value=group.kind==='unrecorded'?(includeUnrecorded?unrecorded:0):(rawTotal>0?recordedTarget*raw[index]/rawTotal:0);
+          totals[index][hour]+=value;
+        });
+      }
+    }
+    const divisor=Math.max(1,stats.days.length);
+    return groups.map((group,index)=>({...group,values:totals[index].map(value=>value/divisor)}));
   }
   function buildOverlaySeries(stats, tokens) {
     return tokens.map(token=>{
@@ -3553,6 +4076,8 @@
     });
     const chartStats={...stats,days:chartDays};
     const series=seriesOverride ? seriesOverride.map(item=>({...item,values:bucketRanges.map(([start,end])=>item.values.slice(start,end).reduce((sum,value)=>sum+value,0)/Math.max(1,end-start))})) : analysisTargetSeries(chartStats,mode,tokens);
+    const rawComposition=!seriesOverride?(mode==='all'?buildTrackedCompositionSeries(stats):mode==='selected'?buildSelectedCompositionSeries(stats,tokens):null):null;
+    const chartComposition=rawComposition?.map(item=>({...item,values:bucketRanges.map(([start,end])=>item.values.slice(start,end).reduce((sum,value)=>sum+value,0)/Math.max(1,end-start))}))||null;
     const values=series.flatMap(item=>item.values.map((v,i)=>chartMode==='ratio'?v/Math.max(1,chartStats.days[i].dayMs)*100:v));
     const maxRaw=Math.max(1,...values);
     const maxValue=chartMode==='ratio'?100:(Math.ceil(maxRaw/(60*60*1000))*60*60*1000||60*60*1000);
@@ -3566,6 +4091,51 @@
       svg.appendChild(label);
     });
     const xAt=i=>chartStats.days.length===1?(left+right)/2:left+i/(chartStats.days.length-1)*(right-left);
+    if(chartComposition?.length) {
+      const plottedComposition=chartComposition.map(item=>({...item,plotted:item.values.map((value,index)=>chartMode==='ratio'?value/Math.max(1,chartStats.days[index].dayMs)*100:value)}));
+      if(chartMode==='bar') {
+        const clusterWidth=Math.min(18,Math.max(5,(right-left)/Math.max(1,chartStats.days.length)*.62));
+        const running=Array(chartStats.days.length).fill(0);
+        plottedComposition.forEach(item=>{
+          item.plotted.forEach((value,index)=>{
+            const previous=running[index];
+            running[index]+=Math.max(0,value);
+            if(value<=0) return;
+            const x=xAt(index)-clusterWidth/2;
+            const yTop=yValue(previous+value), yBottom=yValue(previous);
+            const rect=createTrendSvgElement('rect',{x:x.toFixed(2),y:yTop.toFixed(2),width:clusterWidth,height:Math.max(.5,yBottom-yTop).toFixed(2),fill:item.color,stroke:'var(--surface)', 'stroke-width':'.65',class:'analysis-series-bar'});
+            const share=chartStats.days[index].primaryMs>0?value/(chartMode==='ratio'?chartStats.days[index].primaryMs/Math.max(1,chartStats.days[index].dayMs)*100:chartStats.days[index].primaryMs)*100:0;
+            const title=createTrendSvgElement('title');
+            title.textContent=`${chartStats.days[index].endKey?`${trendDateLabel(chartStats.days[index].key,true)}〜${trendDateLabel(chartStats.days[index].endKey,true)}`:trendDateLabel(chartStats.days[index].key,true)} · ${item.name}：${fmtDuration(item.values[index])}（選択内 ${share.toFixed(1)}%）`;
+            rect.appendChild(title);svg.appendChild(rect);
+          });
+        });
+      } else {
+        const running=Array(chartStats.days.length).fill(0);
+        plottedComposition.forEach(item=>{
+          const lower=running.slice();
+          const upper=item.plotted.map((value,index)=>lower[index]+value);
+          const upperPoints=upper.map((value,index)=>({x:xAt(index),y:yValue(value)}));
+          const lowerPoints=lower.map((value,index)=>({x:xAt(index),y:yValue(value)}));
+          const upperPath=upperPoints.map((point,index)=>`${index?'L':'M'}${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(' ');
+          const lowerPath=lowerPoints.slice().reverse().map(point=>`L${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(' ');
+          const area=createTrendSvgElement('path',{d:`${upperPath} ${lowerPath} Z`,fill:item.color,class:'analysis-composition-area'});
+          const total=item.values.reduce((sum,value)=>sum+value,0);
+          const allTotal=chartComposition.reduce((sum,group)=>sum+group.values.reduce((groupSum,value)=>groupSum+value,0),0);
+          const title=createTrendSvgElement('title');title.textContent=`${item.name}：${fmtDuration(total)}（選択内 ${(allTotal>0?total/allTotal*100:0).toFixed(1)}%）`;
+          area.appendChild(title);svg.appendChild(area);
+          const boundary=createTrendSvgElement('path',{d:upperPath,fill:'none',stroke:item.color,'stroke-width':'1.05',class:'analysis-composition-boundary'});
+          svg.appendChild(boundary);
+          if(chartStats.days.length<=45) upperPoints.forEach((point,index)=>{
+            const circle=createTrendSvgElement('circle',{cx:point.x,cy:point.y,r:2.2,fill:item.color,class:'analysis-series-point'});
+            const dayShare=chartStats.days[index].primaryMs>0?item.values[index]/chartStats.days[index].primaryMs*100:0;
+            const pointTitle=createTrendSvgElement('title');pointTitle.textContent=`${trendDateLabel(chartStats.days[index].key,true)} · ${item.name}：${fmtDuration(item.values[index])}（選択内 ${dayShare.toFixed(1)}%）`;
+            circle.appendChild(pointTitle);svg.appendChild(circle);
+          });
+          upper.forEach((value,index)=>{running[index]=value;});
+        });
+      }
+    } else {
     series.forEach((item,seriesIndex)=>{
       const plotted=item.values.map((v,i)=>chartMode==='ratio'?v/Math.max(1,chartStats.days[i].dayMs)*100:v);
       const color=item.color;
@@ -3593,6 +4163,7 @@
         });
       }
     });
+    }
     const ticks=new Set([0,Math.floor((chartStats.days.length-1)/2),chartStats.days.length-1]);
     [...ticks].filter(i=>i>=0).forEach(i=>{
       const point=chartStats.days[i];
@@ -3601,14 +4172,26 @@
     });
     return true;
   }
-  function renderAnalysisLegend(targetId, mode, tokens = []) {
+  function renderAnalysisLegend(targetId, mode, tokens = [], stats = null) {
     const host=$(targetId);host.replaceChildren();
     const appendItem=(name,color)=>{
       const item=document.createElement('span');item.className='analysis-legend-item';
       const dot=document.createElement('i');dot.className='analysis-legend-dot';dot.style.backgroundColor=color;
       const label=document.createElement('span');label.textContent=name;item.append(dot,label);host.appendChild(item);
     };
+    if(mode==='all') {
+      const composition=stats?buildTrackedCompositionSeries(stats):null;
+      if(composition?.length) {
+        composition.forEach(item=>appendItem(item.name,item.color));
+        return;
+      }
+    }
     if(mode==='selected') {
+      const composition=getSelectedCompositionMeta(tokens);
+      if(composition) {
+        composition.forEach(item=>appendItem(item.name,item.color));
+        return;
+      }
       const catalog=getAnalysisLabelCatalog();
       const infos=tokens.map(token=>getAnalysisTokenInfo(token,catalog)).filter(Boolean);
       const hasLabelSelection=infos.some(item=>item.kind==='label'||item.kind==='sublabel');
@@ -3663,6 +4246,7 @@
     const tracked=stats.hourlyTracked.map(value=>value/Math.max(1,stats.days.length));
     const unrecorded=stats.hourlyUnrecorded.map(value=>value/Math.max(1,stats.days.length));
     const available=stats.hourlyAvailable.map(value=>value/Math.max(1,stats.days.length));
+    const composition=mode==='all'?buildTrackedCompositionHourly(stats):(mode==='selected'?buildSelectedCompositionHourly(stats,tokens):null);
     const maximum=Math.max(1,...(mode==='compare'?tracked.map((value,index)=>value+unrecorded[index]):main));
     for(let hour=0;hour<24;hour++) {
       const col=document.createElement('div');col.className='analysis-hour-col';
@@ -3671,27 +4255,49 @@
       if(mode==='compare') {
         const trackedBar=document.createElement('i');trackedBar.className='analysis-hour-bar';trackedBar.style.height=`${tracked[hour]/maximum*100}%`;trackedBar.style.backgroundColor='var(--accent-strong)';
         const unrecordedBar=document.createElement('i');unrecordedBar.className='analysis-hour-bar';unrecordedBar.style.height=`${unrecorded[hour]/maximum*100}%`;unrecordedBar.style.backgroundColor='#9d8979';track.append(trackedBar,unrecordedBar);
+      } else if(composition) {
+        [...composition].reverse().forEach(group=>{
+          const amount=group.values[hour];
+          if(amount<=0) return;
+          const bar=document.createElement('i');bar.className='analysis-hour-bar';bar.style.height=`${amount/maximum*100}%`;bar.style.backgroundColor=group.color;bar.title=`${group.name}：${fmtDuration(amount)}`;track.appendChild(bar);
+        });
       } else {
         const bar=document.createElement('i');bar.className='analysis-hour-bar';bar.style.height=`${main[hour]/maximum*100}%`;bar.style.backgroundColor=mode==='unrecorded'||unrecordedOnly?'#9d8979':mode==='selected'?getSelectedAnalysisColor(tokens):'var(--accent-strong)';track.appendChild(bar);
       }
       const name=document.createElement('div');name.className='analysis-hour-name';name.textContent=hour%3===0?String(hour):'';
-      const title=document.createElement('title');title.textContent=`${hour}時：${fmtDuration(mode==='compare'?available[hour]:main[hour])}`;col.append(value,track,name);col.title=title.textContent;host.appendChild(col);
+      const compositionTitle=composition?composition.map(group=>`${group.name} ${fmtDuration(group.values[hour])}`).join(' / '):'';
+      const title=document.createElement('title');title.textContent=`${hour}時：${fmtDuration(mode==='compare'?available[hour]:main[hour])}`;col.append(value,track,name);col.title=compositionTitle?`${title.textContent} · ${compositionTitle}`:title.textContent;host.appendChild(col);
     }
   }
   function renderAnalysisBreakdown(targetId, stats, mode, tokens) {
     const host=$(targetId);host.replaceChildren();
-    if(mode==='unrecorded'||mode==='compare') return;
-    const items=[...stats.byActivity.values()].filter(item=>mode!=='selected'||tokens.length===0||sessionMatchesAnalysis({labelId:item.labelId,labelName:'',subLabelId:item.subLabelId,subLabelName:''},tokens));
-    if(mode==='selected'&&tokens.includes('@unrecorded')) {
-      const unrecordedMs=stats.days.reduce((sum,day)=>sum+(day.unrecordedMs||0),0);
-      if(unrecordedMs>0) items.push({id:'@unrecorded',name:'未記録時間',color:'#9d8979',ms:unrecordedMs});
-    }
+    if(mode==='unrecorded'||mode==='compare'||(mode==='selected'&&!tokens.length)) return;
+    const catalog=getAnalysisLabelCatalog();
+    let items=[...stats.byActivity.values()]
+      .filter(item=>mode!=='selected'||sessionMatchesAnalysis({labelId:item.labelId,labelName:'',subLabelId:item.subLabelId,subLabelName:''},tokens))
+      .map(item=>({...item,color:displayLabelColor(catalog.find(label=>label.id===item.labelId)?.color||item.color)}));
+    const unrecordedMs=mode==='selected'&&tokens.includes('@unrecorded')?stats.days.reduce((sum,day)=>sum+(day.unrecordedMs||0),0):0;
+    const rawRecorded=items.reduce((sum,item)=>sum+Math.max(0,item.ms||0),0);
+    const targetRecorded=Math.max(0,(stats.total||0)-unrecordedMs);
+    if(rawRecorded>0) items=items.map(item=>({...item,ms:Math.max(0,item.ms||0)*targetRecorded/rawRecorded}));
+    if(unrecordedMs>0) items.push({id:'@unrecorded',name:'未記録時間',color:'#9d8979',ms:unrecordedMs});
+    const compositionTotal=items.reduce((sum,item)=>sum+Math.max(0,item.ms||0),0);
     items.sort((a,b)=>b.ms-a.ms);
     items.splice(8);
     if(!items.length) return;
-    const max=Math.max(1,...items.map(x=>x.ms));
     const title=document.createElement('div');title.className='analysis-chart-title';title.textContent='ラベル・サブラベル内訳';host.appendChild(title);
-    items.forEach(item=>{const row=document.createElement('div');row.className='analysis-breakdown-row';const name=document.createElement('div');name.className='analysis-breakdown-name';const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=item.color;const text=document.createElement('span');text.textContent=item.name;name.append(dot,text);const time=document.createElement('div');time.className='analysis-breakdown-time';time.textContent=fmtDuration(item.ms);const meter=document.createElement('div');meter.className='analysis-breakdown-meter';const fill=document.createElement('span');fill.style.width=`${item.ms/max*100}%`;fill.style.backgroundColor=item.color;meter.appendChild(fill);row.append(name,time,meter);host.appendChild(row);});
+    items.forEach(item=>{
+      const row=document.createElement('div');row.className='analysis-breakdown-row';
+      const name=document.createElement('div');name.className='analysis-breakdown-name';
+      const dot=document.createElement('i');dot.className='trend-legend-dot';dot.style.backgroundColor=item.color;
+      const text=document.createElement('span');text.textContent=item.name;name.append(dot,text);
+      const time=document.createElement('div');time.className='analysis-breakdown-time';
+      const share=compositionTotal>0?item.ms/compositionTotal*100:0;
+      time.textContent=`${fmtDuration(item.ms)} · ${share.toFixed(1)}%`;
+      const meter=document.createElement('div');meter.className='analysis-breakdown-meter';
+      const fill=document.createElement('span');fill.style.width=`${share}%`;fill.style.backgroundColor=item.color;
+      meter.appendChild(fill);row.append(name,time,meter);host.appendChild(row);
+    });
   }
   function addDaysToKey(key, offset) {
     const date=parseDay(key);date.setDate(date.getDate()+offset);return todayKey(date);
@@ -3900,7 +4506,7 @@
     const selectedUnrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
     const selectedSeries=selectedUnrecordedOnly?[{name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.primaryMs)}]:null;
     const hasChart=drawAnalysisChart('periodTrendChart',stats,mode,chartMode,'period',selectedSeries,tokens);
-    renderAnalysisLegend('periodTrendLegend',mode,tokens);
+    renderAnalysisLegend('periodTrendLegend',mode,tokens,stats);
     renderAnalysisHourly('periodHourlyChart',stats,mode,tokens);
     renderAnalysisBreakdown('periodBreakdown',stats,mode,tokens);
     const hasData=stats.days.length>0&&(stats.total>0||mode==='compare'||mode==='unrecorded');
@@ -3908,7 +4514,9 @@
     $('periodTrendChart').hidden=!hasChart||(!hasData&&mode!=='unrecorded'&&mode!=='compare');
     $('periodTrendLegend').hidden=$('periodTrendChart').hidden;
     $('periodChartTitle').textContent=chartMode==='ratio'?'1日のうち分析対象が占める割合':chartMode==='bar'?'日ごとの時間（棒グラフ）':'日ごとの時間推移';
-    $('periodChartNote').textContent=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは見やすさのため最大120区分の1日平均に圧縮しています。合計・平均・内訳は全日分の正確な値です。`:'グラフは日ごとの推移です。時間帯別分布は期間内の1日平均を表示します。';
+    const hasProportionalColors=(mode==='selected'&&!!getSelectedCompositionMeta(tokens))||(mode==='all'&&!!buildTrackedCompositionSeries(stats));
+    const periodChartNote=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは見やすさのため最大120区分の1日平均に圧縮しています。合計・平均・内訳は全日分の正確な値です。`:'グラフは日ごとの推移です。時間帯別分布は期間内の1日平均を表示します。';
+    $('periodChartNote').textContent=hasProportionalColors?(mode==='all'?`記録済み全体をラベルごとの色で表示しています。各色は重複を除いた記録時間に占める割合です。${periodChartNote}`:`複数ラベルの色は、選択した合計時間に占める各ラベルの割合です。${periodChartNote}`):periodChartNote;
     $('periodTrendEmpty').textContent=mode==='selected'&&!tokens.length?'ラベル、サブラベル、または未記録時間を選択すると分析を表示します。':'この期間に該当する記録はありません。';
   }
   let analysisRenderSequence = 0;
@@ -3934,7 +4542,7 @@
     normalizeCustomRange();
     $('analysisLabelPicker').hidden=analysisPrefs.mode!=='selected';
     $('analysisOverlayPicker').hidden=analysisPrefs.mode!=='multi';
-    const signature=JSON.stringify(getAnalysisLabelCatalog().map(label=>[label.id,label.name,label.color,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])]));
+    const signature=JSON.stringify([document.documentElement.dataset.theme,getAnalysisLabelCatalog().map(label=>[label.id,label.name,label.color,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])])]);
     if(signature!==analysisLabelsSignature) { renderAnalysisLabelChoices(); renderAnalysisOverlayChoices(); }
     const selectedCount=analysisPrefs.tokens.length;
     const mode=analysisPrefs.mode==='selected'&&selectedCount===0?'selected':analysisPrefs.mode;
@@ -3967,7 +4575,9 @@
     if(appFavicon) appFavicon.href=dark?'./icon-dark.svg':'./icon-light.svg';
   }
   function renderAll() {
-    formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderCalendar();renderOverview();applyTheme();drawClock();syncTimerFrames();scheduleAutoStop();
+    applyTheme();
+    formatTopDate();renderTimer();renderLabels();renderSelectFallback();renderCalendar();renderOverview();drawClock();syncTimerFrames();scheduleAutoStop();
+    syncRoutineResetTimeControl();
     renderRoutineChecklist();
     if ($('trendDetails')?.open) renderAdvancedAnalytics();
   }
@@ -4056,7 +4666,74 @@
   let routineMidnightTimeout = 0;
   const normalizeRoutineName = value => String(value || '').normalize('NFKC').trim().slice(0,80);
   const routineNameKey = value => normalizeRoutineName(value).toLocaleLowerCase('ja-JP');
-  function getTodayRoutineChecks(dayKey = todayKey()) {
+  function routineResetTimeParts(value = data.routines.resetTime) {
+    const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(value || '05:00'));
+    return match ? { hour:Number(match[1]), minute:Number(match[2]) } : { hour:5, minute:0 };
+  }
+  function routineDayKey(date = new Date(), resetTime = data.routines.resetTime) {
+    const { hour, minute } = routineResetTimeParts(resetTime);
+    const boundary = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour, minute, 0, 0);
+    if (date.getTime() < boundary.getTime()) boundary.setDate(boundary.getDate() - 1);
+    return todayKey(boundary);
+  }
+  function nextRoutineResetAt(date = new Date(), resetTime = data.routines.resetTime) {
+    const { hour, minute } = routineResetTimeParts(resetTime);
+    const next = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour, minute, 0, 0);
+    if (next.getTime() <= date.getTime()) next.setDate(next.getDate() + 1);
+    return next;
+  }
+  function formatRoutineDuration(ms) {
+    const minutes = Math.max(0, Math.ceil(ms / 60000));
+    const days = Math.floor(minutes / 1440);
+    const hours = Math.floor((minutes % 1440) / 60);
+    const rest = minutes % 60;
+    if (days) return `${days}日${hours ? `${hours}時間` : ''}`;
+    if (hours) return `${hours}時間${rest ? `${rest}分` : ''}`;
+    return `${rest}分`;
+  }
+  function settleCycleRoutine(item, now = Date.now()) {
+    if (item.kind !== 'cycle') return false;
+    let changed = false;
+    let lastBoundary = Number(item.lastBoundaryAt) || mostRecentRoutineBoundary(new Date(now), data.routines.resetTime).getTime();
+    let nextBoundary = nextRoutineResetAt(new Date(lastBoundary + 1));
+    let guard = 0;
+    while (nextBoundary.getTime() <= now && guard++ < 1000) {
+      const boundaryAt = nextBoundary.getTime();
+      const stockAtBoundary = item.stockTokens.reduce((count, token) => count + (token.expiresAt > boundaryAt ? 1 : 0), 0);
+      const success = stockAtBoundary >= 1;
+      const dayKey = routineDayKey(new Date(boundaryAt - 1));
+      item.streakHistory[dayKey] = success;
+      item.streakCurrent = success ? item.streakCurrent + 1 : 0;
+      item.streakBest = Math.max(item.streakBest, item.streakCurrent);
+      item.lastBoundaryAt = boundaryAt;
+      lastBoundary = boundaryAt;
+      nextBoundary = nextRoutineResetAt(new Date(lastBoundary + 1));
+      changed = true;
+    }
+    if (guard >= 1000) {
+      // Corrupt or extremely stale timestamps should not lock startup.
+      item.lastBoundaryAt = mostRecentRoutineBoundary(new Date(now)).getTime();
+      item.streakCurrent = 0;
+      changed = true;
+    }
+    const activeTokens = item.stockTokens.filter(token => token.expiresAt > now);
+    if (activeTokens.length !== item.stockTokens.length) {
+      item.stockTokens = activeTokens;
+      changed = true;
+    }
+    const historyDays = Object.keys(item.streakHistory).sort((a,b) => a.localeCompare(b));
+    historyDays.slice(0, Math.max(0, historyDays.length - MAX_ROUTINE_DAYS)).forEach(day => { delete item.streakHistory[day]; changed = true; });
+    return changed;
+  }
+  function processCycleRoutines(now = Date.now()) {
+    if (!data.routines.items.some(item => item.kind === 'cycle')) return false;
+    const candidate = clone(data.routines);
+    let changed = false;
+    candidate.items.forEach(item => { if (settleCycleRoutine(item, now)) changed = true; });
+    if (!changed) return false;
+    return commitRoutineMutation(() => { data.routines = candidate; });
+  }
+  function getTodayRoutineChecks(dayKey = routineDayKey()) {
     return data.routines.checks[dayKey] || {};
   }
   function pruneRoutineCheckHistory() {
@@ -4095,104 +4772,674 @@
       else delete data.routines.checks[dayKey];
     });
   }
-  function renderRoutineChecklist(focusEdit = false) {
-    const list = $('routineList');
+  function routineActionButtons(item, index, count) {
+    const title = escapeHtml(item.text);
+    const id = escapeHtml(item.id);
+    return `<span class="routine-cycle-actions"><button class="routine-action" type="button" data-routine-move="up" data-routine-id="${id}" aria-label="${title}を上へ移動" title="上へ" ${index===0?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button><button class="routine-action" type="button" data-routine-move="down" data-routine-id="${id}" aria-label="${title}を下へ移動" title="下へ" ${index===count-1?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg></button><button class="routine-action" type="button" data-routine-edit="${id}" aria-label="${title}を編集" title="編集">${svgIconMarkup('pencil','ui-icon')}</button><button class="routine-action" type="button" data-routine-delete="${id}" aria-label="${title}を削除" title="削除">${svgIconMarkup('trash','ui-icon')}</button></span>`;
+  }
+  function routineEditFormMarkup(item) {
+    const isCycle = item.kind === 'cycle';
+    return `<form class="routine-edit-form routine-edit-form-advanced" data-routine-edit-form="${escapeHtml(item.id)}"><label class="routine-edit-name">タスク名<input class="routine-edit-input" id="routineEditInput" name="routineText" type="text" maxlength="80" value="${escapeHtml(item.text)}"></label><div class="routine-edit-form-fields"><label>実行方式<select name="routineKind" data-routine-kind aria-label="実行方式"><option value="daily" ${!isCycle?'selected':''}>毎日</option><option value="cycle" ${isCycle?'selected':''}>周期</option></select></label><div class="routine-edit-cycle-fields" ${isCycle?'':'hidden'}><label>周期（日）<input name="periodDays" type="number" min="1" max="365" step="1" value="${isCycle?item.periodDays:3}"></label><label>目標回数<input name="targetCount" type="number" min="1" max="60" step="1" value="${isCycle?item.targetCount:2}"></label></div></div><div class="routine-edit-form-actions"><button class="routine-edit-save" type="submit">${svgIconMarkup('check','ui-icon')}<span>保存</span></button><button class="routine-edit-cancel" type="button" data-routine-cancel="${escapeHtml(item.id)}">${svgIconMarkup('close','ui-icon')}<span>戻す</span></button></div></form>`;
+  }
+  function renderRoutineSettingsList(focusEdit = false) {
+    const list = $('routineSettingsList');
     if (!list) return;
-    const dayKey = todayKey();
-    routineRenderedDayKey = dayKey;
     const items = data.routines.items;
-    const checks = getTodayRoutineChecks(dayKey);
-    const done = items.reduce((count, item) => count + (checks[item.id] === true ? 1 : 0), 0);
-    const total = items.length;
-    const percent = total ? Math.round(done / total * 100) : 0;
-    $('routineSummaryCount').textContent = `${done} / ${total}`;
-    $('routineSummaryHint').textContent = total ? `${percent}% 完了 · 今日のルーティン` : '日々のルーティンをチェックリストで管理';
-    $('routineDateLabel').textContent = `今日 · ${fmtDateLong(dayKey)}`;
-    $('routineProgressLabel').textContent = `${percent}% 完了`;
-    $('routineProgressFill').style.width = `${percent}%`;
-    $('routineProgressTrack').setAttribute('aria-valuenow', String(percent));
-    $('routineProgressTrack').setAttribute('aria-valuetext', `${done}件完了、${total}件中`);
-    if (!$('routineDetails')?.open && !focusEdit) return;
     list.replaceChildren();
-    if (!total) {
+    if (!items.length) {
       const empty = document.createElement('li');
       empty.className = 'routine-empty';
-      empty.innerHTML = '<strong>日課はまだありません</strong>下の入力欄から、毎日続けたいことを追加できます。';
+      empty.innerHTML = '<strong>登録済みの日課はありません</strong>下の入力欄から毎日タスクまたは周期タスクを追加できます。';
       list.appendChild(empty);
     } else {
       const fragment = document.createDocumentFragment();
-      items.forEach(item => {
-        const checked = checks[item.id] === true;
+      items.forEach((item, index) => {
         const row = document.createElement('li');
-        row.className = `routine-item${checked ? ' is-done' : ''}`;
+        row.className = 'routine-settings-row';
         row.dataset.routineId = item.id;
         if (editingRoutineId === item.id) {
-          row.innerHTML = `<form class="routine-edit-form" data-routine-edit-form="${escapeHtml(item.id)}"><label class="visually-hidden" for="routineEditInput">日課の名前を編集</label><input class="routine-edit-input" id="routineEditInput" type="text" maxlength="80" value="${escapeHtml(item.text)}"><button class="routine-edit-save" type="submit">${svgIconMarkup('check','ui-icon')}<span>保存</span></button><button class="routine-edit-cancel" type="button" data-routine-cancel="${escapeHtml(item.id)}">${svgIconMarkup('close','ui-icon')}<span>戻す</span></button></form>`;
+          row.innerHTML = routineEditFormMarkup(item);
         } else {
-          row.innerHTML = `<label class="routine-check-label"><input class="routine-checkbox" type="checkbox" data-routine-check="${escapeHtml(item.id)}" ${checked ? 'checked' : ''}><span class="routine-checkmark" aria-hidden="true">${svgIconMarkup('check','ui-icon')}</span><span class="routine-task-text">${escapeHtml(item.text)}</span></label><span class="routine-item-actions"><button class="routine-action" type="button" data-routine-move="up" data-routine-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を上へ移動" title="上へ" ${items.indexOf(item)===0?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button><button class="routine-action" type="button" data-routine-move="down" data-routine-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を下へ移動" title="下へ" ${items.indexOf(item)===items.length-1?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg></button><button class="routine-action" type="button" data-routine-edit="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を編集" title="編集">${svgIconMarkup('pencil','ui-icon')}</button><button class="routine-action" type="button" data-routine-delete="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.text)}を削除" title="削除">${svgIconMarkup('trash','ui-icon')}</button></span>`;
+          const meta = item.kind === 'cycle' ? `周期タスク · ${item.periodDays}日間に${item.targetCount}回` : '毎日タスク · チェック式';
+          row.innerHTML = `<span class="routine-settings-info"><strong>${escapeHtml(item.text)}</strong><small>${meta}</small></span>${routineActionButtons(item,index,items.length)}`;
+        }
+        fragment.appendChild(row);
+      });
+      list.appendChild(fragment);
+      // The routine edit form is rendered dynamically after initial page setup.
+      // Decorate its execution-mode select so it uses the same custom menu as
+      // the routine-add form and all other app selects.
+      list.querySelectorAll('select[data-routine-kind]').forEach(decorateSelect);
+    }
+    const atLimit = items.length >= MAX_ROUTINE_ITEMS;
+    ['routineAddInput','routineAddButton','routineAddKind','routineCycleAddDays','routineCycleAddCount'].forEach(id => { const el = $(id); if (el) el.disabled = atLimit; });
+    if (focusEdit) {
+      const editInput = $('routineEditInput');
+      if (editInput) { editInput.focus({preventScroll:true}); editInput.select(); }
+    }
+  }
+  function renderRoutineChecklist(focusEdit = false) {
+    if (!focusEdit) processCycleRoutines(Date.now());
+    renderRoutineSettingsList(focusEdit);
+    const list = $('routineList');
+    if (!list) return;
+    const dayKey = routineDayKey();
+    routineRenderedDayKey = dayKey;
+    const items = data.routines.items;
+    const dailyItems = items.filter(item => item.kind !== 'cycle');
+    const cycleItems = items.filter(item => item.kind === 'cycle');
+    const checks = getTodayRoutineChecks(dayKey);
+    const done = dailyItems.reduce((count, item) => count + (checks[item.id] === true ? 1 : 0), 0);
+    const dailyTotal = dailyItems.length;
+    const percent = dailyTotal ? Math.max(0, Math.min(100, Math.round(done / dailyTotal * 100))) : 0;
+    $('routineSummaryCount').textContent = dailyTotal ? `${done} / ${dailyTotal} 完了` : '日課なし';
+    $('routineSummaryHint').textContent = dailyTotal ? `${percent}% 完了${cycleItems.length ? ` · 周期タスク ${cycleItems.length}件` : ''}` : (cycleItems.length ? `毎日タスクなし · 周期タスク ${cycleItems.length}件` : '毎日タスクなし');
+    const summaryTrack = $('routineSummaryProgressTrack');
+    const summaryFill = $('routineSummaryProgressFill');
+    summaryTrack.hidden = dailyTotal === 0;
+    summaryFill.style.width = `${percent}%`;
+    summaryTrack.setAttribute('aria-valuenow', String(percent));
+    summaryTrack.setAttribute('aria-valuetext', `${done}件完了、${dailyTotal}件中`);
+    const resetTimeLabel = data.routines.resetTime || '05:00';
+    $('routineDateLabel').textContent = `今日 · ${fmtDateLong(dayKey)}（${resetTimeLabel}区切り）`;
+    $('routineProgressLabel').textContent = dailyTotal ? `${percent}% 完了` : (cycleItems.length ? '周期タスクのストックを管理' : '0% 完了');
+    $('routineProgressFill').style.width = `${percent}%`;
+    $('routineProgressTrack').setAttribute('aria-valuenow', String(percent));
+    $('routineProgressTrack').setAttribute('aria-valuetext', `${done}件完了、${dailyTotal}件中`);
+    if (!$('routineDetails')?.open) return;
+    list.replaceChildren();
+    if (!items.length) {
+      const empty = document.createElement('li');
+      empty.className = 'routine-empty';
+      empty.innerHTML = '<strong>日課はまだありません</strong>毎日タスクまたは周期タスクを追加できます。';
+      list.appendChild(empty);
+    } else {
+      const fragment = document.createDocumentFragment();
+      items.forEach((item, index) => {
+        const isCycle = item.kind === 'cycle';
+        const checked = !isCycle && checks[item.id] === true;
+        const row = document.createElement('li');
+        row.className = `routine-item${checked ? ' is-done' : ''}${isCycle ? ' is-cycle' : ''}`;
+        row.dataset.routineId = item.id;
+        if (!isCycle) {
+          row.innerHTML = `<label class="routine-check-label"><input class="routine-checkbox" type="checkbox" data-routine-check="${escapeHtml(item.id)}" ${checked ? 'checked' : ''}><span class="routine-checkmark" aria-hidden="true">${svgIconMarkup('check','ui-icon')}</span><span class="routine-task-text">${escapeHtml(item.text)}</span></label>`;
+        } else {
+          const maxStock = Math.max(1, maxRoutineStock(item.targetCount));
+          const stock = Math.max(0, Math.min(maxStock, Number.isFinite(item.stockTokens?.length) ? item.stockTokens.length : 0));
+          const interval = routineIntervalMs(item.periodDays,item.targetCount);
+          const nextExpiry = item.stockTokens.reduce((min,token) => Math.min(min,token.expiresAt), Infinity);
+          const nextText = Number.isFinite(nextExpiry) ? `次のストック減少まで ${formatRoutineDuration(Math.max(0,nextExpiry-Date.now()))}` : 'ストックなし · 実行を記録して回復';
+          const percentOfGoal = Math.round(stock / Math.max(1,item.targetCount) * 100);
+          const goalWidth = Math.max(0, Math.min(100, item.targetCount / maxStock * 100));
+          const fillWidth = Math.max(0, Math.min(100, stock / maxStock * 100));
+          const normalShare = stock > 0 ? Math.max(0, Math.min(100, Math.min(stock,item.targetCount) / stock * 100)) : 100;
+          const successLeft = Math.max(0, Math.min(100, 1 / maxStock * 100));
+          row.innerHTML = `<div class="routine-cycle-card"><div class="routine-cycle-head"><div><div class="routine-cycle-title">${escapeHtml(item.text)}</div><div class="routine-cycle-meta">${item.periodDays}日間に${item.targetCount}回 · ${formatRoutineDuration(interval)}ごとに1回分減少</div></div><div class="routine-cycle-stock-value">${stock} / ${maxStock}回<span class="routine-cycle-stock-caption">目標比 ${percentOfGoal}%</span></div></div><div class="routine-cycle-track" role="progressbar" aria-label="${escapeHtml(item.text)}のストック" aria-valuemin="0" aria-valuemax="${maxStock}" aria-valuenow="${stock}" aria-valuetext="${stock}回、最大${maxStock}回"><span class="routine-cycle-goal-zone" style="width:${goalWidth}%"></span><span class="routine-cycle-buffer-zone" style="left:${goalWidth}%;width:${Math.max(0,100-goalWidth)}%"></span><span class="routine-cycle-stock-fill" style="width:${fillWidth}%;--normal-share:${normalShare}%"></span><span class="routine-cycle-success-mark" style="left:${successLeft}%"></span><span class="routine-cycle-goal-mark" style="left:${goalWidth}%"></span></div><div class="routine-cycle-scale"><span>0</span><span>成功ライン 1回</span><span>通常目標 ${item.targetCount}回</span><span>最大 ${maxStock}回</span></div><div class="routine-cycle-legend"><span><i style="background:var(--accent-strong)"></i>通常ストック</span><span><i style="background:#c49a63"></i>予備ストック</span></div><div class="routine-cycle-streak-row"><span>🔥 連続成功 ${item.streakCurrent}日 · 最長 ${item.streakBest}日</span><span class="routine-cycle-status${stock<1?' is-low':''}">${stock>=1?'成功ライン維持':'ストック回復が必要'}</span></div><div class="routine-cycle-bottom"><button class="routine-cycle-record" type="button" data-cycle-record="${escapeHtml(item.id)}" ${stock>=maxStock?'disabled':''}>${stock>=maxStock?'ストック満タン':'＋ 実行を記録'}</button><span class="routine-cycle-next">${nextText}</span></div></div>`;
         }
         fragment.appendChild(row);
       });
       list.appendChild(fragment);
     }
-    const addInput = $('routineAddInput');
-    const addButton = $('routineAddButton');
-    const atLimit = total >= MAX_ROUTINE_ITEMS;
-    if (addInput) addInput.disabled = atLimit;
-    if (addButton) addButton.disabled = atLimit;
-    if (focusEdit) {
-      const editInput = $('routineEditInput');
-      if (editInput) { editInput.focus(); editInput.select(); }
-    }
   }
-  function addRoutineItem(text) {
-    const value = normalizeRoutineName(text);
-    if (!value) { $('routineAddInput')?.focus(); return; }
-    if (data.routines.items.length >= MAX_ROUTINE_ITEMS) { showToast(`日課は${MAX_ROUTINE_ITEMS}件まで登録できます`); return; }
-    if (data.routines.items.some(item => routineNameKey(item.text) === routineNameKey(value))) {
-      showToast('同じ日課はすでに登録されています'); $('routineAddInput')?.focus(); return;
+  function routineTextExists(value, exceptId = '') {
+    return data.routines.items.some(entry => entry.id !== exceptId && routineNameKey(entry.text) === routineNameKey(value));
+  }
+  function createCycleRoutineItem(text, periodDays, targetCount) {
+    const now = Date.now();
+    const interval = routineIntervalMs(periodDays,targetCount);
+    return { id:makeId(), text, kind:'cycle', periodDays, targetCount,
+      stockTokens:Array.from({length:targetCount},(_,index)=>({id:makeId(),expiresAt:now+interval*(index+1)})),
+      streakCurrent:0, streakBest:0, streakHistory:{}, lastBoundaryAt:mostRecentRoutineBoundary(new Date(now),data.routines.resetTime).getTime() };
+  }
+  function addRoutineItemFromForm() {
+    const nameInput = $('routineAddInput');
+    const value = normalizeRoutineName(nameInput?.value || '');
+    const kind = $('routineAddKind')?.value === 'cycle' ? 'cycle' : 'daily';
+    const periodDays = Number($('routineCycleAddDays')?.value);
+    const targetCount = Number($('routineCycleAddCount')?.value);
+    if (!value) { showToast('タスク名を入力してください'); nameInput?.focus(); return; }
+    if (kind === 'cycle' && (!Number.isInteger(periodDays) || periodDays < 1 || periodDays > MAX_ROUTINE_PERIOD_DAYS)) {
+      showToast(`周期は1〜${MAX_ROUTINE_PERIOD_DAYS}日の整数で指定してください。`);
+      $('routineAddOptions').open = true;
+      $('routineCycleAddDays')?.focus();
+      return;
     }
-    const saved = commitRoutineMutation(() => { data.routines.items.push({ id:makeId(), text:value }); });
+    if (kind === 'cycle' && (!Number.isInteger(targetCount) || targetCount < 1 || targetCount > MAX_ROUTINE_TARGET_COUNT)) {
+      showToast(`目標回数は1〜${MAX_ROUTINE_TARGET_COUNT}回で指定してください。`);
+      $('routineAddOptions').open = true;
+      $('routineCycleAddCount')?.focus();
+      return;
+    }
+    if (data.routines.items.length >= MAX_ROUTINE_ITEMS) { showToast(`日課は${MAX_ROUTINE_ITEMS}件まで登録できます`); return; }
+    if (routineTextExists(value)) { showToast('同じ日課はすでに登録されています'); nameInput?.focus(); return; }
+    const newItem = kind === 'cycle'
+      ? createCycleRoutineItem(value,periodDays,targetCount)
+      : { id:makeId(), text:value, kind:'daily' };
+    const saved = commitRoutineMutation(() => { data.routines.items.push(newItem); });
     if (!saved) { renderRoutineChecklist(); return; }
-    $('routineAddInput').value = '';
+    nameInput.value = '';
+    $('routineAddKind').value = 'daily';
+    $('routineCycleAddDays').value = '3';
+    $('routineCycleAddCount').value = '2';
+    $('routineAddOptions').open = false;
+    updateRoutineAddOptions();
+    updateCycleAddPreview();
     editingRoutineId = '';
     renderRoutineChecklist();
-    $('routineAddInput').focus();
+    scheduleRoutineMidnightRefresh();
+    showToast(kind === 'cycle' ? '周期タスクを追加しました' : '毎日タスクを追加しました');
+    nameInput?.focus();
   }
-  function commitRoutineEdit(id, text) {
+  function updateRoutineAddOptions() {
+    const isCycle = $('routineAddKind')?.value === 'cycle';
+    const fields = $('routineAddCycleFields');
+    if (fields) fields.hidden = !isCycle;
+    const hint = $('routineAddOptionsHint');
+    if (hint) hint.textContent = isCycle ? '周期タスクの設定' : '毎日タスク';
+  }
+  function commitRoutineEdit(id, form) {
     const item = data.routines.items.find(entry => entry.id === id);
-    const value = normalizeRoutineName(text);
     if (!item) { editingRoutineId=''; renderRoutineChecklist(); return; }
-    if (!value) { showToast('日課の内容を入力してください'); $('routineEditInput')?.focus(); return; }
-    if (data.routines.items.some(entry => entry.id !== id && routineNameKey(entry.text) === routineNameKey(value))) {
-      showToast('同じ日課はすでに登録されています'); $('routineEditInput')?.focus(); return;
-    }
+    const value = normalizeRoutineName(form.querySelector('[name="routineText"]')?.value);
+    const kind = form.querySelector('[name="routineKind"]')?.value === 'cycle' ? 'cycle' : 'daily';
+    const periodDays = Number(form.querySelector('[name="periodDays"]')?.value);
+    const targetCount = Number(form.querySelector('[name="targetCount"]')?.value);
+    if (!value) { showToast('タスク名を入力してください'); $('routineEditInput')?.focus(); return; }
+    if (routineTextExists(value,id)) { showToast('同じ日課はすでに登録されています'); $('routineEditInput')?.focus(); return; }
+    if (kind === 'cycle' && (!Number.isInteger(periodDays) || periodDays < 1 || periodDays > MAX_ROUTINE_PERIOD_DAYS)) { showToast(`周期は1〜${MAX_ROUTINE_PERIOD_DAYS}日の整数で指定してください。`); form.querySelector('[name="periodDays"]')?.focus(); return; }
+    if (kind === 'cycle' && (!Number.isInteger(targetCount) || targetCount < 1 || targetCount > MAX_ROUTINE_TARGET_COUNT)) { showToast(`目標回数は1〜${MAX_ROUTINE_TARGET_COUNT}回で指定してください。`); form.querySelector('[name="targetCount"]')?.focus(); return; }
+    const oldKind = item.kind || 'daily';
+    const configChanged = oldKind === 'cycle' && (item.periodDays !== periodDays || item.targetCount !== targetCount);
     const saved = commitRoutineMutation(() => {
       const target = data.routines.items.find(entry => entry.id === id);
       if (!target) throw new Error('編集対象の日課が見つかりません。');
       target.text = value;
+      if (kind === 'daily') {
+        target.kind = 'daily';
+        ['periodDays','targetCount','stockTokens','streakCurrent','streakBest','streakHistory','lastBoundaryAt'].forEach(key => { delete target[key]; });
+      } else if (oldKind !== 'cycle') {
+        Object.assign(target, createCycleRoutineItem(value,periodDays,targetCount));
+        target.id = id;
+      } else if (configChanged) {
+        const now = Date.now();
+        const currentStock = Math.min(target.stockTokens.filter(token => token.expiresAt > now).length, maxRoutineStock(targetCount));
+        const interval = routineIntervalMs(periodDays,targetCount);
+        target.periodDays = periodDays;
+        target.targetCount = targetCount;
+        target.stockTokens = Array.from({length:currentStock},(_,index)=>({id:makeId(),expiresAt:now+interval*(index+1)}));
+        target.lastBoundaryAt = mostRecentRoutineBoundary(new Date(now),data.routines.resetTime).getTime();
+      }
     });
-    if (saved) editingRoutineId = '';
+    if (saved) {
+      if (kind !== oldKind) Object.keys(data.routines.checks).forEach(day => { delete data.routines.checks[day][id]; if (!Object.keys(data.routines.checks[day]).length) delete data.routines.checks[day]; });
+      editingRoutineId = '';
+      processCycleRoutines(Date.now());
+    }
     renderRoutineChecklist(!saved);
+    scheduleRoutineMidnightRefresh();
+  }
+  function recordCycleRoutine(id) {
+    processCycleRoutines(Date.now());
+    const item = data.routines.items.find(entry => entry.id === id && entry.kind === 'cycle');
+    if (!item) return;
+    const maxStock = maxRoutineStock(item.targetCount);
+    if (item.stockTokens.length >= maxStock) { showToast('ストックは最大まで貯まっています'); return; }
+    const now = Date.now();
+    const interval = routineIntervalMs(item.periodDays,item.targetCount);
+    const saved = commitRoutineMutation(() => {
+      const target = data.routines.items.find(entry => entry.id === id);
+      if (!target || target.kind !== 'cycle') throw new Error('周期タスクが見つかりません。');
+      const lastExpiry = target.stockTokens.reduce((max,token) => Math.max(max,token.expiresAt), now);
+      target.stockTokens.push({id:makeId(),expiresAt:Math.max(now,lastExpiry)+interval});
+    });
+    if (saved) {
+      renderRoutineChecklist();
+      scheduleRoutineMidnightRefresh();
+      showToast('ストックを1回分補充しました');
+    }
   }
   function refreshRoutineForNewDay() {
-    if (todayKey() === routineRenderedDayKey) return false;
+    if (routineDayKey() === routineRenderedDayKey) return false;
     renderRoutineChecklist();
     return true;
   }
   function scheduleRoutineMidnightRefresh() {
     if (routineMidnightTimeout) clearTimeout(routineMidnightTimeout);
-    const now = new Date();
-    const nextDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2, 0);
+    const now = Date.now();
+    let nextEventAt = nextRoutineResetAt(new Date(now)).getTime();
+    for (const item of data.routines.items) {
+      if (item.kind !== 'cycle') continue;
+      for (const token of item.stockTokens) if (token.expiresAt > now && token.expiresAt < nextEventAt) nextEventAt = token.expiresAt;
+    }
+    // Refresh at either the daily boundary or an individual stock expiry.
     routineMidnightTimeout = window.setTimeout(() => {
-      refreshRoutineForNewDay();
+      const changed = processCycleRoutines(Date.now());
+      const dayChanged = refreshRoutineForNewDay();
+      if (changed && !dayChanged || $('routineDetails')?.open) renderRoutineChecklist();
       scheduleRoutineMidnightRefresh();
-    }, Math.max(1000, nextDay.getTime() - now.getTime()));
+    }, Math.max(250, nextEventAt - now + 100));
+  }
+  const ROUTINE_TIME_WHEEL_ROW = 36;
+  const ROUTINE_TIME_WHEEL_CYCLES = 9;
+  const ROUTINE_TIME_WHEEL_CENTER_CYCLE = 4;
+  const ROUTINE_TIME_WHEEL_INERTIA = 5.0;
+  const ROUTINE_TIME_WHEEL_MAX_SPEED = 14;
+  // Per-frame momentum retention: fast finger movement carries into a longer coast.
+  const ROUTINE_TIME_WHEEL_FRICTION = 0.9885;
+  const ROUTINE_TIME_WHEEL_STOP_SPEED = 0.018;
+  const ROUTINE_TIME_WHEEL_MAX_COAST_MS = 9000;
+  const routineTimeWheelState = { hour:5, minute:0 };
+  let routineTimeWheelsReady = false;
+  let routineTimeWheelSyncing = false;
+  let routineTimeWheelSyncTimer = 0;
+  let routineTimeWheelCommitTimer = 0;
+  const routineTimeWheelAnimations = { hour:0, minute:0 };
+  const routineTimeWheelGestures = { hour:null, minute:null };
+  function routineTimeWheelCount(type) { return type === 'hour' ? 24 : 60; }
+  function routineTimeWheelElement(type) { return $(type === 'hour' ? 'routineResetHourWheel' : 'routineResetMinuteWheel'); }
+  function routineTimeWheelValue() {
+    return `${String(routineTimeWheelState.hour).padStart(2,'0')}:${String(routineTimeWheelState.minute).padStart(2,'0')}`;
+  }
+  function routineTimeWheelModulo(value, count) { return ((value % count) + count) % count; }
+  function normalizeRoutineTimeWheel(wheel, type, gesture = null) {
+    const count = routineTimeWheelCount(type);
+    const physical = wheel.scrollTop / ROUTINE_TIME_WHEEL_ROW;
+    const cycle = Math.floor(physical / count);
+    if (cycle >= 2 && cycle <= 6) return 0;
+    const local = routineTimeWheelModulo(physical, count);
+    const normalized = ROUTINE_TIME_WHEEL_CENTER_CYCLE * count + local;
+    const shift = (normalized - physical) * ROUTINE_TIME_WHEEL_ROW;
+    wheel.scrollTop += shift;
+    if (gesture) gesture.startScroll += shift;
+    return shift;
+  }
+  function paintRoutineTimeWheel(type) {
+    const wheel = routineTimeWheelElement(type);
+    if (!wheel) return;
+    const count = routineTimeWheelCount(type);
+    const physicalIndex = Math.max(0, Math.min(wheel.children.length - 1, Math.round(wheel.scrollTop / ROUTINE_TIME_WHEEL_ROW)));
+    const selected = routineTimeWheelModulo(physicalIndex, count);
+    routineTimeWheelState[type] = selected;
+    const options = wheel.children;
+    for (let index = 0; index < options.length; index++) {
+      const active = index === physicalIndex;
+      options[index].classList.toggle('is-active', active);
+      options[index].setAttribute('aria-selected', String(active));
+    }
+    const activeOption = options[physicalIndex];
+    if (activeOption) wheel.setAttribute('aria-activedescendant', activeOption.id);
+    wheel.setAttribute('aria-valuenow', String(selected));
+    wheel.setAttribute('aria-valuetext', type === 'hour' ? `${selected}時` : `${selected}分`);
+  }
+  function updateRoutineTimeWheelReadout() {
+    paintRoutineTimeWheel('hour');
+    paintRoutineTimeWheel('minute');
+    const value = routineTimeWheelValue();
+    const display = $('routineResetTimeDisplay');
+    const input = $('routineResetTime');
+    const toggle = $('routineResetTimeToggle');
+    if (display) display.textContent = value;
+    if (input) input.value = value;
+    if (toggle) toggle.setAttribute('aria-label', `リセット時刻を変更。現在${value}`);
+  }
+  function routineWheelAnimateTo(type, physicalIndex, duration = 260) {
+    const wheel = routineTimeWheelElement(type);
+    if (!wheel) return;
+    if (routineTimeWheelAnimations[type]) cancelAnimationFrame(routineTimeWheelAnimations[type]);
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const from = wheel.scrollTop;
+    const to = Math.max(0, Math.min(wheel.scrollHeight - wheel.clientHeight, physicalIndex * ROUTINE_TIME_WHEEL_ROW));
+    if (reduceMotion || duration <= 0 || Math.abs(to - from) < 0.5) {
+      wheel.scrollTop = to;
+      normalizeRoutineTimeWheel(wheel, type);
+      paintRoutineTimeWheel(type);
+      scheduleRoutineTimeWheelCommit();
+      return;
+    }
+    const start = performance.now();
+    const ms = Math.max(130, duration);
+    const tick = now => {
+      const progress = Math.min(1, (now - start) / ms);
+      const eased = 1 - Math.pow(1 - progress, 3); // softer cubic settle, less magnetic pull
+      wheel.scrollTop = from + (to - from) * eased;
+      updateRoutineTimeWheelReadout();
+      if (progress < 1) routineTimeWheelAnimations[type] = requestAnimationFrame(tick);
+      else {
+        routineTimeWheelAnimations[type] = 0;
+        wheel.scrollTop = to;
+        normalizeRoutineTimeWheel(wheel, type);
+        paintRoutineTimeWheel(type);
+        scheduleRoutineTimeWheelCommit();
+      }
+    };
+    routineTimeWheelAnimations[type] = requestAnimationFrame(tick);
+  }
+  function scrollRoutineTimeWheel(type, physicalIndex, behavior = 'smooth') {
+    const wheel = routineTimeWheelElement(type);
+    if (!wheel) return;
+    const normalizedTarget = Math.max(0, Math.min(wheel.children.length - 1, Number(physicalIndex) || 0));
+    const duration = behavior === 'auto' ? 0 : Math.min(280, 125 + Math.abs(normalizedTarget * ROUTINE_TIME_WHEEL_ROW - wheel.scrollTop) * .065);
+    routineWheelAnimateTo(type, normalizedTarget, duration);
+  }
+  function scheduleRoutineTimeWheelCommit() {
+    if (routineTimeWheelCommitTimer) clearTimeout(routineTimeWheelCommitTimer);
+    routineTimeWheelCommitTimer = window.setTimeout(() => {
+      routineTimeWheelCommitTimer = 0;
+      const nextValue = routineTimeWheelValue();
+      if (nextValue !== data.routines.resetTime) changeRoutineResetTime(nextValue, true);
+      else updateRoutineTimeWheelReadout();
+    }, 560);
+  }
+  function settleRoutineTimeWheel(type, velocity = 0) {
+    const wheel = routineTimeWheelElement(type);
+    if (!wheel) return;
+    const current = wheel.scrollTop / ROUTINE_TIME_WHEEL_ROW;
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) velocity = 0;
+    // The measured finger velocity is the launch velocity: a quick flick carries
+    // through for several seconds, then decays smoothly before a light row settle.
+    let v = Math.max(-ROUTINE_TIME_WHEEL_MAX_SPEED,
+      Math.min(ROUTINE_TIME_WHEEL_MAX_SPEED, velocity * ROUTINE_TIME_WHEEL_INERTIA));
+    if (Math.abs(v) < ROUTINE_TIME_WHEEL_STOP_SPEED) {
+      scrollRoutineTimeWheel(type, Math.round(current), 'smooth');
+      return;
+    }
+    if (routineTimeWheelAnimations[type]) cancelAnimationFrame(routineTimeWheelAnimations[type]);
+    let previous = performance.now();
+    let elapsed = 0;
+    const inertiaTick = now => {
+      const dt = Math.min(32, Math.max(1, now - previous || 16));
+      previous = now;
+      elapsed += dt;
+      wheel.scrollTop += v * dt;
+      normalizeRoutineTimeWheel(wheel, type);
+      updateRoutineTimeWheelReadout();
+      v *= Math.pow(ROUTINE_TIME_WHEEL_FRICTION, dt / 16.67);
+      if (Math.abs(v) > ROUTINE_TIME_WHEEL_STOP_SPEED && elapsed < ROUTINE_TIME_WHEEL_MAX_COAST_MS) {
+        routineTimeWheelAnimations[type] = requestAnimationFrame(inertiaTick);
+      } else {
+        routineTimeWheelAnimations[type] = 0;
+        const nearest = Math.round(wheel.scrollTop / ROUTINE_TIME_WHEEL_ROW);
+        // A brief, gentle correction keeps the final value legible without a hard latch.
+        scrollRoutineTimeWheel(type, nearest, 'smooth');
+      }
+    };
+    routineTimeWheelAnimations[type] = requestAnimationFrame(inertiaTick);
+  }
+  function estimateRoutineTimeWheelVelocity(samples, now) {
+    if (!samples || samples.length < 2) return 0;
+    const recent = samples.filter(sample => now - sample.time <= 100);
+    if (recent.length < 2) return 0;
+    const first = recent[0];
+    const latest = recent[recent.length - 1];
+    const latestAge = Math.max(0, now - latest.time);
+    // If the finger has been resting before release, do not replay old velocity.
+    if (latestAge > 115) return 0;
+    const span = latest.time - first.time;
+    let velocity = 0;
+    if (span >= 10) {
+      // Recency-weighted linear regression follows the most recent part of the swipe.
+      let sumW = 0, sumT = 0, sumS = 0;
+      for (const sample of recent) {
+        const weight = Math.exp(-(latest.time - sample.time) / 58);
+        sumW += weight;
+        sumT += sample.time * weight;
+        sumS += sample.scroll * weight;
+      }
+      const meanT = sumT / sumW;
+      const meanS = sumS / sumW;
+      let covariance = 0, variance = 0;
+      for (const sample of recent) {
+        const weight = Math.exp(-(latest.time - sample.time) / 58);
+        covariance += weight * (sample.time - meanT) * (sample.scroll - meanS);
+        variance += weight * (sample.time - meanT) ** 2;
+      }
+      velocity = variance > 0 ? covariance / variance : 0;
+    } else {
+      // Coalesced pointer events can arrive almost together; retain their displacement
+      // using a small minimum window rather than discarding a genuinely quick flick.
+      velocity = (latest.scroll - first.scroll) / Math.max(8, span);
+    }
+    const pauseFactor = Math.exp(-latestAge / 60);
+    return velocity * pauseFactor;
+  }
+  function buildRoutineTimeWheel(type) {
+    const wheel = routineTimeWheelElement(type);
+    if (!wheel) return;
+    const count = routineTimeWheelCount(type);
+    const fragment = document.createDocumentFragment();
+    for (let cycle = 0; cycle < ROUTINE_TIME_WHEEL_CYCLES; cycle++) {
+      for (let index = 0; index < count; index++) {
+        const physicalIndex = cycle * count + index;
+        const option = document.createElement('div');
+        option.className = 'routine-time-wheel-option';
+        option.id = `${wheel.id}-option-${String(physicalIndex).padStart(3,'0')}`;
+        option.dataset.value = String(index);
+        option.dataset.index = String(physicalIndex);
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', 'false');
+        option.textContent = String(index).padStart(2,'0');
+        fragment.appendChild(option);
+      }
+    }
+    wheel.replaceChildren(fragment);
+    wheel.addEventListener('click', event => {
+      if (wheel.dataset.suppressClick === '1') { wheel.dataset.suppressClick = '0'; return; }
+      const option = event.target.closest('.routine-time-wheel-option');
+      if (!option) return;
+      scrollRoutineTimeWheel(type, Number(option.dataset.index));
+    });
+    wheel.addEventListener('keydown', event => {
+      const current = Math.round(wheel.scrollTop / ROUTINE_TIME_WHEEL_ROW);
+      const step = event.key === 'PageUp' || event.key === 'PageDown' ? 5 : 1;
+      let next = current;
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') next -= step;
+      else if (event.key === 'ArrowDown' || event.key === 'PageDown') next += step;
+      else if (event.key === 'Home') next = Math.floor(current / count) * count;
+      else if (event.key === 'End') next = Math.floor(current / count) * count + count - 1;
+      else return;
+      event.preventDefault();
+      scrollRoutineTimeWheel(type, next);
+    });
+    let wheelSettleTimer = 0;
+    wheel.addEventListener('wheel', event => {
+      event.preventDefault();
+      if (routineTimeWheelAnimations[type]) cancelAnimationFrame(routineTimeWheelAnimations[type]);
+      routineTimeWheelAnimations[type] = 0;
+      wheel.scrollTop += event.deltaY * 1.45;
+      normalizeRoutineTimeWheel(wheel, type);
+      updateRoutineTimeWheelReadout();
+      if (wheelSettleTimer) clearTimeout(wheelSettleTimer);
+      wheelSettleTimer = window.setTimeout(() => {
+        wheelSettleTimer = 0;
+        scrollRoutineTimeWheel(type, Math.round(wheel.scrollTop / ROUTINE_TIME_WHEEL_ROW));
+      }, 130);
+    }, { passive:false });
+    wheel.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      if (routineTimeWheelAnimations[type]) cancelAnimationFrame(routineTimeWheelAnimations[type]);
+      routineTimeWheelAnimations[type] = 0;
+      if (wheelSettleTimer) clearTimeout(wheelSettleTimer);
+      const downTime = performance.now();
+      const gesture = {
+        pointerId:event.pointerId,
+        startY:event.clientY,
+        startScroll:wheel.scrollTop,
+        lastY:event.clientY,
+        lastTime:downTime,
+        velocity:0,
+        moved:false,
+        samples:[{scroll:wheel.scrollTop,time:downTime}]
+      };
+      routineTimeWheelGestures[type] = gesture;
+      wheel.classList.add('is-dragging');
+      wheel.setPointerCapture?.(event.pointerId);
+    });
+    wheel.addEventListener('pointermove', event => {
+      const gesture = routineTimeWheelGestures[type];
+      if (!gesture || gesture.pointerId !== event.pointerId) return;
+      if (event.cancelable) event.preventDefault();
+      const delta = gesture.startY - event.clientY;
+      if (Math.abs(delta) > 4) gesture.moved = true;
+      wheel.scrollTop = gesture.startScroll + delta;
+      const now = performance.now();
+      gesture.lastY = event.clientY;
+      gesture.lastTime = now;
+      gesture.samples.push({scroll:wheel.scrollTop,time:now});
+      while (gesture.samples.length > 2 && now - gesture.samples[0].time > 110) gesture.samples.shift();
+      gesture.velocity = estimateRoutineTimeWheelVelocity(gesture.samples, now);
+      const normalizationShift = normalizeRoutineTimeWheel(wheel, type, gesture);
+      if (normalizationShift) {
+        // Shift existing samples into the same normalized coordinate space;
+        // crossing the circular seam must not erase the finger's fling speed.
+        for (const sample of gesture.samples) sample.scroll += normalizationShift;
+      }
+      updateRoutineTimeWheelReadout();
+    });
+    const endGesture = event => {
+      const gesture = routineTimeWheelGestures[type];
+      if (!gesture || (event && gesture.pointerId !== event.pointerId)) return;
+      const releaseTime = performance.now();
+      if (event && Number.isFinite(event.clientY) && Math.abs(event.clientY - gesture.lastY) > 0.5) {
+        const finalDelta = gesture.startY - event.clientY;
+        wheel.scrollTop = gesture.startScroll + finalDelta;
+        const normalizationShift = normalizeRoutineTimeWheel(wheel, type, gesture);
+        gesture.lastY = event.clientY;
+        gesture.lastTime = releaseTime;
+        gesture.samples.push({scroll:wheel.scrollTop,time:releaseTime});
+        while (gesture.samples.length > 2 && releaseTime - gesture.samples[0].time > 110) gesture.samples.shift();
+        if (normalizationShift) {
+          for (const sample of gesture.samples) sample.scroll += normalizationShift;
+        }
+      }
+      const releaseVelocity = estimateRoutineTimeWheelVelocity(gesture.samples, releaseTime);
+      routineTimeWheelGestures[type] = null;
+      wheel.classList.remove('is-dragging');
+      if (gesture.moved) wheel.dataset.suppressClick = '1';
+      settleRoutineTimeWheel(type, releaseVelocity);
+      if (gesture.moved) window.setTimeout(() => { wheel.dataset.suppressClick = '0'; }, 80);
+    };
+    wheel.addEventListener('pointerup', endGesture);
+    wheel.addEventListener('pointercancel', endGesture);
+    wheel.addEventListener('lostpointercapture', endGesture);
+    const initialPhysical = ROUTINE_TIME_WHEEL_CENTER_CYCLE * count + routineTimeWheelState[type];
+    wheel.scrollTop = initialPhysical * ROUTINE_TIME_WHEEL_ROW;
+    paintRoutineTimeWheel(type);
+  }
+  function setRoutineTimeWheelOpen(open) {
+    const picker = $('routineResetTimePicker');
+    const toggle = $('routineResetTimeToggle');
+    const panel = $('routineResetTimeWheelPanel');
+    if (!picker || !toggle || !panel) return;
+    const nextOpen = !!open;
+    picker.classList.toggle('is-open', nextOpen);
+    toggle.setAttribute('aria-expanded', String(nextOpen));
+    panel.hidden = !nextOpen;
+    if (nextOpen && routineTimeWheelsReady) {
+      for (const type of ['hour','minute']) {
+        const wheel = routineTimeWheelElement(type);
+        const count = routineTimeWheelCount(type);
+        if (!wheel) continue;
+        const value = routineTimeWheelState[type];
+        wheel.scrollTop = (ROUTINE_TIME_WHEEL_CENTER_CYCLE * count + value) * ROUTINE_TIME_WHEEL_ROW;
+        paintRoutineTimeWheel(type);
+      }
+    }
+  }
+  function initializeRoutineTimeWheels() {
+    buildRoutineTimeWheel('hour');
+    buildRoutineTimeWheel('minute');
+    routineTimeWheelsReady = true;
+    syncRoutineResetTimeControl(true);
+    $('routineResetTimeToggle')?.addEventListener('click', () => {
+      const expanded = $('routineResetTimeToggle')?.getAttribute('aria-expanded') === 'true';
+      setRoutineTimeWheelOpen(!expanded);
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && $('routineResetTimeToggle')?.getAttribute('aria-expanded') === 'true') {
+        setRoutineTimeWheelOpen(false);
+        $('routineResetTimeToggle')?.focus();
+      }
+    });
+  }
+  function syncRoutineResetTimeControl(force = false) {
+    const input = $('routineResetTime');
+    const value = data.routines.resetTime || '05:00';
+    if (input) input.value = value;
+    const parts = routineResetTimeParts(value);
+    routineTimeWheelState.hour = parts.hour;
+    routineTimeWheelState.minute = parts.minute;
+    const display = $('routineResetTimeDisplay');
+    if (display) display.textContent = value;
+    if (!routineTimeWheelsReady) return;
+    if (routineTimeWheelCommitTimer) clearTimeout(routineTimeWheelCommitTimer);
+    routineTimeWheelCommitTimer = 0;
+    routineTimeWheelSyncing = true;
+    const hourWheel = routineTimeWheelElement('hour');
+    const minuteWheel = routineTimeWheelElement('minute');
+    if (hourWheel) hourWheel.scrollTop = (ROUTINE_TIME_WHEEL_CENTER_CYCLE * 24 + parts.hour) * ROUTINE_TIME_WHEEL_ROW;
+    if (minuteWheel) minuteWheel.scrollTop = (ROUTINE_TIME_WHEEL_CENTER_CYCLE * 60 + parts.minute) * ROUTINE_TIME_WHEEL_ROW;
+    updateRoutineTimeWheelReadout();
+    if (routineTimeWheelSyncTimer) clearTimeout(routineTimeWheelSyncTimer);
+    routineTimeWheelSyncTimer = window.setTimeout(() => { routineTimeWheelSyncing = false; routineTimeWheelSyncTimer = 0; }, 180);
+  }
+  function changeRoutineResetTime(nextValue, silent = false) {
+    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(nextValue || ''))) {
+      syncRoutineResetTimeControl(true);
+      showToast('時刻は4桁の数字で入力してください（例：0530）。');
+      return;
+    }
+    processCycleRoutines(Date.now());
+    const oldDayKey = routineDayKey();
+    const currentChecks = clone(data.routines.checks[oldDayKey] || {});
+    const newDayKey = routineDayKey(new Date(), nextValue);
+    const saved = commitRoutineMutation(() => {
+      data.routines.resetTime = nextValue;
+      const newBoundary = mostRecentRoutineBoundary(new Date(), nextValue).getTime();
+      data.routines.items.forEach(item => { if (item.kind === 'cycle') item.lastBoundaryAt = newBoundary; });
+      // Keep the visible checklist state intact when the user moves the boundary.
+      // Re-key the active day (rather than merge old historical checks) so a
+      // previous day's completed items cannot reappear at the next boundary.
+      if (oldDayKey !== newDayKey) {
+        delete data.routines.checks[oldDayKey];
+        if (Object.keys(currentChecks).length) data.routines.checks[newDayKey] = currentChecks;
+        else delete data.routines.checks[newDayKey];
+      }
+    });
+    if (!saved) {
+      syncRoutineResetTimeControl(true);
+      return;
+    }
+    syncRoutineResetTimeControl(true);
+    routineRenderedDayKey = '';
+    refreshRoutineForNewDay();
+    scheduleRoutineMidnightRefresh();
+    if (!silent) showToast(`毎日タスクのリセット時刻を${nextValue}に設定しました`);
   }
   $('routineAddForm')?.addEventListener('submit', event => {
     event.preventDefault();
-    addRoutineItem($('routineAddInput').value);
+    addRoutineItemFromForm();
   });
+  $('routineAddKind')?.addEventListener('change', updateRoutineAddOptions);
+  function updateCycleAddPreview() {
+    const days = Number($('routineCycleAddDays')?.value);
+    const count = Number($('routineCycleAddCount')?.value);
+    const preview = $('routineCycleAddPreview');
+    if (!preview) return;
+    if (!Number.isInteger(days) || days < 1 || !Number.isInteger(count) || count < 1) {
+      preview.textContent = '周期と目標回数を正しく入力してください。';
+      return;
+    }
+    if (days > MAX_ROUTINE_PERIOD_DAYS || count > MAX_ROUTINE_TARGET_COUNT) {
+      preview.textContent = `周期は1〜${MAX_ROUTINE_PERIOD_DAYS}日、目標回数は1〜${MAX_ROUTINE_TARGET_COUNT}回で指定してください。`;
+      return;
+    }
+    preview.textContent = `${days}日間に${count}回 · ${formatRoutineDuration(routineIntervalMs(days,count))}ごとに1回分減少。初期ストックは${count}回、最大は${maxRoutineStock(count)}回です。`;
+  }
+  $('routineCycleAddDays')?.addEventListener('input', updateCycleAddPreview);
+  $('routineCycleAddCount')?.addEventListener('input', updateCycleAddPreview);
+  updateRoutineAddOptions();
+  updateCycleAddPreview();
   $('routineList')?.addEventListener('change', event => {
     const input = event.target instanceof Element ? event.target.closest('[data-routine-check]') : null;
     if (!input) return;
@@ -4206,7 +5453,12 @@
     saveRoutineChecks(checks, routineRenderedDayKey);
     renderRoutineChecklist();
   });
-  $('routineList')?.addEventListener('click', async event => {
+  $('routineList')?.addEventListener('click', event => {
+    const target = event.target instanceof Element ? event.target : null;
+    const record = target?.closest('[data-cycle-record]');
+    if (record && !record.disabled) recordCycleRoutine(record.dataset.cycleRecord);
+  });
+  $('routineSettingsList')?.addEventListener('click', async event => {
     const target = event.target instanceof Element ? event.target : null;
     if (!target) return;
     const edit = target.closest('[data-routine-edit]');
@@ -4227,8 +5479,8 @@
       }
       return;
     }
-    if (edit) { editingRoutineId = edit.dataset.routineEdit; renderRoutineChecklist(true); }
-    if (cancel) { editingRoutineId = ''; renderRoutineChecklist(); }
+    if (edit) { editingRoutineId = edit.dataset.routineEdit; renderRoutineChecklist(true); return; }
+    if (cancel) { editingRoutineId = ''; renderRoutineChecklist(); return; }
     if (remove) {
       const id = remove.dataset.routineDelete;
       const item = data.routines.items.find(entry => entry.id === id);
@@ -4246,13 +5498,19 @@
       renderRoutineChecklist();
     }
   });
-  $('routineList')?.addEventListener('submit', event => {
+  $('routineSettingsList')?.addEventListener('change', event => {
+    const select = event.target instanceof Element ? event.target.closest('[data-routine-kind]') : null;
+    if (!select) return;
+    const fields = select.closest('form')?.querySelector('.routine-edit-cycle-fields');
+    if (fields) fields.hidden = select.value !== 'cycle';
+  });
+  $('routineSettingsList')?.addEventListener('submit', event => {
     const form = event.target.closest('[data-routine-edit-form]');
     if (!form) return;
     event.preventDefault();
-    commitRoutineEdit(form.dataset.routineEditForm, form.querySelector('input')?.value);
+    commitRoutineEdit(form.dataset.routineEditForm, form);
   });
-  $('routineList')?.addEventListener('keydown', event => {
+  $('routineSettingsList')?.addEventListener('keydown', event => {
     if (event.target.matches('.routine-edit-input') && event.key === 'Escape') {
       editingRoutineId=''; renderRoutineChecklist();
     }
@@ -4261,11 +5519,22 @@
     $('routineDetails')?.querySelector(':scope > summary')?.setAttribute('aria-expanded', String($('routineDetails').open));
     if ($('routineDetails')?.open) renderRoutineChecklist();
   });
+  ['labelSettingsDetails','routineSettingsDetails'].forEach(id => {
+    const panel = $(id);
+    const summary = panel?.querySelector(':scope > summary');
+    summary?.setAttribute('aria-expanded', String(!!panel?.open));
+    panel?.addEventListener('toggle', () => {
+      summary?.setAttribute('aria-expanded', String(!!panel.open));
+      if (panel.open && id === 'routineSettingsDetails') renderRoutineSettingsList();
+      if (panel.open && id === 'labelSettingsDetails') renderLabels();
+    });
+  });
   $('routineDetails')?.querySelector(':scope > summary')?.setAttribute('aria-expanded', 'false');
+  updateCycleAddPreview();
   renderRoutineChecklist();
   scheduleRoutineMidnightRefresh();
-  window.addEventListener('focus', refreshRoutineForNewDay);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshRoutineForNewDay(); });
+  window.addEventListener('focus', () => { const changed = processCycleRoutines(Date.now()); const dayChanged = refreshRoutineForNewDay(); if ((changed && !dayChanged || $('routineDetails')?.open) && !dayChanged) renderRoutineChecklist(); scheduleRoutineMidnightRefresh(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { const changed = processCycleRoutines(Date.now()); const dayChanged = refreshRoutineForNewDay(); if ((changed && !dayChanged || $('routineDetails')?.open) && !dayChanged) renderRoutineChecklist(); scheduleRoutineMidnightRefresh(); } });
 
   const timerImmersiveBtn = $('timerImmersiveBtn');
   const timerImmersiveLabel = $('timerImmersiveLabel');
@@ -4332,11 +5601,12 @@
   settingsPanel?.addEventListener('toggle', () => settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel.open)));
   $('stopTimerBtn').addEventListener('click',stopSession);
   $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color,subLabels:[],autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}};data.labels.push(label);selectedLabelId=label.id;selectedSubLabelId='';save();renderAll();showToast('ラベルを追加しました');});
-  $('themeSelect').addEventListener('change',e=>{data.settings.theme=e.target.value;save();applyTheme();});
+  $('themeSelect').addEventListener('change',e=>{data.settings.theme=e.target.value;save();renderAll();});
+  initializeRoutineTimeWheels();
   $('ambientEnabled').addEventListener('change',e=>{data.settings.ambientEnabled=e.target.checked;save();renderTimer();});
   $('ambientStrength').addEventListener('change',e=>{data.settings.ambientStrength=['subtle','balanced','rich'].includes(e.target.value)?e.target.value:'subtle';save();renderTimer();});
   $('ambientFollowLabel').addEventListener('change',e=>{data.settings.ambientFollowLabel=e.target.checked;save();renderTimer();});
-  window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(data.settings.theme==='system')applyTheme();});
+  window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(data.settings.theme==='system')renderAll();});
   function selectDay(key, scrollToOverview = false) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || key > todayKey()) return;
     const date = parseDay(key);
@@ -4532,10 +5802,23 @@
     try { return JSON.parse(text); }
     catch { throw new Error('JSONの書式が壊れているか、途中で切れています。'); }
   }
+  async function readJsonFileText(file) {
+    if (typeof file?.text === 'function') {
+      try { return await file.text(); } catch (_) { /* Try FileReader below for older local-file contexts. */ }
+    }
+    if (typeof FileReader === 'undefined') throw new Error('このブラウザーではファイルを読み込めません。別のブラウザーでお試しください。');
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(new Error('JSONファイルを読み込めませんでした。'));
+      reader.readAsText(file);
+    });
+  }
   async function parseJsonFile(file, onProgress = () => {}) {
-    if (file.size <= LARGE_JSON_WORKER_THRESHOLD || typeof Worker === 'undefined' || typeof Blob === 'undefined' || typeof URL.createObjectURL !== 'function') {
+    // Safari file:// documents have an opaque origin; bypass Blob Workers there.
+    if (location.protocol === 'file:' || location.origin === 'null' || file.size <= LARGE_JSON_WORKER_THRESHOLD || typeof Worker === 'undefined' || typeof Blob === 'undefined' || typeof URL.createObjectURL !== 'function') {
       onProgress(22, 'JSONファイルを読み込んでいます');
-      const text = await file.text();
+      const text = await readJsonFileText(file);
       onProgress(72, 'JSONの内容を解析しています');
       return parseJsonText(text);
     }
@@ -4583,14 +5866,19 @@
     }
     if (result?.invalidJson) throw new Error('JSONの書式が壊れているか、途中で切れています。');
     if (result?.ok) return result.value;
-    return parseJsonText(await file.text());
+    return parseJsonText(await readJsonFileText(file));
   }
-  $('importBtn').addEventListener('click',()=>$('importFile').click());
-  $('importFile').addEventListener('change',async e=>{
+  async function handleBackupFileChange(e) {
+    // Event.currentTarget becomes null after the async handler yields. Capture
+    // the initiating control synchronously before any await.
+    const requestedFromAnalysis = e.currentTarget?.id === 'analysisImportFile';
     const file=e.target.files?.[0];
     if(!file)return;
-    const importButton=$('importBtn');
-    importButton.disabled=true;
+    const importPickers=[$('importFile'),$('analysisImportFile')].filter(Boolean);
+    const importLabels=importPickers.map(input=>input.closest('.file-picker-label')).filter(Boolean);
+    importPickers.forEach(input=>input.disabled=true);
+    importLabels.forEach(label=>label.classList.add('is-disabled'));
+    e.currentTarget.value='';
     let importCommitted = false;
     let activeLoadingToken=startLoading('JSONを読み込んでいます','ファイルを読み込んでいます',4);
     const loadingToken=activeLoadingToken;
@@ -4609,7 +5897,8 @@
       const summary = `ラベル ${labelCount}個／サブラベル ${subLabelCount}個／記録 ${sessionCount}件／日課 ${routineCount}件`;
       updateLoading(loadingToken,'読み込み内容を確認しています',96);
       finishLoading(loadingToken);
-      if (!confirm(`JSONの内容で現在のデータを置き換えます。\n\n読み込む内容：${summary}\n\n現在の記録は置き換わります。先にバックアップを保存することをおすすめします。続けますか？`)) return;
+      const confirmed = await showConfirmDialog(`JSONの内容で現在のデータを置き換えます。\n\n読み込む内容：${summary}\n\n現在の記録は置き換わります。先にバックアップを保存することをおすすめします。続けますか？`, 'JSONを読み込みますか？', '読み込む');
+      if (!confirmed) return;
       const saveToken=startLoading('JSONを反映しています','保存内容を書き込んでいます',94);
       activeLoadingToken=saveToken;
       await yieldToPaint();
@@ -4618,6 +5907,15 @@
       persistDataSnapshot(staged);
       importCommitted = true;
       updateLoading(saveToken,'画面と分析データを更新しています',98);
+      // The analysis-specific importer means 'analyze this backup'. Switch to
+      // the full imported record set (both scope and date range) so a stale
+      // label filter or short period cannot make the newly imported data look
+      // empty. General settings import continues to preserve analysis prefs.
+      if (requestedFromAnalysis) {
+        analysisPrefs.mode = 'all';
+        analysisPrefs.period = 'all';
+        saveAnalysisPrefs();
+      }
       data = staged;
       invalidateDataCaches();
       resetActiveSessionCache();
@@ -4634,7 +5932,7 @@
       renderAll();
       scheduleAutoStop();
       updateLoading(saveToken,'読み込みが完了しました',100);
-      showToast(`JSONを読み込みました（${summary}）`);
+      showToast(requestedFromAnalysis ? `JSONを読み込み、記録済み全体・全期間で分析します（${summary}）` : `JSONを読み込みました（${summary}）`);
       finishLoading(saveToken);
     } catch(error) {
       const detail = error?.message || 'ファイルの形式や内容を確認してください。';
@@ -4643,16 +5941,20 @@
         : `JSONを読み込めませんでした。\n${detail}\n\n現在のデータは変更していません。`);
     } finally {
       finishLoading(activeLoadingToken);
-      importButton.disabled=false;
-      e.target.value='';
+      importPickers.forEach(input=>input.disabled=false);
+      importLabels.forEach(label=>label.classList.remove('is-disabled'));
     }
-  });
-  $('mergeSessionsBtn').addEventListener('click',()=>$('mergeSessionsFile').click());
+  }
+  $('importFile').addEventListener('change',handleBackupFileChange);
+  $('analysisImportFile').addEventListener('change',handleBackupFileChange);
   $('mergeSessionsFile').addEventListener('change',async e=>{
     const file=e.target.files?.[0];
     if(!file)return;
-    const button=$('mergeSessionsBtn');
-    button.disabled=true;
+    const picker=$('mergeSessionsFile');
+    const pickerLabel=$('mergeSessionsBtn');
+    picker.disabled=true;
+    pickerLabel.classList.add('is-disabled');
+    e.currentTarget.value='';
     let committed=false;
     let activeLoadingToken=startLoading('別端末のデータを読み込んでいます','JSONファイルを読み込んでいます',4);
     const loadingToken=activeLoadingToken;
@@ -4685,7 +5987,8 @@
         ? `この端末で計測中の「${labelPath(plan.autoClosedActive.labelName, plan.autoClosedActive.subLabelName)}」は、別端末の最初のセッション開始時刻で終了します。その時刻より後の計測区間は破棄されます。`
         : 'この端末の計測中セッションは変更しません。';
       finishLoading(loadingToken);
-      if(!confirm(`別端末の記録を現在のデータに合成します。\n\nファイル：${file.name}\n\n${summary}\n\n${activeMergeNotice}\n日課・チェック履歴・テーマ・分析設定はこの端末の内容を維持します。合成を実行しますか？`)) return;
+      const confirmed = await showConfirmDialog(`別端末の記録を現在のデータに合成します。\n\nファイル：${file.name}\n\n${summary}\n\n${activeMergeNotice}\n日課・チェック履歴・テーマ・分析設定はこの端末の内容を維持します。合成を実行しますか？`, '別端末の記録を合成しますか？', '合成する');
+      if(!confirmed) return;
       const saveToken=startLoading('別端末の記録を合成しています','データを保存しています',96);
       activeLoadingToken=saveToken;
       await yieldToPaint();
@@ -4713,8 +6016,8 @@
         : `合成できませんでした。\n${detail}\n\n現在のデータは変更していません。`);
     } finally {
       finishLoading(activeLoadingToken);
-      button.disabled=false;
-      e.target.value='';
+      picker.disabled=false;
+      pickerLabel.classList.remove('is-disabled');
     }
   });
   document.querySelectorAll('select').forEach(decorateSelect);
@@ -4739,9 +6042,17 @@
     }
   });
   let lastStatsRefreshMinute=Math.floor(Date.now()/60000);
+  let lastRoutineRefreshMinute=Math.floor(Date.now()/60000);
   setInterval(()=>{
     const now=Date.now();
     const autoStopped = processAutoStopExpiry(now);
+    const routineMinute = Math.floor(now/60000);
+    if (routineMinute !== lastRoutineRefreshMinute) {
+      lastRoutineRefreshMinute = routineMinute;
+      const cycleChanged = processCycleRoutines(now);
+      if (cycleChanged || $('routineDetails')?.open) renderRoutineChecklist();
+      scheduleRoutineMidnightRefresh();
+    }
     if (autoStopped) { renderAll(); showToast('設定した時刻に自動終了しました'); lastStatsRefreshMinute=Math.floor(now/60000); }
     else if(getActive()?.status==='running') {
       const minute=Math.floor(now/60000);
