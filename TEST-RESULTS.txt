@@ -1,96 +1,68 @@
-DAYLOG v102 検証結果
+# DAYLOG v145 — final stability verification
 
-UI確認（Chromium）
-- 日課追加入力欄が `surface` 背景になり、周囲の背景と区別できることを確認。
-- オプション欄が控えめな `bg` 背景・境界線・ミュート色見出しで表示されることを確認。
-- ライト／ダーク双方で入力欄とオプション欄のコントラストを確認。
-- 入力フォーカス時の既存アクセント色フォーカスリングを確認。
-- オプション開閉、毎日／周期選択、周期入力欄の連動、タスク追加を確認。
-- 320 / 360 / 375 / 390 / 430 / 1024pxで横スクロールなし。
-- JavaScript実行時エラー／コンソールエラーなし。
+## Defect corrected
 
-ビルド・互換性確認
-- JavaScript構文チェック成功。
-- HTML単体版とPWA index.htmlはバイト一致。
-- ZIP CRC検査成功。
-- Service Workerキャッシュ名をv102に更新し、v101キャッシュを旧キャッシュとして登録。
-- データ形式v6、保存キーdaylog.data.v3、日課保存処理、周期ストック、カスタムselectを維持。
+- Corrected the daily-reset time wheel's initial synchronization while the settings disclosure and wheel panel are collapsed. A hidden wheel reports `scrollTop=0`; the previous initial paint incorrectly replaced the displayed/default 05:00 with 00:00.
+- The normalized data value now sets the visible time text, hidden input and accessible label. Wheel selection is painted from scroll positions only when both wheel viewports are laid out. Opening the wheel positions it at the retained selection.
+- No data schema, persistence key, reset-boundary calculation, session or backup format was changed.
 
-注記
-- Chromiumによる自動表示確認。iPhone Safariでの実機確認は未実施。
+## Executed checks
 
+- Chromium browser interaction suite: **47/47 passed**. Covered initial render; 05:00 default display; daily and periodic task creation; checklist rendering and completion; periodic stock increase/cap and quota decrement; reset-time wheel open/change to 05:30/reopen; timer start, pause, resume and stop; analysis settings; weekday presets; include/exclude label selection, contradiction warning and clear-all; light/dark theme switch; JSON export/import; merge preview with duplicate suppression plus a distinct session; local-data preservation during merge; invalid JSON import preserving the previous snapshot; v5 backup without routine data migrating to resetTime 05:00; responsive widths 320, 360, 375, 390, 430, 768 and 1024px without horizontal overflow.
+- Auto-stop: a controlled-clock 1-minute duration session auto-ended, hid the active stop control, showed the review/correction panel and produced no JavaScript runtime errors.
+- Storage: a map-backed Web Storage test double verified write/reload, custom reset-time persistence (05:30), restoration of the selected wheel row after a full app reload, and simulated `QuotaExceededError`. Failed routine mutation rolled back in memory and did not replace the previously saved JSON snapshot; the previous task and 05:00 default reloaded correctly.
+- Runtime console/page errors: none observed in the interaction, auto-stop, and storage test flows.
+- Service Worker mock-runtime: install and cache fill (15 app-shell resources), activation/legacy cache cleanup, unrelated cache preservation, same-scope cache-first behavior, offline navigation fallback, GET-only handling and out-of-scope isolation all passed.
+- JavaScript syntax: Node.js `--check` passed for the inline app script and Service Worker.
+- HTML/CSS: HTML parse reported 0 errors; CSS parser reported 0 rule or declaration errors; all 162 static IDs are unique.
+- PWA package assets: manifest JSON valid; all icon files and all 15 Service Worker app-shell resources exist; PNG dimensions agree with declared manifest sizes; SVG icons parse.
+- Packaging: standalone HTML and PWA `DAYLOG/index.html` byte-identical; ZIP integrity/CRC check passed after packaging.
 
-DAYLOG v104 検証結果
+## Test environment limitations
 
-UI・CSS
-- 日課の「オプション」見出しに専用の後段CSSを追加し、`.settings summary` の52px指定よりもラベルサブラベル用の37px指定が適用されるよう修正。
-- 高さ・左右余白・文字色・文字サイズ・太さをラベルのサブラベル折りたたみ見出しと一致させた。
-- 他の設定見出し、タスク追加・編集・保存処理には影響しないことを確認。
+- Direct Chromium navigation to `file://` and local HTTP URLs is blocked by the environment (`ERR_BLOCKED_BY_ADMINISTRATOR`). The complete HTML was loaded via Chromium's `set_content` path for interaction testing.
+- The main browser suite used the app's temporary in-memory fallback on an opaque origin. A separate map-backed Storage test double exercised the Web Storage code path and quota rollback, but the real browser profile's persistent localStorage was not tested.
+- Service Worker behavior was tested through a Node.js mock runtime, not an actual browser registration/install.
+- Physical iPhone/iPad Safari, actual PWA installation, real-device offline launch, and other browser engines were not tested.
 
-ビルド・互換性
-- JavaScript構文チェック成功。
-- HTML単体版とPWA `index.html` はバイト一致。
-- ZIP CRC検査成功。
-- Service Workerキャッシュ名をv104に更新し、v103キャッシュを旧キャッシュとして登録。
-- データ形式v6、保存キー `daylog.data.v3` を維持。
+---
 
-注記
-- ソース比較および自動チェックを実施。実ブラウザでの表示確認は未完了。iPhone Safari実機確認も未実施。
+# DAYLOG v144 verification results
 
+- Replaced only the auto-stop review explanatory sentence with the approved shorter wording.
+- Confirmed the new wording occurs once in standalone HTML and PWA HTML.
+- No application logic, settings, or data handling changed.
+- Updated Service Worker cache name and registered v143 as a known legacy DAYLOG cache.
+- Standalone HTML and PWA `DAYLOG/index.html` are byte-identical.
+- ZIP CRC validation passed for every packaged file.
 
-DAYLOG v106 — リセット時刻の縦スクロールホイール
-- 時（00〜23）・分（00〜59）を上下スワイプで選択できるカスタムホイールを追加。
-- タッチスワイプ、トラックパッド／マウスホイール、マウスドラッグ、キーボード矢印・PageUp/PageDown・Home/Endに対応。
-- 選択停止後に既存の日課リセット時刻として自動保存。既存JSON形式は維持。
+# DAYLOG v143 verification results
 
+- Updated the label-management, routine-management, daily reset-time and JSON import/merge explanatory notes.
+- Clarified long-range chart aggregation (maximum 120 daily-average buckets) and multi-series overlap behavior in both initial markup and runtime-generated descriptions.
+- Confirmed the approved weekday note from v141 remains unchanged.
+- No event handlers, calculation functions, persisted settings, data schema v6 or backup schema were changed; only explanatory text and the PWA cache version/legacy entry were updated.
+- Standalone HTML and PWA `DAYLOG/index.html` are byte-identical.
+- ZIP CRC validation passed for every packaged file.
 
-DAYLOG v107 検証
-- 時刻ピッカーを閉じた初期状態で、現在の時刻ボタンだけが表示されるDOM構造を確認。
-- ボタン操作でホイールパネルを開閉し、aria-expandedとhidden状態が同期する実装を確認。
-- 9周分の値を生成し、時間／分とも端を越えたときに中央周へ同値補正する循環処理を確認。
-- ドラッグ速度から慣性を付加し、停止時に最寄り行へ吸着する処理を実装。prefers-reduced-motionでは慣性を抑制。
-- JavaScript構文、HTML構造、ID重複、PWA内HTML一致、ZIP CRCを確認。実機iOS Safariの触感確認は未実施。
+# DAYLOG v142 verification results
 
+- Removed the analysis-only `JSONを読み込んで分析` row and its orphaned CSS. No analysis file input or analysis-specific import branch remains.
+- Confirmed the standard settings `importFile` control and cross-device `mergeSessionsFile` flow remain registered.
+- The standard JSON import still uses the same validation, confirmation, persistence and success/error handling; its completion toast is now the standard import message only.
+- Analysis preferences, aggregate logic, local data schema v6, backup format and session data are unchanged.
+- PWA `DAYLOG/index.html` matches standalone HTML byte-for-byte; Service Worker cache updated and v141 registered as a known legacy cache.
+- ZIP CRC check passed for every packaged file.
 
-DAYLOG v107 Chromium UI追加確認
-- 画面初期状態では時刻ボタンのみ表示され、ホイールパネルがhiddenであることを確認。ボタンタップでパネルが展開し、再タップとEscで閉じられることを確認。
-- 時ホイールの23→00、00→23、分ホイールの59→00、00→59の両方向循環を確認。選択値の表示と非表示inputの更新を確認。
-- マウスの高速ドラッグで慣性移動が働き、停止後に選択位置へ吸着することを確認。キーボードArrowDownによる値変更も確認。
-- ライト／ダーク両テーマを確認。320 / 360 / 375 / 390 / 430 / 768 / 1024pxで水平オーバーフローなし。JavaScriptの実行時エラー・コンソールエラーなし。
-- ChromiumへのHTML文字列読み込み（set_content）でのUI操作テスト。iPhone Safari実機での触感確認は未実施。
+- Text-only change: exactly one weekday explanation replaced with the approved sentence; no other HTML text or code changed relative to v140.
+- HTML: JavaScript syntax is unchanged from v140; prior v140 verification reported a successful Node.js syntax check.
+- Markup: one analysis-settings disclosure contains five sibling setting sections in order: period, analysis target, chart display, weekday filter, label filter; a divider separates the first three from the last two.
+- Nested disclosure check: no `<details>` remains inside the label filter; include and exclude groups are directly visible.
+- State/logic: existing element IDs for period, target, chart, weekday chips, include/exclude label trees, mode buttons, clear buttons and calendar pickers are retained.
+- Summary: compact summary is refreshed from the current period, target, chart mode, weekday selection, and include/exclude label conditions.
+- Persistence/data: analysis preference schema, local data schema v6, backup format and aggregation logic unchanged.
+- PWA: `DAYLOG/index.html` matches standalone HTML byte-for-byte; Service Worker cache name updated; prior v140 cache registered as legacy.
+- ZIP integrity: all files pass CRC check.
 
+Chromium page navigation was blocked by the execution environment (ERR_BLOCKED_BY_ADMINISTRATOR), so interactive browser validation and manual iPhone Safari validation have not been performed.
 
-DAYLOG v108 検証結果
-- 日課追加ボタンのダークモード専用色指定を追加。ライトテーマの基底色は変更しない。
-- 時刻ホイールの慣性初速係数4.2・上限10px/ms・減速保持率0.982/16.67msへ変更し、停止しきい値0.025px/ms・安全上限5.5秒に設定。停止時の最寄り行スナップとループ補正は維持。
-- JavaScript構文、HTML構造、PWA内HTML一致、ZIP CRCを確認。
-- Chromiumで高速マウスフリックを実行。時・分とも指を離した後も慣性移動を継続し、複数の目盛りを通過してから選択行へ吸着することを確認。
-- フリック後の最終位置は36px行ピッチに一致し、非整数行で停止しないことを確認。自動保存後の表示値は `01:36` と hidden inputで一致。
-- ダークテーマで日課追加ボタンの背景・文字・境界色をcomputed styleで確認。JavaScript実行時エラー／コンソールエラーなし。
-- 320 / 360 / 375 / 390 / 430 / 768 / 1024pxで水平オーバーフローなし。iPhone Safari実機確認は未実施。
-
-
-DAYLOG v109 検証結果
-- 指の移動速度を直近100msのサンプルから時系列加重推定し、pointerup座標とリリースまでの停止時間を反映。短時間にまとめて届くイベントも最小サンプル窓で取りこぼさない。
-- 高速フリックの初速係数を5.0、上限14px/ms、減速保持率0.9885/16.67ms、停止しきい値0.018px/ms、最大惰性時間9秒に設定。循環境界で座標補正しても速度サンプルを同じ座標系へ移し、フリック速度を保持。
-- 停止時の吸着を3乗イージング・短い補正時間に変更。最終位置は行ピッチへ整列。
-- JavaScript構文、HTML構造、ID重複、PWA内HTML一致、ZIP CRCを確認。
-- Chromiumタッチ入力シミュレーション：165pxの高速スワイプ後、指を離してから500msでさらに約3,523px移動。その後も減速し、最大9秒の範囲内で停止。
-- Chromiumマウス入力シミュレーション：110pxの高速スワイプ後、指を離してから500msでさらに約1,113px移動。
-- ゆっくり35px移動した後180ms待ってから離す試験では、リリース後350msの追加移動は約1px。停止前の指の速度と一時停止を反映。
-- 停止後の位置は36px行ピッチに整列し、表示時刻とhidden inputの保存値が一致。実行時エラー／コンソールエラーなし。
-- 320 / 360 / 375 / 390 / 430 / 768 / 1024pxで水平オーバーフローなし。
-- iPhone Safari実機での触感確認は未実施。
-
-
-DAYLOG v110 検証結果
-- 日課メーター描画を整理し、周期ストックは単一の塗りつぶし要素に通常色／予備色のグラデーションを適用する構造へ変更。通常ストック・予備ストックの隣接する絶対配置レイヤーが互いに塗りを隠す可能性を除去。
-- ストック数、最大ストック、通常目標幅、全体塗り幅、通常色の比率を有限値・0〜100%へクランプ。0ストックは空表示、正のストックは必ず有限の幅を持つ。
-- 毎日タスクの折りたたみ／展開メーターは display:block と色フォールバックを明示し、達成率を0〜100%に制限。
-- JavaScript構文、HTMLパーサー、ID重複、周期メーター生成マークアップ、HTML単体版とPWA内HTMLのバイト一致、ZIP CRCを確認。
-- 保存形式v6、保存キーdaylog.data.v3、周期ストック／予備ストック計算、リセット境界、既存データ形式は維持。
-- Chromiumで日課フォームから周期タスク（目標回数1 / 2 / 5 / 12 / 60）を追加し、通常ストック状態のバー幅・色・実寸を確認。通常目標を超える操作記録も行い、通常色と予備色のグラデーションが連続して表示されることを確認。
-- Chromiumで毎日タスクを3件登録し、チェック操作に応じて33%・67%・100%へ更新されることを確認。折りたたみ時のサマリーメーターも100%・アクセント色で描画。
-- ダークテーマの周期メーターでアクセント色・予備色のcomputed gradientを確認。
-- 320 / 360 / 375 / 390 / 430 / 768 / 1024pxの全7幅でdocumentElementとbodyのscrollWidthがviewport widthと一致し、水平オーバーフローなし。
-- Chromiumのpage error・console errorなし。iPhone Safari実機確認は未実施。

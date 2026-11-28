@@ -506,10 +506,22 @@
   .routine-edit-save { border-color: var(--accent-strong); background: var(--accent-strong); color: #fff; }
   .routine-edit-save, .routine-edit-cancel { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
   .routine-edit-save .ui-icon, .routine-edit-cancel .ui-icon { width: 12px; height: 12px; }
-  .routine-item.is-cycle { display: block; padding: 12px; }
+  /* 周期タスクは閉じた状態で通常の日課と同じ高さにそろえ、詳細のみ展開表示する。 */
+  .routine-item.is-cycle { display: block; padding: 5px 6px 5px 9px; }
+  .routine-cycle-disclosure { display: block; width: 100%; min-width: 0; }
+  .routine-cycle-summary { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; min-height: 34px; padding: 0 1px; border: 0; background: transparent; color: var(--ink); cursor: pointer; list-style: none; text-align: left; -webkit-tap-highlight-color: transparent; }
+  .routine-cycle-summary::-webkit-details-marker { display: none; }
+  .routine-cycle-summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 7px; }
+  .routine-cycle-title { min-width: 0; flex: 1 1 auto; overflow: hidden; color: var(--ink); font-size: 11px; line-height: 1.45; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+  .routine-cycle-streak-badge { display: inline-flex; align-items: center; justify-content: flex-end; gap: 3px; flex: 0 0 auto; color: var(--accent-strong); font-size: 10px; line-height: 1; font-weight: 750; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .routine-flame-icon { display: block; width: 14px; height: 14px; flex: 0 0 14px; color: #c47a43; }
+  [data-theme="dark"] .routine-flame-icon { color: #d49a68; }
+  .routine-cycle-chevron { display: block; width: 14px; height: 14px; flex: 0 0 14px; color: var(--muted); transition: transform .18s ease, color .18s ease; }
+  .routine-cycle-disclosure[open] > .routine-cycle-summary .routine-cycle-chevron { transform: rotate(180deg); color: var(--accent-strong); }
+  .routine-cycle-detail { min-width: 0; margin-top: 7px; padding: 9px 1px 2px; border-top: 1px solid var(--line); }
+  .routine-cycle-detail[hidden] { display: none !important; }
   .routine-cycle-card { display: grid; gap: 9px; min-width: 0; width: 100%; }
   .routine-cycle-head, .routine-cycle-stock-row, .routine-cycle-streak-row, .routine-cycle-bottom { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
-  .routine-cycle-title { min-width: 0; color: var(--ink); font-size: 11px; line-height: 1.45; font-weight: 750; overflow-wrap: anywhere; }
   .routine-cycle-meta, .routine-cycle-next, .routine-cycle-scale, .routine-cycle-stock-caption { color: var(--muted); font-size: 9px; line-height: 1.5; }
   .routine-cycle-stock-value { flex: 0 0 auto; text-align: right; color: var(--accent-strong); font-size: 16px; line-height: 1.1; font-weight: 800; font-variant-numeric: tabular-nums; }
   .routine-cycle-stock-caption { display: block; margin-top: 3px; font-size: 8px; font-weight: 600; }
@@ -526,11 +538,16 @@
   .routine-cycle-legend span { display: inline-flex; align-items: center; gap: 4px; }
   .routine-cycle-legend i { width: 8px; height: 8px; border-radius: 3px; display: inline-block; }
   .routine-cycle-streak-row { border-top: 1px solid var(--line); padding-top: 7px; color: var(--ink); font-size: 9px; font-weight: 700; }
+  .routine-cycle-streak-current { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+  .routine-cycle-streak-current .routine-flame-icon { width: 13px; height: 13px; flex-basis: 13px; }
   .routine-cycle-status { flex: 0 0 auto; color: var(--accent-strong); font-size: 8px; font-weight: 750; }
   .routine-cycle-status.is-low { color: #b57950; }
   .routine-cycle-bottom { align-items: center; flex-wrap: wrap; }
-  .routine-cycle-record { min-height: 34px; padding: 0 12px; border: 1px solid var(--accent-strong); border-radius: 9px; background: var(--accent-strong); color: #fff; font: inherit; font-size: 9px; font-weight: 750; }
-  .routine-cycle-record:disabled { opacity: .45; cursor: default; }
+  .routine-cycle-buttons { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; }
+  .routine-cycle-record, .routine-cycle-quota { min-height: 34px; padding: 0 10px; border-radius: 9px; font: inherit; font-size: 9px; font-weight: 750; }
+  .routine-cycle-record { border: 1px solid var(--accent-strong); background: var(--accent-strong); color: #fff; }
+  .routine-cycle-record:disabled, .routine-cycle-quota:disabled { opacity: .45; cursor: default; }
+  .routine-cycle-quota { border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
   .routine-cycle-actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; border-top: 1px solid var(--line); padding-top: 5px; }
   .routine-edit-form-advanced label { display: grid; gap: 4px; color: var(--muted); font-size: 9px; font-weight: 650; }
   .routine-edit-form-advanced input, .routine-edit-form-advanced select { width: 100%; min-width: 0; height: 36px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; font-size: 11px; }
@@ -651,13 +668,13 @@
   .routine-time-wheel-group { display: grid; grid-template-columns: minmax(0,1fr) 18px minmax(0,1fr); align-items: end; gap: 5px; }
   .routine-time-wheel-unit { min-width: 0; display: grid; gap: 5px; }
   .routine-time-wheel-caption { color: var(--muted); font-size: 9px; font-weight: 700; text-align: center; }
-  .routine-time-wheel-window { position: relative; height: 180px; min-width: 0; overflow: hidden; border-radius: 10px; }
-  .routine-time-wheel-scroll { position: relative; box-sizing: border-box; width: 100%; height: 180px; overflow: hidden; padding-block: 72px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); scrollbar-width: none; outline: none; touch-action: none; user-select: none; cursor: grab; }
+  .routine-time-wheel-window { position: relative; height: 180px; min-width: 0; overflow: hidden; border-radius: 10px; background: var(--surface); }
+  .routine-time-wheel-scroll { position: relative; z-index: 1; box-sizing: border-box; width: 100%; height: 180px; overflow: hidden; padding-block: 72px; border: 1px solid var(--line); border-radius: 10px; background: transparent; scrollbar-width: none; outline: none; touch-action: none; user-select: none; cursor: grab; }
   .routine-time-wheel-scroll:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 48%, transparent); }
   .routine-time-wheel-option { display: flex; align-items: center; justify-content: center; height: 36px; min-height: 36px; color: var(--muted); font-size: 13px; line-height: 1; font-weight: 600; font-variant-numeric: tabular-nums; user-select: none; cursor: pointer; opacity: .62; transition: color .1s ease, font-size .1s ease, font-weight .1s ease, opacity .1s ease; }
   .routine-time-wheel-option.is-active { color: var(--accent-strong); font-size: 17px; font-weight: 850; opacity: 1; }
   .routine-time-wheel-colon { align-self: center; padding-top: 22px; color: var(--muted); font-size: 22px; line-height: 1; font-weight: 750; text-align: center; }
-  .routine-time-wheel-selection { position: absolute; z-index: 1; top: 72px; right: 4px; left: 4px; height: 36px; border: 1px solid color-mix(in srgb, var(--accent) 52%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--accent-soft) 72%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent); pointer-events: none; }
+  .routine-time-wheel-selection { position: absolute; z-index: 0; top: 72px; right: 4px; left: 4px; height: 36px; border: 1px solid color-mix(in srgb, var(--accent) 52%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--accent-soft) 72%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent); pointer-events: none; }
   .routine-time-wheel-fade { position: absolute; z-index: 2; inset: 0; border-radius: 10px; background: linear-gradient(to bottom, color-mix(in srgb, var(--surface) 90%, transparent), transparent 28%, transparent 72%, color-mix(in srgb, var(--surface) 90%, transparent)); pointer-events: none; }
   .routine-time-wheel-scroll.is-dragging { cursor: grabbing; }
   @media (prefers-reduced-motion: reduce) { .routine-time-picker-panel { animation: none; } .routine-time-picker-chevron { transition: none; } }
@@ -669,8 +686,9 @@
   .ambient-switch input { position: absolute; inset: 0; width: 40px; height: 24px; margin: 0; opacity: 0; cursor: pointer; }
   .ambient-switch-track { position: absolute; inset: 0; border: 1px solid var(--line); border-radius: 99px; background: var(--surface-3); pointer-events: none; transition: background .2s ease, border-color .2s ease; }
   .ambient-switch-track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.14); transition: transform .2s cubic-bezier(.2,.7,.25,1); }
-  .ambient-switch input:checked + .ambient-switch-track { border-color: color-mix(in srgb, var(--accent) 48%, var(--line)); background: color-mix(in srgb, var(--accent) 38%, var(--surface-3)); }
-  .ambient-switch input:checked + .ambient-switch-track::after { transform: translateX(16px); }
+  /* A clearly active iOS-style switch: use the theme's strong accent at full strength. */
+  #ambientEnabled:checked + .ambient-switch-track { border-color: var(--accent-strong); background: var(--accent-strong); box-shadow: 0 1px 2px rgba(54, 35, 23, .16); }
+  #ambientEnabled:checked + .ambient-switch-track::after { transform: translateX(16px); background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.22), 0 0 0 1px color-mix(in srgb, var(--surface) 72%, transparent); }
   .ambient-switch input:focus-visible + .ambient-switch-track { outline: 2px solid var(--accent); outline-offset: 3px; }
   .ambient-strength-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(120px, 1fr); align-items: center; gap: 12px; color: var(--ink); font-size: 11px; }
   .setting-group-title { margin: 0 0 11px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
@@ -831,10 +849,83 @@
   .analysis-settings-disclosure[open] .analysis-settings-body { animation: picker-soft-open .16s ease-out both; }
   .analysis-settings-disclosure[open] .analysis-settings-chevron { transform: rotate(180deg); }
   .analysis-settings-body { padding: 0 12px 12px; }
+  .analysis-settings-body > .analysis-date-controls { padding: 12px 0 8px; border: 0; }
+  .analysis-settings-body > .analysis-target-controls { padding: 4px 0 8px; border: 0; }
+  .analysis-settings-body > .analysis-chart-controls { padding: 4px 0 12px; border: 0; }
+  .analysis-settings-divider { height: 0; margin: 0 0 12px; border-top: 1px solid var(--line); }
+  .analysis-settings-body > .analysis-weekday-filter { margin: 0 0 10px; }
+  .analysis-settings-body > .analysis-day-label-filter { margin-top: 0; }
+  .analysis-settings-summary-copy small { line-height: 1.45; overflow-wrap: anywhere; }
   .analysis-controls { padding: 14px 0 4px; border-bottom: 1px solid var(--line); }
-  .analysis-control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-  .analysis-import-row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 10px; margin: 10px 0 2px; }
-  .analysis-import-note { color: var(--muted); font-size: 9px; line-height: 1.5; }
+  .analysis-weekday-filter { margin: 14px 0 12px; padding: 11px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+  .analysis-weekday-presets { display: flex; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+  .analysis-weekday-presets button { min-height: 28px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; font-size: 9px; font-weight: 650; }
+  .analysis-weekday-presets button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+  .analysis-weekday-choices { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 6px; margin-top: 10px; }
+  .analysis-weekday-chip { min-width: 0; min-height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); font: inherit; font-size: 11px; font-weight: 700; -webkit-tap-highlight-color: transparent; }
+  .analysis-weekday-chip[aria-pressed="true"] { border-color: var(--accent-strong); background: var(--accent-strong); color: var(--surface); box-shadow: 0 1px 2px rgba(54,35,23,.12); }
+  .analysis-weekday-chip:disabled { cursor: default; opacity: .78; }
+  .analysis-weekday-presets button:focus-visible, .analysis-weekday-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .analysis-weekday-note { margin: 8px 0 0; color: var(--muted); font-size: 9px; line-height: 1.55; }
+  .analysis-day-label-filter { margin: 11px 0 12px; padding: 9px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+  .analysis-day-label-filter[hidden] { display: none !important; }
+  .analysis-day-filter-section { margin-top: 8px; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .analysis-day-filter-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 38px; padding: 0 10px; border-bottom: 1px solid var(--line); }
+  .analysis-day-filter-summary-copy { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; min-width: 0; }
+  .analysis-day-filter-summary-copy strong { color: var(--ink); font-size: 10px; font-weight: 750; }
+  .analysis-day-filter-summary-copy small { color: var(--muted); font-size: 8px; }
+  .analysis-day-filter-disclosure-body { padding: 9px; }
+  .analysis-day-filter-body-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+  .analysis-day-filter-body-tools span { color: var(--muted); font-size: 8px; }
+  .analysis-day-filter-body-tools button, .analysis-day-filter-clear-all { padding: 4px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--muted); font: inherit; font-size: 9px; }
+  .analysis-day-filter-mode { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; margin: 0 0 8px; }
+  .analysis-day-filter-mode button { min-height: 30px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--muted); font: inherit; font-size: 9px; font-weight: 650; }
+  .analysis-day-filter-mode button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
+  .analysis-day-label-tree { display: grid; gap: 5px; max-height: 225px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 1px 3px 5px 0; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+  .analysis-day-label-tree::-webkit-scrollbar { width: 5px; }
+  .analysis-day-label-tree::-webkit-scrollbar-thumb { border-radius: 99px; background: var(--line); }
+  .analysis-day-label-group { padding-top: 6px; border-top: 1px solid var(--line); }
+  .analysis-day-label-group:first-child { padding-top: 0; border-top: 0; }
+  .analysis-day-label-parent-row { display: flex; align-items: stretch; gap: 5px; min-width: 0; }
+  .analysis-day-label-chip, .analysis-day-label-expand, .analysis-day-sublabel-chip { min-height: 32px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; -webkit-tap-highlight-color: transparent; }
+  .analysis-day-label-chip { display: flex; flex: 1 1 auto; align-items: center; gap: 7px; min-width: 0; padding: 5px 8px; text-align: left; font-size: 10px; }
+  .analysis-day-label-chip > span:nth-last-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .analysis-day-label-dot { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; }
+  .analysis-day-label-mark { width: 12px; flex: 0 0 12px; color: var(--muted); text-align: center; font-size: 10px; font-weight: 800; }
+  .analysis-day-label-chip small { margin-left: auto; color: var(--muted); font-size: 8px; white-space: nowrap; }
+  .analysis-day-label-expand { width: 34px; flex: 0 0 34px; padding: 0; color: var(--muted); font-size: 13px; }
+  .analysis-day-sublabels { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 0 1px 15px; }
+  .analysis-day-sublabels[hidden] { display: none !important; }
+  .analysis-day-sublabel-chip { display: inline-flex; align-items: center; gap: 5px; min-height: 29px; padding: 4px 7px; font-size: 9px; }
+  .analysis-day-label-filter [data-filter-scope="include"] .analysis-day-label-chip[aria-pressed="true"],
+  .analysis-day-label-filter [data-filter-scope="include"] .analysis-day-sublabel-chip[aria-pressed="true"] { border-color: color-mix(in srgb,var(--accent) 65%,var(--line)); background: var(--accent-soft); color: var(--accent-strong); }
+  .analysis-day-label-filter [data-filter-scope="exclude"] .analysis-day-label-chip[aria-pressed="true"],
+  .analysis-day-label-filter [data-filter-scope="exclude"] .analysis-day-sublabel-chip[aria-pressed="true"] { border-color: color-mix(in srgb,#a76e64 55%,var(--line)); background: color-mix(in srgb,#a76e64 14%,var(--surface)); color: color-mix(in srgb,#a76e64 78%,var(--ink)); }
+  .analysis-day-label-filter [data-filter-scope="exclude"] .analysis-day-label-chip[aria-pressed="true"] .analysis-day-label-mark,
+  .analysis-day-label-filter [data-filter-scope="exclude"] .analysis-day-sublabel-chip[aria-pressed="true"] .analysis-day-label-mark { color: inherit; }
+  .analysis-day-label-chip:focus-visible, .analysis-day-label-expand:focus-visible, .analysis-day-sublabel-chip:focus-visible, .analysis-day-filter-mode button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .analysis-day-filter-note { margin: 8px 0 0; color: var(--muted); font-size: 9px; line-height: 1.6; }
+  .analysis-day-filter-note[data-state="warning"] { color: #b4776c; }
+  [data-theme="dark"] .analysis-day-label-filter [data-filter-scope="include"] .analysis-day-label-chip[aria-pressed="true"],
+  [data-theme="dark"] .analysis-day-label-filter [data-filter-scope="include"] .analysis-day-sublabel-chip[aria-pressed="true"] { border-color: color-mix(in srgb,var(--accent) 38%,var(--line)); background: color-mix(in srgb,var(--accent) 18%,var(--surface-2)); color: var(--accent-strong); }
+  [data-theme="dark"] .analysis-day-label-filter [data-filter-scope="exclude"] .analysis-day-label-chip[aria-pressed="true"],
+  [data-theme="dark"] .analysis-day-label-filter [data-filter-scope="exclude"] .analysis-day-sublabel-chip[aria-pressed="true"] { border-color: color-mix(in srgb,#bd8479 38%,var(--line)); background: color-mix(in srgb,#bd8479 15%,var(--surface-2)); color: #d4a096; }
+  @media (max-width: 380px) { .analysis-day-label-filter { padding: 9px; } .analysis-day-label-chip { gap: 5px; padding-inline: 6px; } .analysis-day-label-chip small { font-size: 7px; } }
+  /* v132: dark-mode selected weekday controls use the subdued label-add accent treatment. */
+  [data-theme="dark"] .analysis-weekday-presets button[aria-pressed="true"] {
+    border-color: color-mix(in srgb, var(--accent) 34%, var(--line));
+    background: color-mix(in srgb, var(--accent) 18%, var(--surface-2));
+    color: var(--accent-strong);
+  }
+  [data-theme="dark"] .analysis-weekday-chip[aria-pressed="true"] {
+    border: 1px dashed color-mix(in srgb, var(--accent) 38%, var(--line));
+    background: color-mix(in srgb, var(--accent) 20%, var(--surface-2));
+    color: var(--accent-strong);
+    box-shadow: none;
+  }
+  [data-theme="dark"] .analysis-weekday-chip[aria-pressed="true"]:active {
+    background: color-mix(in srgb, var(--accent) 26%, var(--surface-2));
+  }
   .analysis-period-row { display: grid; grid-template-columns: minmax(0,1fr); gap: 9px; margin-bottom: 10px; }
   /* Custom period: fully app-rendered calendar controls (no native input[type=date]). */
   .analysis-period-row,
@@ -1104,6 +1195,13 @@
     .month-btn:hover, .icon-btn:hover, .day-cell:hover { transform: none; }
     .btn-primary:hover { filter: brightness(1.025); }
   }
+  /* Make the complete label-to-sublabel group easier to distinguish in light mode. */
+  :root:not([data-theme="dark"]) .label-edit-row {
+    border-color: color-mix(in srgb, var(--line) 48%, var(--muted) 52%);
+  }
+
+  /* v140: compact layout for the single analysis-settings disclosure. */
+  .analysis-period-row { margin-bottom: 0; }
 </style>
 </head>
 <body>
@@ -1251,7 +1349,7 @@
     </details>
     <section class="auto-stop-review" id="autoStopReview" aria-live="polite" hidden>
       <h3 class="auto-stop-review-title">自動終了しました</h3>
-      <p class="auto-stop-review-text" id="autoStopReviewText">終了時刻を確認してください。必要なら、次に開いたときでも修正できます。</p>
+      <p class="auto-stop-review-text" id="autoStopReviewText">終了時刻を確認してください。必要なら、あとから修正できます。</p>
       <div class="auto-stop-review-row">
         <label for="autoStopReviewTime">記録上の終了時刻
           <input id="autoStopReviewTime" type="datetime-local" step="60">
@@ -1296,7 +1394,7 @@
               <h3 class="setting-group-title">ラベルをカスタム</h3>
               <div class="label-list" id="labelEditor"></div>
               <button class="add-label-btn button-with-icon" id="addLabelBtn" type="button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>ラベルを追加</span></button>
-              <p class="setting-note">色はテンプレートから選べます。ラベル左側の「↑」「↓」ボタンで順番を変更できます。自動終了とサブラベルは各ラベルの折りたたみにまとめています。</p>
+              <p class="setting-note">色はテンプレートから選べます。順番は「↑」「↓」で変更できます。自動終了とサブラベルは各ラベル内で設定します。</p>
             </div>
           </details>
 
@@ -1332,7 +1430,7 @@
             </details>
             <button class="routine-add-button button-with-icon" id="routineAddButton" type="submit"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg><span>追加</span></button>
           </form>
-              <p class="routine-limit-note">日課の追加・種類変更・周期変更・並べ替え・削除は、この設定内から行います。毎日のチェックや周期タスクの実行記録は、上の日課欄から行えます。</p>
+              <p class="routine-limit-note">日課の追加・編集・並べ替え・削除はここで行います。チェックと実行記録は上の日課欄から行います。</p>
               <h3 class="setting-group-title" style="margin-top:20px">毎日タスクのリセット</h3>
               <div class="routine-reset-setting">
                 <div class="routine-reset-label">毎日タスクのリセット時刻</div>
@@ -1370,7 +1468,7 @@
                   </div>
                   <input id="routineResetTime" type="hidden" value="05:00">
                 </div>
-                <p class="setting-note" id="routineResetTimeHelp">この時刻を1日の区切りとして、毎日タスクのチェックを新しい状態に切り替えます。時刻をタップすると時・分のホイールが開き、上下にスライドして設定できます。ホイールは端で止まらず循環します。選択した時刻は自動で保存されます。初期設定は午前5:00です。アプリを閉じている間に時刻を過ぎた場合も、次回起動時に反映されます。</p>
+                <p class="setting-note" id="routineResetTimeHelp">この時刻を1日の区切りとして毎日タスクをリセットします。時刻はホイールで設定し、自動保存されます（初期設定：5:00）。アプリを閉じていても、次回起動時に反映されます。</p>
               </div>
             </div>
           </details>
@@ -1412,7 +1510,7 @@
               <div class="data-merge-action">
                 <label class="small-action button-with-icon file-picker-label" id="mergeSessionsBtn"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7h10M7 17h10M7 7l3-3M7 7l3 3M17 17l-3-3M17 17l-3 3"/><path d="M12 7v10"/></svg><span>別端末と合成</span><input class="file-picker-overlay" id="mergeSessionsFile" type="file" accept=".json,application/json" aria-label="合成するJSONファイルを選択"></label>
               </div>
-              <p class="setting-note">「JSONを読み込む」は現在のデータを置き換えます。「別端末と合成」は、相手端末の完了済みセッションを現在の記録へ追加します。同じ記録IDは重複登録せず、必要なラベル・サブラベルだけを補います。別端末の最初のセッションが、この端末で計測中の時間区間の途中から始まっている場合は、切り忘れと判断してこの端末の計測をその開始時刻で終了します。終了時刻より後の区間は破棄されるため、確定前に内容を確認してください。日課・テーマ・分析設定はこの端末の内容を維持します。</p>
+              <p class="setting-note">「JSONを読み込む」は現在のデータを置き換えます。「別端末と合成」は相手端末の完了済み記録を追加し、同じIDの記録は重複登録せず、必要なラベル・サブラベルを補います。相手端末の最初の新規記録がこの端末の計測中に始まる場合、この端末の計測をその開始時刻で終了します。終了後の区間は破棄されるため、確定前に確認してください。日課・テーマ・分析設定はこの端末の内容を維持します。</p>
             </section>
           </div>
         </div>
@@ -1478,14 +1576,14 @@
           <svg class="trend-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
         </summary>
         <div class="trend-body" id="trendBody">
-          <details class="analysis-settings-disclosure" id="analysisSettingsDetails">
-            <summary>
-              <span class="analysis-settings-summary-copy"><strong>分析設定</strong><small>期間・対象・重ねて表示する系列を変更</small></span>
+          <details class="analysis-settings-disclosure analysis-all-settings-disclosure" id="analysisSettingsDetails">
+            <summary aria-controls="analysisSettingsBody">
+              <span class="analysis-settings-summary-copy"><strong>分析設定</strong><small id="analysisSettingsSummaryHint">週 · 全体 · 折れ線 · 全曜日 · ラベル指定なし</small></span>
               <svg class="analysis-settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </summary>
-            <div class="analysis-settings-body">
-          <section class="analysis-controls" aria-label="分析条件">
-            <div class="analysis-period-row">
+            <div class="analysis-settings-body" id="analysisSettingsBody">
+<section class="analysis-controls analysis-date-controls" aria-label="集計期間">
+<div class="analysis-period-row">
             <label class="analysis-field"><span>集計期間</span><select id="analysisPeriod" class="analysis-select">
               <option value="week">週</option>
               <option value="month">月</option>
@@ -1510,23 +1608,66 @@
               </div>
             </div>
           </div>
-          <div class="analysis-control-grid">
-            <label class="analysis-field"><span>分析対象</span><select id="analysisTargetMode" class="analysis-select">
+          </section>
+<section class="analysis-controls analysis-target-controls" aria-label="分析対象"><label class="analysis-field"><span>分析対象</span><select id="analysisTargetMode" class="analysis-select">
               <option value="all">記録済み全体</option>
               <option value="selected">選択したラベル・サブラベル</option>
               <option value="compare">記録済み時間と未記録時間を比較</option>
               <option value="multi">複数の推移を同じグラフに重ねて比較</option>
-            </select></label>
-            <label class="analysis-field"><span>グラフ表示</span><select id="analysisChartMode" class="analysis-select">
+            </select></label></section>
+<section class="analysis-controls analysis-chart-controls" aria-label="グラフ表示"><label class="analysis-field"><span>グラフ表示</span><select id="analysisChartMode" class="analysis-select">
               <option value="line">折れ線・推移</option>
               <option value="bar">日ごとの棒グラフ</option>
               <option value="ratio">1日の時間割合（%）</option>
-            </select></label>
-          </div>
-          <div class="analysis-import-row">
-            <label class="small-action file-picker-label">JSONを読み込んで分析<input class="file-picker-overlay" id="analysisImportFile" type="file" accept=".json,application/json" aria-label="分析用のJSONバックアップを選択"></label>
-            <span class="analysis-import-note">バックアップを読み込むと、現在のアプリデータを置き換えます。</span>
-          </div>
+            </select></label></section>
+              <div class="analysis-settings-divider" aria-hidden="true"></div>
+<section class="analysis-weekday-filter" aria-labelledby="analysisWeekdayTitle">
+            <div class="analysis-picker-head">
+              <div><strong id="analysisWeekdayTitle">曜日</strong><span id="analysisWeekdayDescription" aria-live="polite">対象にする曜日を選択します。</span></div>
+              <div class="analysis-weekday-presets" role="group" aria-label="曜日のプリセット">
+                <button type="button" data-analysis-weekday-preset="all" aria-pressed="true">全曜日</button>
+                <button type="button" data-analysis-weekday-preset="weekdays" aria-pressed="false">平日</button>
+                <button type="button" data-analysis-weekday-preset="weekend" aria-pressed="false">土日</button>
+              </div>
+            </div>
+            <div class="analysis-weekday-choices" id="analysisWeekdayChoices" role="group" aria-label="集計する曜日">
+              <button type="button" class="analysis-weekday-chip" data-analysis-weekday="0" aria-pressed="true">日</button>
+              <button type="button" class="analysis-weekday-chip" data-analysis-weekday="1" aria-pressed="true">月</button>
+              <button type="button" class="analysis-weekday-chip" data-analysis-weekday="2" aria-pressed="true">火</button>
+              <button type="button" class="analysis-weekday-chip" data-analysis-weekday="3" aria-pressed="true">水</button>
+              <button type="button" class="analysis-weekday-chip" data-analysis-weekday="4" aria-pressed="true">木</button>
+              <button type="button" class="analysis-weekday-chip" data-analysis-weekday="5" aria-pressed="true">金</button>
+              <button type="button" class="analysis-weekday-chip" data-analysis-weekday="6" aria-pressed="true">土</button>
+            </div>
+            <p class="analysis-weekday-note">選択した曜日だけを集計し、グラフ全体に反映します。</p>
+          </section>
+<section class="analysis-day-label-filter" id="analysisDayLabelFilter" aria-labelledby="analysisDayLabelFilterTitle">
+            <div class="analysis-picker-head">
+              <div><strong id="analysisDayLabelFilterTitle">ラベル</strong><span>含むラベル・除外ラベルを指定します。</span></div>
+              <div class="analysis-picker-actions"><button type="button" class="analysis-day-filter-clear-all" id="analysisDayLabelClearAll">すべて解除</button></div>
+            </div>
+            <section class="analysis-day-filter-section" data-filter-scope="include" aria-labelledby="analysisDayIncludeTitle">
+              <div class="analysis-day-filter-section-heading"><span class="analysis-day-filter-summary-copy"><strong id="analysisDayIncludeTitle">含むラベル</strong><small id="analysisDayIncludeCount">未選択</small></span></div>
+              <div class="analysis-day-filter-disclosure-body" id="analysisDayIncludeBody">
+                <div class="analysis-day-filter-body-tools"><span>対象にするラベル・サブラベル</span><button type="button" data-day-filter-clear="include">選択解除</button></div>
+                <div class="analysis-day-filter-mode" role="group" aria-label="含むラベルの組み合わせ">
+                  <button type="button" data-day-label-mode="any" aria-pressed="true">いずれかを含む</button>
+                  <button type="button" data-day-label-mode="all" aria-pressed="false">すべて含む</button>
+                </div>
+                <div class="analysis-day-label-tree" id="analysisDayIncludeChoices" aria-label="含むラベルとサブラベル"></div>
+              </div>
+            </section>
+            <section class="analysis-day-filter-section" data-filter-scope="exclude" aria-labelledby="analysisDayExcludeTitle">
+              <div class="analysis-day-filter-section-heading"><span class="analysis-day-filter-summary-copy"><strong id="analysisDayExcludeTitle">除外ラベル</strong><small id="analysisDayExcludeCount">未選択</small></span></div>
+              <div class="analysis-day-filter-disclosure-body" id="analysisDayExcludeBody">
+                <div class="analysis-day-filter-body-tools"><span>対象から外すラベル・サブラベル</span><button type="button" data-day-filter-clear="exclude">選択解除</button></div>
+                <div class="analysis-day-label-tree" id="analysisDayExcludeChoices" aria-label="除外ラベルとサブラベル"></div>
+              </div>
+            </section>
+            <p class="analysis-day-filter-note" id="analysisDayFilterNote" aria-live="polite">親ラベルは配下のすべてのサブラベルを含みます。サブラベル単独でも指定できます。</p>
+          </section>
+            </div>
+          </details>
           <div class="analysis-label-picker" id="analysisLabelPicker" hidden>
             <div class="analysis-picker-head"><div><strong>分析に含める項目</strong><span>選択した複数項目を合算して1本の推移にします。</span></div><div class="analysis-picker-actions"><button type="button" id="analysisSelectAll">すべて</button><button type="button" id="analysisClearAll">解除</button></div></div>
             <div class="analysis-label-choices" id="analysisLabelChoices"></div>
@@ -1534,12 +1675,8 @@
           <div class="analysis-label-picker" id="analysisOverlayPicker" hidden>
             <div class="analysis-picker-head"><div><strong>グラフに重ねる系列</strong><span>各項目を別々の線で表示します。最大8系列まで選択できます。</span></div><div class="analysis-picker-actions"><button type="button" id="analysisOverlaySelectLabels">ラベル最大8本</button><button type="button" id="analysisOverlayClear">解除</button></div></div>
             <div class="analysis-label-choices" id="analysisOverlayChoices"></div>
-            <p class="analysis-definition">各系列は独立して集計します。異なるラベルの記録時間が同時刻に重なる場合、線の値は重なって表示され、系列同士を足しても記録済み全体とは一致しないことがあります。</p>
+            <p class="analysis-definition">各系列は独立して集計します。同時刻に重なる記録は重複表示されるため、系列の合計は記録済み全体と一致しません。</p>
           </div>
-          
-          </section>
-            </div>
-          </details>
 
         <section class="trend-panel" aria-labelledby="periodTrendTitle">
           <div class="trend-panel-head"><strong id="periodTrendTitle">分析結果</strong><span class="trend-panel-range" id="periodTrendRange">—</span></div>
@@ -1550,7 +1687,7 @@
           <div class="analysis-hourly-block" id="periodHourlyBlock"><div class="analysis-chart-title">時間帯別の平均分布</div><div class="analysis-hourly" id="periodHourlyChart"></div><div class="analysis-hourly-axis"><span>0時</span><span>6時</span><span>12時</span><span>18時</span><span>24時</span></div></div>
           <div class="analysis-breakdown" id="periodBreakdown"></div>
           <div class="analysis-empty" id="periodTrendEmpty" hidden>この期間のデータはありません。</div>
-          <p class="analysis-definition" id="periodChartNote">長期間のグラフは見やすさのため平均化して表示します。集計値は全日分の正確な値です。</p>
+          <p class="analysis-definition" id="periodChartNote">120日を超える期間では、グラフを最大120区分の日平均で表示します。合計・平均・内訳は全日分から計算します。</p>
         </section>
         </div>
       </details>
@@ -1623,27 +1760,25 @@
       };
     }
   })();
-  // Keep every existing swatch, then add distinct purple-family choices that
-  // were previously missing from the finite preset list.
-  const LABEL_COLOR_TEMPLATES = [
-    { name: 'セージ', color: '#879978' },
-    { name: 'テラコッタ', color: '#c18f6c' },
-    { name: 'ブルーグレー', color: '#8e9eaa' },
-    { name: 'ラベンダー', color: '#b6a5bd' },
-    { name: 'ハニー', color: '#d2ad70' },
-    { name: 'ダスティローズ', color: '#c98f83' },
-    { name: 'モカ', color: '#9d8979' },
-    { name: 'ミストグリーン', color: '#7f968d' },
-    { name: 'ライラック', color: '#a58bbd' },
-    { name: 'バイオレット', color: '#8f79b8' },
-    { name: 'プラム', color: '#a17f9c' },
-    { name: 'インディゴ', color: '#7e89b8' }
-  ];
+  // Nine warm, slightly desaturated hues. The palette keeps distinct hue families
+  // while reducing chroma for a calmer appearance across settings, timers and charts.
+  const LABEL_COLOR_TEMPLATES = Object.freeze([
+    { name: 'テラコッタ', color: '#af7268' },
+    { name: 'キャメル', color: '#b9885f' },
+    { name: 'ハニー', color: '#a49761' },
+    { name: 'オリーブ', color: '#78896a' },
+    { name: 'ユーカリ', color: '#608980' },
+    { name: 'スモーキーブルー', color: '#58859f' },
+    { name: 'インディゴ', color: '#5e6c99' },
+    { name: 'モーブ', color: '#9c7ba5' },
+    { name: 'ダスティローズ', color: '#b88597' }
+  ]);
+  const LABEL_COLOR_SET = new Set(LABEL_COLOR_TEMPLATES.map(item => item.color));
   const DEFAULT_LABELS = [
-    { id: 'focus', name: '学習', color: '#879978' },
-    { id: 'creative', name: '制作', color: '#c18f6c' },
-    { id: 'reading', name: '読書', color: '#8e9eaa' },
-    { id: 'rest', name: '休憩', color: '#b6a5bd' }
+    { id: 'focus', name: '学習', color: '#58859f' },
+    { id: 'creative', name: '制作', color: '#b9885f' },
+    { id: 'reading', name: '読書', color: '#78896a' },
+    { id: 'rest', name: '休憩', color: '#9c7ba5' }
   ];
   const $ = (id) => document.getElementById(id);
   const ICON_PATHS = Object.freeze({
@@ -1677,23 +1812,43 @@
     const cacheKey = typeof c === 'string' ? c.trim().toLowerCase() : '';
     const cached = safeColorCache.get(cacheKey);
     if (cached) return cached;
-    const resolved = HEX_COLOR_PATTERN.test(cacheKey) ? cacheKey : '#879978';
+    const resolved = HEX_COLOR_PATTERN.test(cacheKey) ? cacheKey : '#af7268';
     safeColorCache.set(cacheKey, resolved);
     if (safeColorCache.size > 256) safeColorCache.delete(safeColorCache.keys().next().value);
     return resolved;
   };
-  // The eight v94 display colors remain unchanged for visual continuity.
-  // Any other valid HEX value receives a hue-preserving dark variant instead
-  // of falling back to sage. This covers custom colors and older palette values.
+  // Theme-specific display colors are separate from saved label HEX values.
+  // v128 harmonizes both display palettes with the app's warm cream and charcoal surfaces.
+  // v129 strengthens the checked state of the timer ambient iOS-style switches only.
+  // v134 places the include and exclude day-label filters in separate compact disclosures.
+  // v132 softens selected weekday buttons in dark mode to match the subdued label-add accent.
+  // v131 changes weekday filter presentation and normalized display order to Sunday-first.
+  // v130 adds weekday filtering inside the existing analysis-settings disclosure;
+  // current/comparison series share the same selected day set without changing stored sessions.
+  // Only presentation HEX values change: canonical saved colors, stored history,
+  // balanced label allocation, migration and backup data remain untouched.
+  // Migration and backups use only the canonical saved HEX values.
+  const LIGHT_LABEL_COLOR_MAP = Object.freeze({
+    '#af7268':'#a76861', // terracotta
+    '#b9885f':'#a97f59', // camel
+    '#a49761':'#968b5b', // honey
+    '#78896a':'#758463', // olive
+    '#608980':'#597f78', // eucalyptus
+    '#58859f':'#587d93', // smoky blue
+    '#5e6c99':'#5b688f', // indigo
+    '#9c7ba5':'#8d7293', // mauve
+    '#b88597':'#a97a8a' // dusty rose
+  });
   const DARK_LABEL_COLOR_MAP = Object.freeze({
-    '#879978':'#74866a', // sage
-    '#c18f6c':'#9d765a', // terracotta
-    '#8e9eaa':'#748996', // blue grey
-    '#b6a5bd':'#8e8098', // lavender
-    '#d2ad70':'#9a8055', // honey
-    '#c98f83':'#9d746b', // dusty rose
-    '#9d8979':'#827365', // mocha
-    '#7f968d':'#6f857b'  // mist green
+    '#af7268':'#c58f82', // terracotta
+    '#b9885f':'#c49366', // camel
+    '#a49761':'#b7a865', // honey
+    '#78896a':'#94a372', // olive
+    '#608980':'#76a798', // eucalyptus
+    '#58859f':'#79a0b7', // smoky blue
+    '#5e6c99':'#7f8ab8', // indigo
+    '#9c7ba5':'#b392b8', // mauve
+    '#b88597':'#c490a1' // dusty rose
   });
   const darkColorCache = new Map();
   function relativeLuminance(hex) {
@@ -1725,8 +1880,119 @@
   }
   function displayLabelColor(color) {
     const canonical=safeColor(color);
-    if(document.documentElement.dataset.theme!=='dark') return canonical;
-    return DARK_LABEL_COLOR_MAP[canonical] || darkenPreservingHue(canonical);
+    if(document.documentElement.dataset.theme==='dark') {
+      return DARK_LABEL_COLOR_MAP[canonical] || darkenPreservingHue(canonical);
+    }
+    return LIGHT_LABEL_COLOR_MAP[canonical] || canonical;
+  }
+  // Convert sRGB to CIE Lab so migration spreads colors by perceived difference,
+  // not merely by RGB channel distance. The small palette keeps this inexpensive.
+  function labelColorToLab(hex) {
+    const rgb=[1,3,5].map(index=>parseInt(hex.slice(index,index+2),16)/255).map(v=>v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4);
+    let x=(rgb[0]*0.4124564+rgb[1]*0.3575761+rgb[2]*0.1804375)/0.95047;
+    let y=(rgb[0]*0.2126729+rgb[1]*0.7151522+rgb[2]*0.0721750);
+    let z=(rgb[0]*0.0193339+rgb[1]*0.1191920+rgb[2]*0.9503041)/1.08883;
+    const f=v=>v>0.008856451679?Math.cbrt(v):(7.787037037*v+16/116);
+    x=f(x); y=f(y); z=f(z);
+    return [116*y-16,500*(x-y),200*(y-z)];
+  }
+  const LABEL_COLOR_LAB = new Map(LABEL_COLOR_TEMPLATES.map(item=>[item.color,labelColorToLab(item.color)]));
+  function labelColorDistance(a,b) {
+    const x=LABEL_COLOR_LAB.get(a)||labelColorToLab(a), y=LABEL_COLOR_LAB.get(b)||labelColorToLab(b);
+    return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2]);
+  }
+  function stableColorHash(value) {
+    const text=String(value||'DAYLOG'); let hash=2166136261;
+    for(let index=0;index<text.length;index++) { hash^=text.charCodeAt(index); hash=Math.imul(hash,16777619); }
+    return hash>>>0;
+  }
+  function chooseBalancedPaletteColor(usage, alreadyUsed, stableKey='') {
+    const lowestUse=Math.min(...LABEL_COLOR_TEMPLATES.map(item=>usage.get(item.color)||0));
+    const candidates=LABEL_COLOR_TEMPLATES.filter(item=>(usage.get(item.color)||0)===lowestUse);
+    const usedColors=alreadyUsed instanceof Set?[...alreadyUsed]:[...new Set(alreadyUsed)];
+    let best=candidates[0], bestDistance=-1, bestTie=-1;
+    for(const candidate of candidates) {
+      const separation=usedColors.length
+        ? Math.min(...usedColors.map(color=>labelColorDistance(candidate.color,color)))
+        : 0;
+      const tie=stableColorHash(`${stableKey}:${candidate.color}`);
+      if(separation>bestDistance+0.0001 || (Math.abs(separation-bestDistance)<=0.0001 && tie>bestTie)) {
+        best=candidate; bestDistance=separation; bestTie=tie;
+      }
+    }
+    return best.color;
+  }
+  function chooseNextLabelPaletteColor(labels, stableKey='') {
+    const usage=new Map(LABEL_COLOR_TEMPLATES.map(item=>[item.color,0]));
+    const used=new Set();
+    for(const label of labels||[]) {
+      const color=typeof label?.color==='string'?label.color.toLowerCase():'';
+      if(!LABEL_COLOR_SET.has(color)) continue;
+      usage.set(color,(usage.get(color)||0)+1); used.add(color);
+    }
+    return chooseBalancedPaletteColor(usage,used,stableKey);
+  }
+  // Legacy/custom colors are migrated per label identity, not by old HEX value.
+  // This avoids collapsing several former colors into one replacement. Existing
+  // new-palette colors are reserved first; legacy labels then take the least-used
+  // hue with the greatest minimum Lab distance from colors already in use.
+  function migrateLabelPalette(labels,sessions) {
+    let changed=false;
+    const usage=new Map(LABEL_COLOR_TEMPLATES.map(item=>[item.color,0]));
+    const used=new Set();
+    for(const label of labels) {
+      const color=String(label.color||'').toLowerCase();
+      if(LABEL_COLOR_SET.has(color)) { usage.set(color,(usage.get(color)||0)+1); used.add(color); }
+    }
+    for(const label of labels) {
+      const color=String(label.color||'').toLowerCase();
+      if(LABEL_COLOR_SET.has(color)) continue;
+      const next=chooseBalancedPaletteColor(usage,used,label.id||label.name);
+      label.color=next; usage.set(next,(usage.get(next)||0)+1); used.add(next); changed=true;
+    }
+    const labelById=new Map(labels.map(label=>[label.id,label]));
+    const orphanGroups=new Map();
+    for(const session of sessions) {
+      const target=labelById.get(session.labelId);
+      if(target) {
+        if(session.labelColor!==target.color) { session.labelColor=target.color; changed=true; }
+        continue;
+      }
+      const identity=session.labelId?`id:${session.labelId}`:`name:${String(session.labelName||'その他').normalize('NFKC').trim().toLocaleLowerCase('ja-JP')}`;
+      if(!orphanGroups.has(identity)) orphanGroups.set(identity,[]);
+      orphanGroups.get(identity).push(session);
+    }
+    const orphanAssignments=[];
+    for(const [identity,group] of orphanGroups) {
+      const counts=new Map();
+      for(const session of group) {
+        const color=String(session.labelColor||'').toLowerCase();
+        if(LABEL_COLOR_SET.has(color)) counts.set(color,(counts.get(color)||0)+1);
+      }
+      if(counts.size) {
+        const preserved=[...counts.entries()].sort((a,b)=>b[1]-a[1])[0][0];
+        usage.set(preserved,(usage.get(preserved)||0)+1); used.add(preserved);
+        orphanAssignments.push([group,preserved]);
+      } else {
+        orphanAssignments.push([group,null]);
+      }
+    }
+    for(const [group,preserved] of orphanAssignments) {
+      const next=preserved||chooseBalancedPaletteColor(usage,used,group[0]?.labelId||group[0]?.labelName);
+      if(!preserved) { usage.set(next,(usage.get(next)||0)+1); used.add(next); }
+      for(const session of group) if(session.labelColor!==next) { session.labelColor=next; changed=true; }
+    }
+    return changed;
+  }
+  function hasLegacyLabelPaletteColors(value) {
+    if(!isPlainObject(value)||!Array.isArray(value.labels)||!Array.isArray(value.sessions)) return false;
+    const byId=new Map(value.labels.filter(item=>isPlainObject(item)).map(item=>[item.id,String(item.color||'').toLowerCase()]));
+    if(value.labels.some(item=>!LABEL_COLOR_SET.has(String(item?.color||'').toLowerCase()))) return true;
+    return value.sessions.some(session=>{
+      if(!LABEL_COLOR_SET.has(String(session?.labelColor||'').toLowerCase())) return true;
+      const known=byId.get(session?.labelId);
+      return !!known && known!==String(session.labelColor||'').toLowerCase();
+    });
   }
   const clone = (v) => JSON.parse(JSON.stringify(v));
   const normalizeAutoStop = (value) => {
@@ -2070,6 +2336,7 @@
         session.endedAt = session.segments.reduce((max, part) => Math.max(max, part.endAt ?? part.startAt), session.createdAt);
       }
     }
+    migrateLabelPalette(labels,sessions);
     return {
       version: DATA_VERSION,
       labels,
@@ -2183,7 +2450,7 @@
         target = {
           id:sourceLabel.id || makeId(),
           name:String(sourceLabel.name || 'その他').trim().slice(0,24) || 'その他',
-          color:safeColor(sourceLabel.color),
+          color:chooseNextLabelPaletteColor(labels,sourceLabel.id||sourceLabel.name),
           subLabels:[],
           autoStopDefault:normalizeAutoStop(sourceLabel.autoStopDefault)
         };
@@ -2323,9 +2590,11 @@
   function isCanonicalV6Snapshot(value) {
     if (!isPlainObject(value) || value.version!==DATA_VERSION || !Array.isArray(value.labels) || !value.labels.length || value.labels.length>MAX_LABELS || !Array.isArray(value.sessions) || value.sessions.length>MAX_SESSIONS || !isPlainObject(value.settings) || !isPlainObject(value.routines)) return false;
     const labelIds=new Set();
+    const labelColorsById=new Map();
     for(const label of value.labels) {
-      if(!isPlainObject(label)||typeof label.id!=='string'||!label.id||labelIds.has(label.id)||typeof label.name!=='string'||!label.name||label.name.length>24||safeColor(label.color)!==label.color||!Array.isArray(label.subLabels)||label.subLabels.length>MAX_SUBLABELS||!isPlainObject(label.autoStopDefault)) return false;
+      if(!isPlainObject(label)||typeof label.id!=='string'||!label.id||labelIds.has(label.id)||typeof label.name!=='string'||!label.name||label.name.length>24||safeColor(label.color)!==label.color||!LABEL_COLOR_SET.has(label.color)||!Array.isArray(label.subLabels)||label.subLabels.length>MAX_SUBLABELS||!isPlainObject(label.autoStopDefault)) return false;
       labelIds.add(label.id);
+      labelColorsById.set(label.id,label.color);
       const subIds=new Set();
       for(const sub of label.subLabels) if(!isPlainObject(sub)||typeof sub.id!=='string'||!sub.id||subIds.has(sub.id)||typeof sub.name!=='string'||!sub.name||sub.name.length>24) return false; else subIds.add(sub.id);
       const auto=label.autoStopDefault;
@@ -2368,7 +2637,7 @@
       if(!isPlainObject(session)||typeof session.id!=='string'||!session.id||sessionIds.has(session.id)||!Number.isFinite(session.createdAt)||session.createdAt<=0||!['running','paused','done'].includes(session.status)||!Array.isArray(session.segments)||session.segments.length>MAX_SEGMENTS_PER_SESSION||!isPlainObject(session.autoStop)||!['off','duration','time'].includes(session.autoStop.mode)||!Number.isFinite(session.autoStop.durationMinutes)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(session.autoStop.time||''))||!(session.autoStopAt===null||Number.isFinite(session.autoStopAt)&&session.autoStopAt>0)||!(session.autoStopRemainingMs===null||Number.isFinite(session.autoStopRemainingMs)&&session.autoStopRemainingMs>=0)) return false;
       sessionIds.add(session.id);
       if(session.status!=='done') activeCount++;
-      if(typeof session.labelId!=='string'||typeof session.labelName!=='string'||typeof session.subLabelId!=='string'||typeof session.subLabelName!=='string'||safeColor(session.labelColor)!==session.labelColor) return false;
+      if(typeof session.labelId!=='string'||typeof session.labelName!=='string'||typeof session.subLabelId!=='string'||typeof session.subLabelName!=='string'||safeColor(session.labelColor)!==session.labelColor||!LABEL_COLOR_SET.has(session.labelColor)||(labelColorsById.has(session.labelId)&&labelColorsById.get(session.labelId)!==session.labelColor)) return false;
       if(session.status==='done') { if(!Number.isFinite(session.endedAt)||session.endedAt<session.createdAt) return false; }
       else if(session.endedAt!==null) return false;
       let openCount=0,lastOpen=-1;
@@ -2407,7 +2676,7 @@
         }
         const normalized = normalizeData(parsed);
         const routineDataNeedsNormalization = JSON.stringify(parsed.routines ?? null) !== JSON.stringify(normalized.routines);
-        startupMigrationPending = parsed.version !== DATA_VERSION || !isPlainObject(parsed.settings) || !isPlainObject(parsed.routines) || routineDataNeedsNormalization ||
+        startupMigrationPending = hasLegacyLabelPaletteColors(parsed) || parsed.version !== DATA_VERSION || !isPlainObject(parsed.settings) || !isPlainObject(parsed.routines) || routineDataNeedsNormalization ||
           ['selectedLabelId','selectedSubLabelId','autoStopScope','autoStopOverride','ambientEnabled','ambientStrength','ambientFollowLabel'].some(key => !Object.prototype.hasOwnProperty.call(parsed.settings, key));
         return normalized;
       } catch (error) {
@@ -3299,7 +3568,10 @@
       paletteOptions.forEach(preset=>{
         const swatch=document.createElement('button');
         swatch.type='button'; swatch.className='palette-swatch'; swatch.style.backgroundColor=displayLabelColor(preset.color);
-        swatch.title=`${preset.name} ${preset.color}`; swatch.setAttribute('aria-label',`${preset.name} ${preset.color}`); swatch.setAttribute('aria-pressed',String(currentColor===preset.color));
+        const shownColor=displayLabelColor(preset.color);
+        swatch.title=`${preset.name} · 表示色 ${shownColor} / 保存色 ${preset.color}`;
+        swatch.setAttribute('aria-label',`${preset.name}。表示色 ${shownColor}。保存色 ${preset.color}`);
+        swatch.setAttribute('aria-pressed',String(currentColor===preset.color));
         swatch.addEventListener('click',()=>{
           if(currentColor===preset.color) return;
           label.color=preset.color;
@@ -3600,7 +3872,7 @@
       if(inMonth&&stats.total>0)recorded++;
       const future = key > todayValue;
       const btn=document.createElement('button');btn.type='button';btn.disabled=future;btn.className='day-cell'+(!inMonth?' outside':'')+(key===selectedDay?' selected':'')+(key===todayValue?' today':'');btn.setAttribute('aria-label',`${fmtDateLong(key)}、${fmtDuration(stats.total)}${future?'、未来の日付':''}`);btn.setAttribute('aria-pressed',String(key===selectedDay));
-      const dots=[...stats.byLabel.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>{const l=findLabel(id),s=stats.slices.find(x=>x.labelId===id);return `<i style="background:${displayLabelColor(l?.color||s?.labelColor||'#879978')}"></i>`;}).join('');
+      const dots=[...stats.byLabel.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>{const l=findLabel(id),s=stats.slices.find(x=>x.labelId===id);return `<i style="background:${displayLabelColor(l?.color||s?.labelColor||'#af7268')}"></i>`;}).join('');
       const dayTotalMarkup = stats.total ? calendarDurationMarkup(stats.total) : '<span class="day-total-full">　</span><span class="day-total-short"><span>　</span></span>';
       btn.innerHTML=`<span class="day-number">${date.getDate()}</span><span class="day-dots">${dots}</span><span class="day-total">${dayTotalMarkup}</span>`;
       btn.addEventListener('click',()=>{if(key>todayKey())return;selectDay(key,true);});grid.appendChild(btn);
@@ -3619,6 +3891,31 @@
     return node;
   }
   const ANALYSIS_PREF_KEY = 'daylog.analysis.v1';
+  const ANALYSIS_WEEKDAY_ORDER = [0,1,2,3,4,5,6]; // Sunday through Saturday for the UI.
+  const ANALYSIS_WEEKDAY_NAMES = ['日','月','火','水','木','金','土']; // Date#getDay() order.
+  function normalizeAnalysisDayLabelTokens(value) {
+    if (!Array.isArray(value)) return [];
+    const cleaned = [...new Set(value.filter(token => {
+      if (typeof token !== 'string') return false;
+      if (token.startsWith('L:')) return token.length > 2;
+      if (!token.startsWith('S:')) return false;
+      const split = token.indexOf('::', 2);
+      return split > 2 && split < token.length - 2;
+    }))].slice(0, 300);
+    const parentIds = new Set(cleaned.filter(token => token.startsWith('L:')).map(token => token.slice(2)));
+    return cleaned.filter(token => {
+      if (!token.startsWith('S:')) return true;
+      const split = token.indexOf('::', 2);
+      return !parentIds.has(token.slice(2, split));
+    });
+  }
+  function normalizeAnalysisWeekdays(value) {
+    if (!Array.isArray(value)) return [0,1,2,3,4,5,6];
+    const allowed = new Set(value.filter(day => Number.isInteger(day) && day >= 0 && day <= 6));
+    const normalized = ANALYSIS_WEEKDAY_ORDER.filter(day => allowed.has(day));
+    // At least one day must remain selected; an empty/corrupt legacy value safely means all days.
+    return normalized.length ? normalized : [0,1,2,3,4,5,6];
+  }
   const analysisPrefs = (() => {
     try {
       const saved = JSON.parse(appStorage.getItem(ANALYSIS_PREF_KEY) || '{}');
@@ -3632,13 +3929,57 @@
         customStart: typeof saved.customStart === 'string' ? saved.customStart : '',
         customEnd: typeof saved.customEnd === 'string' ? saved.customEnd : '',
         tokens: tokens.slice(0,300),
-        overlayTokens: Array.isArray(saved.overlayTokens) ? saved.overlayTokens.filter(x => typeof x === 'string').slice(0,8) : []
+        overlayTokens: Array.isArray(saved.overlayTokens) ? saved.overlayTokens.filter(x => typeof x === 'string').slice(0,8) : [],
+        weekdays: normalizeAnalysisWeekdays(saved.weekdays),
+        dayIncludeTokens: normalizeAnalysisDayLabelTokens(saved.dayIncludeTokens),
+        dayExcludeTokens: normalizeAnalysisDayLabelTokens(saved.dayExcludeTokens),
+        dayLabelMode: saved.dayLabelMode === 'all' ? 'all' : 'any'
       };
-    } catch { return { mode:'all', chart:'line', period:'week', customStart:'', customEnd:'', tokens:[], overlayTokens:[] }; }
+    } catch { return { mode:'all', chart:'line', period:'week', customStart:'', customEnd:'', tokens:[], overlayTokens:[], weekdays:[0,1,2,3,4,5,6], dayIncludeTokens:[], dayExcludeTokens:[], dayLabelMode:'any' }; }
   })();
   let analysisLabelsSignature = '';
   function saveAnalysisPrefs() {
     try { appStorage.setItem(ANALYSIS_PREF_KEY, JSON.stringify(analysisPrefs)); } catch { /* Optional preference only. */ }
+  }
+  function getAnalysisWeekdayPreset(weekdays = analysisPrefs.weekdays) {
+    const normalized = normalizeAnalysisWeekdays(weekdays);
+    const same = expected => normalized.length === expected.length && expected.every(day => normalized.includes(day));
+    if (same([0,1,2,3,4,5,6])) return 'all';
+    if (same([1,2,3,4,5])) return 'weekdays';
+    if (same([0,6])) return 'weekend';
+    return 'custom';
+  }
+  function getAnalysisWeekdayLabel(weekdays = analysisPrefs.weekdays) {
+    const normalized = normalizeAnalysisWeekdays(weekdays);
+    const preset = getAnalysisWeekdayPreset(normalized);
+    if (preset === 'all') return '全曜日';
+    if (preset === 'weekdays') return '平日のみ';
+    if (preset === 'weekend') return '土日のみ';
+    return ANALYSIS_WEEKDAY_ORDER.filter(day => normalized.includes(day)).map(day => ANALYSIS_WEEKDAY_NAMES[day]).join('・');
+  }
+  function updateAnalysisWeekdayControls() {
+    const normalized = normalizeAnalysisWeekdays(analysisPrefs.weekdays);
+    analysisPrefs.weekdays = normalized;
+    const preset = getAnalysisWeekdayPreset(normalized);
+    document.querySelectorAll('[data-analysis-weekday-preset]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.analysisWeekdayPreset === preset));
+    });
+    document.querySelectorAll('[data-analysis-weekday]').forEach(button => {
+      const day = Number(button.dataset.analysisWeekday);
+      const selected = normalized.includes(day);
+      button.setAttribute('aria-pressed', String(selected));
+      button.disabled = selected && normalized.length === 1;
+    });
+    const label = getAnalysisWeekdayLabel(normalized);
+    const description = $('analysisWeekdayDescription');
+    if (description) description.textContent = `${label}を集計します。`;
+    updateAnalysisSettingsSummary();
+  }
+  function setAnalysisWeekdays(weekdays) {
+    analysisPrefs.weekdays = normalizeAnalysisWeekdays(weekdays);
+    saveAnalysisPrefs();
+    updateAnalysisWeekdayControls();
+    renderAdvancedAnalytics();
   }
   function analysisDayKeys(startDate, count, stopAtToday = true) {
     const today = todayKey();
@@ -3692,6 +4033,148 @@
     analysisLabelCatalogCache=[...catalog.values()].sort((a,b)=>a.name.localeCompare(b.name,'ja'));
     analysisLabelCatalogRevision=dataRevision;
     return analysisLabelCatalogCache;
+  }
+  const analysisDayLabelExpanded = { include:new Set(), exclude:new Set() };
+  function getAnalysisDayLabelFilterSummary() {
+    const include = normalizeAnalysisDayLabelTokens(analysisPrefs.dayIncludeTokens);
+    const exclude = normalizeAnalysisDayLabelTokens(analysisPrefs.dayExcludeTokens);
+    if (!include.length && !exclude.length) return 'ラベル: 指定なし';
+    const parts = [];
+    if (include.length) parts.push(`含む${include.length}件・${analysisPrefs.dayLabelMode === 'all' ? 'すべて' : 'いずれか'}`);
+    if (exclude.length) parts.push(`除外${exclude.length}件`);
+    return `ラベル: ${parts.join('／')}`;
+  }
+  function updateAnalysisSettingsSummary() {
+    const summary = $('analysisSettingsSummaryHint');
+    if (!summary) return;
+    const period = analysisPrefs.period || $('analysisPeriod')?.value || 'week';
+    const periodText = period === 'month' ? '月' : period === 'quarter' ? '3ヶ月' : period === 'all' ? '全期間' : period === 'custom' ? `期間指定${$('analysisCustomStartLabel')?.textContent && $('analysisCustomEndLabel')?.textContent && $('analysisCustomStartLabel').textContent !== '—' ? `・${$('analysisCustomStartLabel').textContent}〜${$('analysisCustomEndLabel').textContent}` : ''}` : '週';
+    const target = analysisPrefs.mode || $('analysisTargetMode')?.value || 'all';
+    const targetText = target === 'selected' ? '選択ラベル' : target === 'compare' ? '記録済み／未記録' : target === 'multi' ? '複数系列' : '全体';
+    const chart = analysisPrefs.chart || $('analysisChartMode')?.value || 'line';
+    const chartText = chart === 'bar' ? '棒グラフ' : chart === 'ratio' ? '割合' : '折れ線';
+    summary.textContent = `${periodText} · ${targetText} · ${chartText} · ${getAnalysisWeekdayLabel()} · ${getAnalysisDayLabelFilterSummary()}`;
+  }
+  updateAnalysisSettingsSummary();
+  function isAnalysisDayLabelTokenWithin(token, parentToken) {
+    if (token === parentToken) return true;
+    if (!parentToken.startsWith('L:') || !token.startsWith('S:')) return false;
+    const split = token.indexOf('::', 2);
+    return split > 2 && token.slice(2, split) === parentToken.slice(2);
+  }
+  function hasContradictoryAnalysisDayLabelFilter() {
+    const include = normalizeAnalysisDayLabelTokens(analysisPrefs.dayIncludeTokens);
+    const exclude = normalizeAnalysisDayLabelTokens(analysisPrefs.dayExcludeTokens);
+    if (!include.length || !exclude.length) return false;
+    const blocked = token => exclude.some(excluded => isAnalysisDayLabelTokenWithin(token, excluded));
+    return analysisPrefs.dayLabelMode === 'all' ? include.some(blocked) : include.every(blocked);
+  }
+  function createAnalysisDayLabelChip(scope, token, name, color, isSubLabel = false) {
+    const selected = (scope === 'include' ? analysisPrefs.dayIncludeTokens : analysisPrefs.dayExcludeTokens).includes(token);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = isSubLabel ? 'analysis-day-sublabel-chip' : 'analysis-day-label-chip';
+    button.dataset.dayLabelScope = scope;
+    button.dataset.dayLabelToken = token;
+    button.setAttribute('aria-pressed', String(selected));
+    button.setAttribute('aria-label', `${scope === 'include' ? '含む' : '除外'}：${name}${selected ? '（選択中）' : ''}`);
+    const mark = document.createElement('span');
+    mark.className = 'analysis-day-label-mark';
+    mark.textContent = selected ? (scope === 'include' ? '✓' : '−') : '';
+    mark.setAttribute('aria-hidden', 'true');
+    if (!isSubLabel) {
+      const dot = document.createElement('i');
+      dot.className = 'analysis-day-label-dot';
+      dot.style.backgroundColor = displayLabelColor(color);
+      dot.setAttribute('aria-hidden', 'true');
+      button.append(mark, dot);
+    } else {
+      button.append(mark);
+    }
+    const label = document.createElement('span');
+    label.textContent = name;
+    button.append(label);
+    if (!isSubLabel) {
+      const scopeHint = document.createElement('small');
+      scopeHint.textContent = '全体';
+      button.append(scopeHint);
+    }
+    return button;
+  }
+  function renderAnalysisDayLabelTree(scope, host, catalog) {
+    host.replaceChildren();
+    if (!catalog.length) {
+      const empty = document.createElement('div');
+      empty.className = 'analysis-definition';
+      empty.textContent = 'ラベルがありません。先にラベルを登録してください。';
+      host.appendChild(empty);
+      return;
+    }
+    const selectedTokens = scope === 'include' ? analysisPrefs.dayIncludeTokens : analysisPrefs.dayExcludeTokens;
+    for (const label of catalog) {
+      const group = document.createElement('div');
+      group.className = 'analysis-day-label-group';
+      const row = document.createElement('div');
+      row.className = 'analysis-day-label-parent-row';
+      row.appendChild(createAnalysisDayLabelChip(scope, `L:${label.id}`, label.name, label.color, false));
+      if (label.subLabels.size) {
+        const expanded = analysisDayLabelExpanded[scope].has(label.id);
+        const expand = document.createElement('button');
+        expand.type = 'button';
+        expand.className = 'analysis-day-label-expand';
+        expand.dataset.dayLabelExpand = label.id;
+        expand.dataset.dayLabelScope = scope;
+        expand.setAttribute('aria-expanded', String(expanded));
+        expand.setAttribute('aria-label', `${label.name}のサブラベルを${expanded ? '閉じる' : '表示'}`);
+        expand.textContent = expanded ? '▴' : '▾';
+        row.appendChild(expand);
+      }
+      group.appendChild(row);
+      if (label.subLabels.size) {
+        const children = document.createElement('div');
+        children.className = 'analysis-day-sublabels';
+        children.hidden = !analysisDayLabelExpanded[scope].has(label.id);
+        for (const sub of [...label.subLabels.values()].sort((a,b) => a.name.localeCompare(b.name, 'ja'))) {
+          const token = `S:${label.id}::${sub.id}`;
+          children.appendChild(createAnalysisDayLabelChip(scope, token, sub.name, label.color, true));
+        }
+        group.appendChild(children);
+      }
+      // Selection of a parent supersedes its children in the same area.
+      const parentSelected = selectedTokens.includes(`L:${label.id}`);
+      if (parentSelected) group.dataset.parentSelected = 'true';
+      host.appendChild(group);
+    }
+  }
+  function renderAnalysisDayLabelFilter() {
+    const catalog = getAnalysisLabelCatalog();
+    renderAnalysisDayLabelTree('include', $('analysisDayIncludeChoices'), catalog);
+    renderAnalysisDayLabelTree('exclude', $('analysisDayExcludeChoices'), catalog);
+    updateAnalysisDayLabelFilterControls();
+  }
+  function updateAnalysisDayLabelFilterControls() {
+    analysisPrefs.dayIncludeTokens = normalizeAnalysisDayLabelTokens(analysisPrefs.dayIncludeTokens);
+    analysisPrefs.dayExcludeTokens = normalizeAnalysisDayLabelTokens(analysisPrefs.dayExcludeTokens);
+    document.querySelectorAll('[data-day-label-mode]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.dayLabelMode === analysisPrefs.dayLabelMode));
+    });
+    const includeCount = $('analysisDayIncludeCount');
+    const excludeCount = $('analysisDayExcludeCount');
+    if (includeCount) includeCount.textContent = analysisPrefs.dayIncludeTokens.length
+      ? `${analysisPrefs.dayIncludeTokens.length}件・${analysisPrefs.dayLabelMode === 'all' ? 'すべて' : 'いずれか'}`
+      : '未選択';
+    if (excludeCount) excludeCount.textContent = analysisPrefs.dayExcludeTokens.length
+      ? `${analysisPrefs.dayExcludeTokens.length}件選択`
+      : '未選択';
+    const note = $('analysisDayFilterNote');
+    if (note) {
+      const contradictory = hasContradictoryAnalysisDayLabelFilter();
+      note.dataset.state = contradictory ? 'warning' : 'normal';
+      note.textContent = contradictory
+        ? '含む条件と除外条件が矛盾しています。この組み合わせでは対象日がありません。条件を見直してください。'
+        : `親ラベルは配下のサブラベルすべてを含みます。含む条件は${analysisPrefs.dayLabelMode === 'all' ? '選択した項目をすべて記録した日' : '選択した項目のいずれかを記録した日'}が対象です。除外ラベルが1つでも記録された日は対象外です。`;
+    }
+    updateAnalysisSettingsSummary();
   }
   function renderAnalysisLabelChoices() {
     const host=$('analysisLabelChoices');
@@ -3782,12 +4265,12 @@
   }
   async function collectAdvancedPeriod(dayKeys, mode, tokens, comparisonElapsedMs = null, progress = null) {
     const now=Date.now();
-    const days=dayKeys.map((key,index)=>{
+    let days=dayKeys.map((key,index)=>{
       const bounds=getLocalDayBounds(key);
       let dayEnd=bounds.end;
       if(key===todayKey()) dayEnd=Math.min(dayEnd,now);
       if(index===dayKeys.length-1 && comparisonElapsedMs!==null) dayEnd=Math.min(dayEnd,bounds.start+Math.max(0,comparisonElapsedMs));
-      return {key,dayMs:Math.max(0,dayEnd-bounds.start),dayStart:bounds.start,dayEnd,intervals:[],sessions:new Set(),selectedSessions:new Set(),byActivity:new Map()};
+      return {key,dayMs:Math.max(0,dayEnd-bounds.start),dayStart:bounds.start,dayEnd,intervals:[],sessions:new Set(),selectedSessions:new Set(),byActivity:new Map(),dayLabelTokens:new Set()};
     });
     const dayIndex=new Map(days.map((day,index)=>[day.key,index]));
     if(!days.length) return {days,total:0,trackedTotal:0,unrecordedTotal:0,availableTotal:0,sessions:new Set(),activeDays:0,byActivity:new Map(),hourly:Array(24).fill(0),hourlyTracked:Array(24).fill(0),hourlyUnrecorded:Array(24).fill(0),hourlyAvailable:Array(24).fill(0)};
@@ -3811,12 +4294,17 @@
         while(cursor<finish) {
           const key=todayKey(new Date(cursor));
           const idx=dayIndex.get(key);
-          const bounds=idx===undefined?null:getLocalDayBounds(key);
-          const overlapEnd=Math.min(finish,bounds?days[idx].dayEnd:finish);
-          if(idx!==undefined&&overlapEnd>cursor) {
-            const day=days[idx];
+          const day=idx===undefined?null:days[idx];
+          const bounds=getLocalDayBounds(key);
+          // Weekday filtering creates intentional gaps in dayIndex. Advance only to
+          // the next local-day boundary so a session can still reach a later selected day.
+          const overlapEnd=Math.min(finish,day?day.dayEnd:bounds.end);
+          if(day&&overlapEnd>cursor) {
             const interval={start:cursor,end:overlapEnd,labelId:session.labelId||session.labelName||'other',labelName:session.labelName||'その他',labelColor:safeColor(session.labelColor),subLabelId:session.subLabelId||'',subLabelName:session.subLabelName||'',sessionId:session.id,selected};
             day.intervals.push(interval);
+            day.dayLabelTokens.add(`L:${interval.labelId}`);
+            const filterSubLabelId = interval.subLabelId || interval.subLabelName || '';
+            if (filterSubLabelId) day.dayLabelTokens.add(`S:${interval.labelId}::${filterSubLabelId}`);
             day.sessions.add(session.id);
             if(selected) day.selectedSessions.add(session.id);
             const activityId=`${interval.labelId}::${interval.subLabelId}`;
@@ -3832,6 +4320,17 @@
       void included;
       // Yielding and reporting occur at the top of the next batch so continue
       // branches (e.g. out-of-range sessions) cannot skip progress updates.
+    }
+    const includeDayTokens = normalizeAnalysisDayLabelTokens(analysisPrefs.dayIncludeTokens);
+    const excludeDayTokens = normalizeAnalysisDayLabelTokens(analysisPrefs.dayExcludeTokens);
+    if (includeDayTokens.length || excludeDayTokens.length) {
+      days = days.filter(day => {
+        const matchesInclude = includeDayTokens.length === 0 || (analysisPrefs.dayLabelMode === 'all'
+          ? includeDayTokens.every(token => day.dayLabelTokens.has(token))
+          : includeDayTokens.some(token => day.dayLabelTokens.has(token)));
+        const matchesExclude = excludeDayTokens.some(token => day.dayLabelTokens.has(token));
+        return matchesInclude && !matchesExclude;
+      });
     }
     const allSessions=new Set(), selectedSessions=new Set(), byActivity=new Map();
     const hourly=Array(24).fill(0), hourlyTracked=Array(24).fill(0), hourlyUnrecorded=Array(24).fill(0), hourlyAvailable=Array(24).fill(0);
@@ -4226,14 +4725,15 @@
     const pct=prevValue>0?delta/prevValue*100:null;
     const deltaText=prevValue===null?'—':prevValue===0?(value>0?'新規':'±0'): `${delta>0?'+':delta<0?'−':''}${fmtDuration(Math.abs(delta))}`;
     const rate=current.availableTotal>0?current.trackedTotal/current.availableTotal*100:0;
+    const rateDescription=getAnalysisWeekdayPreset()==='all'?'記録済み時間 ÷ 期間の実時間':'記録済み時間 ÷ 選択曜日の実時間';
     const values=mode==='compare' ? [
       ['記録済み時間',fmtDuration(current.trackedTotal),'重複を除いた記録区間'],
       ['未記録時間',fmtDuration(current.unrecordedTotal),'記録が存在しない時間'],
-      ['記録率',`${rate.toFixed(1)}%`,'記録済み時間 ÷ 期間の実時間'],
+      ['記録率',`${rate.toFixed(1)}%`,rateDescription],
       [`${comparisonName}（記録済み）`,deltaText,prevValue===null?'全期間のため比較なし':pct===null?'比較対象の記録なし':`${pct>=0?'+':''}${pct.toFixed(1)}%`]
     ] : [
       ['期間合計',fmtDuration(value),mode==='unrecorded'||unrecordedOnly?'記録のない時間':mode==='selected'?'選択項目の合算':'重複を除いた記録時間'],
-      ['1日平均',fmtDuration(current.days.length?value/current.days.length:0),'期間内の全日数で平均'],
+      ['1日平均',fmtDuration(current.days.length?value/current.days.length:0),'対象日数で平均'],
       [comparisonName,deltaText,prevValue===null?'全期間のため比較なし':pct===null?'比較対象の記録なし':`${pct>=0?'+':''}${pct.toFixed(1)}%`],
       [mode==='unrecorded'||unrecordedOnly?'記録率':'セッション数',mode==='unrecorded'||unrecordedOnly?`${rate.toFixed(1)}%`:`${current.sessions.size}回`,mode==='unrecorded'||unrecordedOnly?'記録済み時間 ÷ 1日の総時間':'対象に含まれる計測回数']
     ];
@@ -4461,6 +4961,27 @@
     const rangeText=`${startLabel}〜${endLabel} · ${keys.length.toLocaleString('ja-JP')}日`;
     return {keys,previousKeys,comparisonElapsedMs,title,comparisonLabel,compare,rangeText,startKey,endKey};
   }
+  function formatAnalysisFilteredRangeText(range, includedDayCount) {
+    const labelSummary = getAnalysisDayLabelFilterSummary();
+    const hasLabelFilter = normalizeAnalysisDayLabelTokens(analysisPrefs.dayIncludeTokens).length || normalizeAnalysisDayLabelTokens(analysisPrefs.dayExcludeTokens).length;
+    const parts = [getAnalysisWeekdayLabel()];
+    if (hasLabelFilter) parts.push(labelSummary.replace(/^ラベル:\s*/, ''));
+    return `${trendDateLabel(range.startKey)}〜${trendDateLabel(range.endKey)} · ${parts.join(' · ')} · 対象${includedDayCount.toLocaleString('ja-JP')}日`;
+  }
+  function applyAnalysisWeekdayFilter(range) {
+    const weekdays = normalizeAnalysisWeekdays(analysisPrefs.weekdays);
+    const allDays = weekdays.length === 7;
+    if (allDays) return range;
+    const selected = new Set(weekdays);
+    const keys = range.keys.filter(key => selected.has(parseDay(key).getDay()));
+    const previousKeys = range.previousKeys.filter(key => selected.has(parseDay(key).getDay()));
+    const today = todayKey();
+    const comparisonElapsedMs = keys.length && keys[keys.length - 1] === today ? range.comparisonElapsedMs : null;
+    const compare = range.compare && keys.length > 0;
+    const weekdayLabel = getAnalysisWeekdayLabel(weekdays);
+    const rangeText = `${trendDateLabel(range.startKey)}〜${trendDateLabel(range.endKey)} · ${weekdayLabel} · 対象${keys.length}日`;
+    return { ...range, keys, previousKeys, comparisonElapsedMs, compare, rangeText };
+  }
   async function renderMultiSeriesPeriod(range, tokens, chartMode, loadingToken, isCurrent) {
     const report = (base, span) => (percent, detail) => updateLoading(loadingToken, detail, base + percent / 100 * span);
     report(8, 42)(0, '選択した系列を集計しています');
@@ -4471,11 +4992,11 @@
     if (!isCurrent()) return;
     const previousSeries=previousStats?buildOverlaySeries(previousStats,tokens):null;
     $('periodTrendTitle').textContent='推移の重ね合わせ';
-    $('periodTrendRange').textContent=range.rangeText;
+    $('periodTrendRange').textContent=formatAnalysisFilteredRangeText(range,stats.days.length);
     $('periodHourlyBlock').hidden=true;
     $('periodBreakdown').hidden=true;
     $('periodTrendEmpty').hidden=!!(stats.days.length&&series.length);
-    $('periodTrendEmpty').textContent=!series.length?'設定を開き、「グラフに重ねる系列」から2つ以上の項目を選択してください。':'この期間に表示できるデータはありません。';
+    $('periodTrendEmpty').textContent=!stats.days.length?'曜日・ラベル条件に該当する日がありません。条件または集計期間を変更してください。':!series.length?'設定を開き、「グラフに重ねる系列」から2つ以上の項目を選択してください。':'この期間に表示できるデータはありません。';
     $('periodTrendChart').hidden=!(stats.days.length&&series.length);
     $('periodTrendLegend').hidden=!(stats.days.length&&series.length);
     if(!series.length) {
@@ -4490,7 +5011,7 @@
     $('periodTrendChart').hidden=!hasChart;
     $('periodTrendLegend').hidden=!hasChart;
     $('periodChartTitle').textContent=chartMode==='ratio'?'各系列が1日のうちに占める割合':chartMode==='bar'?'系列別・日ごとの時間':'日ごとの推移（系列を重ねて比較）';
-    $('periodChartNote').textContent=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは最大120区分に圧縮しています。各系列の合計・平均は全日分の正確な値です。異なるラベルの時間が重なる場合、系列同士は独立した値として表示します。`:'各系列は同じ時間軸・縦軸で表示しています。異なるラベルの記録時間が同時刻に重なる場合、線は重なりますが、系列同士を足した値は記録済み全体と一致しないことがあります。';
+    $('periodChartNote').textContent=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは最大120区分の日平均で表示します。系列ごとの合計・平均は全日分から計算します。同時刻に重なる異なるラベルの時間は、系列ごとに重複して表示されます。`:'各系列は同じ時間軸・縦軸で個別に集計します。同時刻に重なる記録は重複表示されるため、系列の合計は記録済み全体と一致しません。';
   }
   async function renderSelectedAnalysisPeriod(range, mode, tokens, chartMode, loadingToken, isCurrent) {
     $('periodHourlyBlock').hidden=false;$('periodBreakdown').hidden=false;
@@ -4501,7 +5022,7 @@
     if (!isCurrent()) return;
     updateLoading(loadingToken, 'グラフと内訳を作成しています', 90);
     $('periodTrendTitle').textContent=range.title+'の分析';
-    $('periodTrendRange').textContent=range.rangeText;
+    $('periodTrendRange').textContent=formatAnalysisFilteredRangeText(range,stats.days.length);
     renderAnalysisKpis('periodTrendKpis',stats,previous,mode,range.compare?range.comparisonLabel:'全期間比較',tokens);
     const selectedUnrecordedOnly=mode==='selected'&&tokens.length===1&&tokens[0]==='@unrecorded';
     const selectedSeries=selectedUnrecordedOnly?[{name:'未記録時間',color:'#9d8979',values:stats.days.map(day=>day.primaryMs)}]:null;
@@ -4515,9 +5036,9 @@
     $('periodTrendLegend').hidden=$('periodTrendChart').hidden;
     $('periodChartTitle').textContent=chartMode==='ratio'?'1日のうち分析対象が占める割合':chartMode==='bar'?'日ごとの時間（棒グラフ）':'日ごとの時間推移';
     const hasProportionalColors=(mode==='selected'&&!!getSelectedCompositionMeta(tokens))||(mode==='all'&&!!buildTrackedCompositionSeries(stats));
-    const periodChartNote=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは見やすさのため最大120区分の1日平均に圧縮しています。合計・平均・内訳は全日分の正確な値です。`:'グラフは日ごとの推移です。時間帯別分布は期間内の1日平均を表示します。';
+    const periodChartNote=stats.days.length>120?`全${stats.days.length.toLocaleString('ja-JP')}日を集計し、グラフは最大120区分の日平均で表示します。合計・平均・内訳は全日分から計算します。`:'グラフは日ごとに表示し、時間帯別分布は対象日の平均です。';
     $('periodChartNote').textContent=hasProportionalColors?(mode==='all'?`記録済み全体をラベルごとの色で表示しています。各色は重複を除いた記録時間に占める割合です。${periodChartNote}`:`複数ラベルの色は、選択した合計時間に占める各ラベルの割合です。${periodChartNote}`):periodChartNote;
-    $('periodTrendEmpty').textContent=mode==='selected'&&!tokens.length?'ラベル、サブラベル、または未記録時間を選択すると分析を表示します。':'この期間に該当する記録はありません。';
+    $('periodTrendEmpty').textContent=!stats.days.length?'曜日・ラベル条件に該当する日がありません。条件または集計期間を変更してください。':mode==='selected'&&!tokens.length?'ラベル、サブラベル、または未記録時間を選択すると分析を表示します。':'この期間に該当する記録はありません。';
   }
   let analysisRenderSequence = 0;
   async function renderAdvancedAnalytics() {
@@ -4540,13 +5061,16 @@
     syncCustomSelect($('analysisTargetMode'));
     syncCustomSelect($('analysisChartMode'));
     normalizeCustomRange();
+    updateAnalysisWeekdayControls();
+    updateAnalysisSettingsSummary();
     $('analysisLabelPicker').hidden=analysisPrefs.mode!=='selected';
     $('analysisOverlayPicker').hidden=analysisPrefs.mode!=='multi';
     const signature=JSON.stringify([document.documentElement.dataset.theme,getAnalysisLabelCatalog().map(label=>[label.id,label.name,label.color,[...label.subLabels.values()].map(sub=>[sub.id,sub.name])])]);
-    if(signature!==analysisLabelsSignature) { renderAnalysisLabelChoices(); renderAnalysisOverlayChoices(); }
+    if(signature!==analysisLabelsSignature) { renderAnalysisLabelChoices(); renderAnalysisOverlayChoices(); renderAnalysisDayLabelFilter(); }
+    else updateAnalysisDayLabelFilterControls();
     const selectedCount=analysisPrefs.tokens.length;
     const mode=analysisPrefs.mode==='selected'&&selectedCount===0?'selected':analysisPrefs.mode;
-    const range=getSelectedAnalysisRange();
+    const range=applyAnalysisWeekdayFilter(getSelectedAnalysisRange());
     if(mode==='multi') { await renderMultiSeriesPeriod(range,analysisPrefs.overlayTokens,analysisPrefs.chart,loadingToken,isCurrent); return; }
     if(mode==='selected'&&selectedCount===0) {
       $('periodTrendChart').replaceChildren();$('periodTrendChart').hidden=true;
@@ -4665,6 +5189,9 @@
   let routineRenderedDayKey = '';
   let routineMidnightTimeout = 0;
   const normalizeRoutineName = value => String(value || '').normalize('NFKC').trim().slice(0,80);
+  function routineFlameSvgMarkup() {
+    return '<svg class="routine-flame-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.15 2.05c.36 3.15-1.08 4.88-2.42 6.3-1.2 1.27-2.28 2.6-2.28 4.76a6.55 6.55 0 0 0 13.1 0c0-3.2-2.17-5.57-5.1-8.72.1 2.23-.43 3.8-1.62 4.82-.1-2.84-.62-5.05-1.68-7.16Z" fill="currentColor"/><path d="M12.55 14.05c1.26 1.12 1.67 2.14 1.17 3.2-.42.91-1.49 1.36-2.47.9-1-.47-1.22-1.66-.68-2.57.37-.63 1.09-1.02 1.98-1.53Z" fill="currentColor" opacity=".52"/></svg>';
+  }
   const routineNameKey = value => normalizeRoutineName(value).toLocaleLowerCase('ja-JP');
   function routineResetTimeParts(value = data.routines.resetTime) {
     const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(value || '05:00'));
@@ -4818,6 +5345,17 @@
       if (editInput) { editInput.focus({preventScroll:true}); editInput.select(); }
     }
   }
+  function calculateRoutineAchievement(dailyItems, cycleItems, checks) {
+    const dailyTotal = dailyItems.length;
+    const cycleTotal = cycleItems.length;
+    const dailyDone = dailyItems.reduce((count, item) => count + (checks[item.id] === true ? 1 : 0), 0);
+    // Match the cycle streak-success threshold: at least one unexpired stock token.
+    const cycleDone = cycleItems.reduce((count, item) => count + (item.stockTokens?.length > 0 ? 1 : 0), 0);
+    const done = dailyDone + cycleDone;
+    const totalItems = dailyTotal + cycleTotal;
+    const percent = totalItems ? Math.max(0, Math.min(100, Math.round(done / totalItems * 100))) : 0;
+    return { dailyDone, cycleDone, done, dailyTotal, cycleTotal, totalItems, percent };
+  }
   function renderRoutineChecklist(focusEdit = false) {
     if (!focusEdit) processCycleRoutines(Date.now());
     renderRoutineSettingsList(focusEdit);
@@ -4826,26 +5364,28 @@
     const dayKey = routineDayKey();
     routineRenderedDayKey = dayKey;
     const items = data.routines.items;
+    const expandedCycleIds = new Set([...list.querySelectorAll('details[data-cycle-id][open]')].map(detail => detail.dataset.cycleId));
     const dailyItems = items.filter(item => item.kind !== 'cycle');
     const cycleItems = items.filter(item => item.kind === 'cycle');
     const checks = getTodayRoutineChecks(dayKey);
-    const done = dailyItems.reduce((count, item) => count + (checks[item.id] === true ? 1 : 0), 0);
-    const dailyTotal = dailyItems.length;
-    const percent = dailyTotal ? Math.max(0, Math.min(100, Math.round(done / dailyTotal * 100))) : 0;
-    $('routineSummaryCount').textContent = dailyTotal ? `${done} / ${dailyTotal} 完了` : '日課なし';
-    $('routineSummaryHint').textContent = dailyTotal ? `${percent}% 完了${cycleItems.length ? ` · 周期タスク ${cycleItems.length}件` : ''}` : (cycleItems.length ? `毎日タスクなし · 周期タスク ${cycleItems.length}件` : '毎日タスクなし');
+    const { dailyDone, cycleDone, done, dailyTotal, cycleTotal, totalItems, percent } = calculateRoutineAchievement(dailyItems, cycleItems, checks);
+    $('routineSummaryCount').textContent = totalItems ? `${done} / ${totalItems} 完了` : '日課なし';
+    $('routineSummaryHint').textContent = totalItems
+      ? `${percent}% 完了${cycleTotal ? ` · 周期達成 ${cycleDone}/${cycleTotal}` : ''}`
+      : '毎日タスクなし';
     const summaryTrack = $('routineSummaryProgressTrack');
     const summaryFill = $('routineSummaryProgressFill');
-    summaryTrack.hidden = dailyTotal === 0;
+    summaryTrack.hidden = totalItems === 0;
     summaryFill.style.width = `${percent}%`;
     summaryTrack.setAttribute('aria-valuenow', String(percent));
-    summaryTrack.setAttribute('aria-valuetext', `${done}件完了、${dailyTotal}件中`);
+    const progressText = `${done}件達成、${totalItems}件中（毎日 ${dailyDone}/${dailyTotal}件・周期 ${cycleDone}/${cycleTotal}件）`;
+    summaryTrack.setAttribute('aria-valuetext', progressText);
     const resetTimeLabel = data.routines.resetTime || '05:00';
     $('routineDateLabel').textContent = `今日 · ${fmtDateLong(dayKey)}（${resetTimeLabel}区切り）`;
-    $('routineProgressLabel').textContent = dailyTotal ? `${percent}% 完了` : (cycleItems.length ? '周期タスクのストックを管理' : '0% 完了');
+    $('routineProgressLabel').textContent = `${percent}% 完了`;
     $('routineProgressFill').style.width = `${percent}%`;
     $('routineProgressTrack').setAttribute('aria-valuenow', String(percent));
-    $('routineProgressTrack').setAttribute('aria-valuetext', `${done}件完了、${dailyTotal}件中`);
+    $('routineProgressTrack').setAttribute('aria-valuetext', progressText);
     if (!$('routineDetails')?.open) return;
     list.replaceChildren();
     if (!items.length) {
@@ -4874,7 +5414,11 @@
           const fillWidth = Math.max(0, Math.min(100, stock / maxStock * 100));
           const normalShare = stock > 0 ? Math.max(0, Math.min(100, Math.min(stock,item.targetCount) / stock * 100)) : 100;
           const successLeft = Math.max(0, Math.min(100, 1 / maxStock * 100));
-          row.innerHTML = `<div class="routine-cycle-card"><div class="routine-cycle-head"><div><div class="routine-cycle-title">${escapeHtml(item.text)}</div><div class="routine-cycle-meta">${item.periodDays}日間に${item.targetCount}回 · ${formatRoutineDuration(interval)}ごとに1回分減少</div></div><div class="routine-cycle-stock-value">${stock} / ${maxStock}回<span class="routine-cycle-stock-caption">目標比 ${percentOfGoal}%</span></div></div><div class="routine-cycle-track" role="progressbar" aria-label="${escapeHtml(item.text)}のストック" aria-valuemin="0" aria-valuemax="${maxStock}" aria-valuenow="${stock}" aria-valuetext="${stock}回、最大${maxStock}回"><span class="routine-cycle-goal-zone" style="width:${goalWidth}%"></span><span class="routine-cycle-buffer-zone" style="left:${goalWidth}%;width:${Math.max(0,100-goalWidth)}%"></span><span class="routine-cycle-stock-fill" style="width:${fillWidth}%;--normal-share:${normalShare}%"></span><span class="routine-cycle-success-mark" style="left:${successLeft}%"></span><span class="routine-cycle-goal-mark" style="left:${goalWidth}%"></span></div><div class="routine-cycle-scale"><span>0</span><span>成功ライン 1回</span><span>通常目標 ${item.targetCount}回</span><span>最大 ${maxStock}回</span></div><div class="routine-cycle-legend"><span><i style="background:var(--accent-strong)"></i>通常ストック</span><span><i style="background:#c49a63"></i>予備ストック</span></div><div class="routine-cycle-streak-row"><span>🔥 連続成功 ${item.streakCurrent}日 · 最長 ${item.streakBest}日</span><span class="routine-cycle-status${stock<1?' is-low':''}">${stock>=1?'成功ライン維持':'ストック回復が必要'}</span></div><div class="routine-cycle-bottom"><button class="routine-cycle-record" type="button" data-cycle-record="${escapeHtml(item.id)}" ${stock>=maxStock?'disabled':''}>${stock>=maxStock?'ストック満タン':'＋ 実行を記録'}</button><span class="routine-cycle-next">${nextText}</span></div></div>`;
+          const cycleId = escapeHtml(item.id);
+          const cycleTitle = escapeHtml(item.text);
+          row.innerHTML = `<details class="routine-cycle-disclosure" data-cycle-id="${cycleId}"><summary class="routine-cycle-summary" aria-label="${cycleTitle}の詳細を開閉"><span class="routine-cycle-title">${cycleTitle}</span><span class="routine-cycle-streak-badge" aria-label="連続成功 ${item.streakCurrent}日">${routineFlameSvgMarkup()}<span>${item.streakCurrent}日</span></span><svg class="routine-cycle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="routine-cycle-detail"><div class="routine-cycle-card"><div class="routine-cycle-head"><div><div class="routine-cycle-meta">${item.periodDays}日間に${item.targetCount}回 · ${formatRoutineDuration(interval)}ごとに1回分減少</div></div><div class="routine-cycle-stock-value">${stock} / ${maxStock}回<span class="routine-cycle-stock-caption">目標比 ${percentOfGoal}%</span></div></div><div class="routine-cycle-track" role="progressbar" aria-label="${cycleTitle}のストック" aria-valuemin="0" aria-valuemax="${maxStock}" aria-valuenow="${stock}" aria-valuetext="${stock}回、最大${maxStock}回"><span class="routine-cycle-goal-zone" style="width:${goalWidth}%"></span><span class="routine-cycle-buffer-zone" style="left:${goalWidth}%;width:${Math.max(0,100-goalWidth)}%"></span><span class="routine-cycle-stock-fill" style="width:${fillWidth}%;--normal-share:${normalShare}%"></span><span class="routine-cycle-success-mark" style="left:${successLeft}%"></span><span class="routine-cycle-goal-mark" style="left:${goalWidth}%"></span></div><div class="routine-cycle-scale"><span>0</span><span>成功ライン 1回</span><span>通常目標 ${item.targetCount}回</span><span>最大 ${maxStock}回</span></div><div class="routine-cycle-legend"><span><i style="background:var(--accent-strong)"></i>通常ストック</span><span><i style="background:#c49a63"></i>予備ストック</span></div><div class="routine-cycle-streak-row"><span class="routine-cycle-streak-current">${routineFlameSvgMarkup()}現在の連続記録 ${item.streakCurrent}日 · 最長 ${item.streakBest}日</span><span class="routine-cycle-status${stock<1?' is-low':''}">${stock>=1?'成功ライン維持':'ストック回復が必要'}</span></div><div class="routine-cycle-bottom"><div class="routine-cycle-buttons"><button class="routine-cycle-record" type="button" data-cycle-record="${cycleId}" ${stock>=maxStock?'disabled':''}>${stock>=maxStock?'ストック満タン':'✓ 実行完了'}</button><button class="routine-cycle-quota" type="button" data-cycle-quota="${cycleId}" ${stock<=0?'disabled':''}>＋ ノルマ追加</button></div><span class="routine-cycle-next">${nextText}</span></div></div></div></details>`;
+          const cycleDisclosure = row.querySelector('.routine-cycle-disclosure');
+          if (expandedCycleIds.has(item.id)) cycleDisclosure.open = true;
         }
         fragment.appendChild(row);
       });
@@ -4995,7 +5539,25 @@
     if (saved) {
       renderRoutineChecklist();
       scheduleRoutineMidnightRefresh();
-      showToast('ストックを1回分補充しました');
+      showToast('実行完了を記録しました（ストック＋1回）');
+    }
+  }
+  function addCycleQuota(id) {
+    processCycleRoutines(Date.now());
+    const item = data.routines.items.find(entry => entry.id === id && entry.kind === 'cycle');
+    if (!item || !item.stockTokens.length) { showToast('減らせる達成回数がありません'); return; }
+    const saved = commitRoutineMutation(() => {
+      const target = data.routines.items.find(entry => entry.id === id && entry.kind === 'cycle');
+      if (!target || !target.stockTokens.length) throw new Error('減らせる達成回数がありません。');
+      // Keep the nearest expiry intact; adding a quota removes the furthest-future achievement.
+      const removeIndex = target.stockTokens.reduce((latestIndex, token, index, tokens) =>
+        token.expiresAt > tokens[latestIndex].expiresAt ? index : latestIndex, 0);
+      target.stockTokens.splice(removeIndex, 1);
+    });
+    if (saved) {
+      renderRoutineChecklist();
+      scheduleRoutineMidnightRefresh();
+      showToast('ノルマを1回分追加しました（達成回数 −1）');
     }
   }
   function refreshRoutineForNewDay() {
@@ -5022,12 +5584,18 @@
   const ROUTINE_TIME_WHEEL_ROW = 36;
   const ROUTINE_TIME_WHEEL_CYCLES = 9;
   const ROUTINE_TIME_WHEEL_CENTER_CYCLE = 4;
-  const ROUTINE_TIME_WHEEL_INERTIA = 5.0;
-  const ROUTINE_TIME_WHEEL_MAX_SPEED = 14;
-  // Per-frame momentum retention: fast finger movement carries into a longer coast.
-  const ROUTINE_TIME_WHEEL_FRICTION = 0.9885;
-  const ROUTINE_TIME_WHEEL_STOP_SPEED = 0.018;
-  const ROUTINE_TIME_WHEEL_MAX_COAST_MS = 9000;
+  // Reduce the flick-to-coast gain to exactly one third of v114.
+  // The release coast is independently capped at 1.8 px/ms (about 30 px/frame at 60 Hz).
+  const ROUTINE_TIME_WHEEL_INERTIA = 5.0 / 3;
+  const ROUTINE_TIME_WHEEL_MAX_SPEED = 1.8;
+  const ROUTINE_TIME_WHEEL_STOP_SPEED = 0.035;
+  const ROUTINE_TIME_WHEEL_MIN_COAST_MS = 1350;
+  const ROUTINE_TIME_WHEEL_MAX_COAST_MS = 5200;
+  const ROUTINE_TIME_WHEEL_COAST_POWER = 1.95;
+  // Touch screens may deliver pointermove samples less frequently than a mouse.
+  // Keep a wider velocity window so pointerup latency does not leave only one sample.
+  const ROUTINE_TIME_WHEEL_VELOCITY_WINDOW_MS = 300;
+  const ROUTINE_TIME_WHEEL_SAMPLE_RETENTION_MS = 330;
   const routineTimeWheelState = { hour:5, minute:0 };
   let routineTimeWheelsReady = false;
   let routineTimeWheelSyncing = false;
@@ -5100,7 +5668,7 @@
     const ms = Math.max(130, duration);
     const tick = now => {
       const progress = Math.min(1, (now - start) / ms);
-      const eased = 1 - Math.pow(1 - progress, 3); // softer cubic settle, less magnetic pull
+      const eased = 1 - Math.pow(1 - progress, 5); // 5乗イージングで選択行への吸着を少し強化
       wheel.scrollTop = from + (to - from) * eased;
       updateRoutineTimeWheelReadout();
       if (progress < 1) routineTimeWheelAnimations[type] = requestAnimationFrame(tick);
@@ -5118,7 +5686,7 @@
     const wheel = routineTimeWheelElement(type);
     if (!wheel) return;
     const normalizedTarget = Math.max(0, Math.min(wheel.children.length - 1, Number(physicalIndex) || 0));
-    const duration = behavior === 'auto' ? 0 : Math.min(280, 125 + Math.abs(normalizedTarget * ROUTINE_TIME_WHEEL_ROW - wheel.scrollTop) * .065);
+    const duration = behavior === 'auto' ? 0 : Math.min(320, 155 + Math.abs(normalizedTarget * ROUTINE_TIME_WHEEL_ROW - wheel.scrollTop) * .075);
     routineWheelAnimateTo(type, normalizedTarget, duration);
   }
   function scheduleRoutineTimeWheelCommit() {
@@ -5134,28 +5702,41 @@
     const wheel = routineTimeWheelElement(type);
     if (!wheel) return;
     const current = wheel.scrollTop / ROUTINE_TIME_WHEEL_ROW;
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) velocity = 0;
-    // The measured finger velocity is the launch velocity: a quick flick carries
-    // through for several seconds, then decays smoothly before a light row settle.
-    let v = Math.max(-ROUTINE_TIME_WHEEL_MAX_SPEED,
-      Math.min(ROUTINE_TIME_WHEEL_MAX_SPEED, velocity * ROUTINE_TIME_WHEEL_INERTIA));
+    // Picker inertia is part of the direct-manipulation interaction. Keep it
+    // enabled even when the OS/browser requests reduced decorative motion.
+    // Hard-limit the free-spin launch speed so a noisy pointer sample cannot
+    // create an extreme jump. Direct finger tracking remains 1:1 while dragging.
+    const scaledVelocity = velocity * ROUTINE_TIME_WHEEL_INERTIA;
+    const v = Math.max(-ROUTINE_TIME_WHEEL_MAX_SPEED,
+      Math.min(ROUTINE_TIME_WHEEL_MAX_SPEED, scaledVelocity));
     if (Math.abs(v) < ROUTINE_TIME_WHEEL_STOP_SPEED) {
       scrollRoutineTimeWheel(type, Math.round(current), 'smooth');
       return;
     }
     if (routineTimeWheelAnimations[type]) cancelAnimationFrame(routineTimeWheelAnimations[type]);
-    let previous = performance.now();
-    let elapsed = 0;
+    const direction = Math.sign(v);
+    const initialSpeed = Math.abs(v);
+    // Stronger flicks receive both a higher launch speed and a longer glide.
+    const intensity = Math.max(0, Math.min(1,
+      (initialSpeed - 0.35) / 10.5));
+    const duration = ROUTINE_TIME_WHEEL_MIN_COAST_MS +
+      (ROUTINE_TIME_WHEEL_MAX_COAST_MS - ROUTINE_TIME_WHEEL_MIN_COAST_MS) * intensity;
+    const curvePower = ROUTINE_TIME_WHEEL_COAST_POWER;
+    const startedAt = performance.now();
+    let previousDistance = 0;
     const inertiaTick = now => {
-      const dt = Math.min(32, Math.max(1, now - previous || 16));
-      previous = now;
-      elapsed += dt;
-      wheel.scrollTop += v * dt;
+      const elapsed = Math.max(0, now - startedAt);
+      const progress = Math.min(1, elapsed / duration);
+      // Integrate a smooth, speed-dependent deceleration curve. This avoids a
+      // sharp early drop and guarantees several seconds of visible motion on a fast flick.
+      const remaining = Math.pow(1 - progress, curvePower + 1);
+      const distance = initialSpeed * duration / (curvePower + 1) * (1 - remaining);
+      // Apply only the per-frame delta so circular normalization is preserved.
+      wheel.scrollTop += direction * (distance - previousDistance);
+      previousDistance = distance;
       normalizeRoutineTimeWheel(wheel, type);
       updateRoutineTimeWheelReadout();
-      v *= Math.pow(ROUTINE_TIME_WHEEL_FRICTION, dt / 16.67);
-      if (Math.abs(v) > ROUTINE_TIME_WHEEL_STOP_SPEED && elapsed < ROUTINE_TIME_WHEEL_MAX_COAST_MS) {
+      if (progress < 1) {
         routineTimeWheelAnimations[type] = requestAnimationFrame(inertiaTick);
       } else {
         routineTimeWheelAnimations[type] = 0;
@@ -5168,13 +5749,13 @@
   }
   function estimateRoutineTimeWheelVelocity(samples, now) {
     if (!samples || samples.length < 2) return 0;
-    const recent = samples.filter(sample => now - sample.time <= 100);
+    const recent = samples.filter(sample => now - sample.time <= ROUTINE_TIME_WHEEL_VELOCITY_WINDOW_MS);
     if (recent.length < 2) return 0;
     const first = recent[0];
     const latest = recent[recent.length - 1];
     const latestAge = Math.max(0, now - latest.time);
     // If the finger has been resting before release, do not replay old velocity.
-    if (latestAge > 115) return 0;
+    if (latestAge > 210) return 0;
     const span = latest.time - first.time;
     let velocity = 0;
     if (span >= 10) {
@@ -5200,7 +5781,7 @@
       // using a small minimum window rather than discarding a genuinely quick flick.
       velocity = (latest.scroll - first.scroll) / Math.max(8, span);
     }
-    const pauseFactor = Math.exp(-latestAge / 60);
+    const pauseFactor = Math.exp(-latestAge / 150);
     return velocity * pauseFactor;
   }
   function buildRoutineTimeWheel(type) {
@@ -5246,7 +5827,7 @@
       event.preventDefault();
       if (routineTimeWheelAnimations[type]) cancelAnimationFrame(routineTimeWheelAnimations[type]);
       routineTimeWheelAnimations[type] = 0;
-      wheel.scrollTop += event.deltaY * 1.45;
+      wheel.scrollTop += event.deltaY * 1.25;
       normalizeRoutineTimeWheel(wheel, type);
       updateRoutineTimeWheelReadout();
       if (wheelSettleTimer) clearTimeout(wheelSettleTimer);
@@ -5286,7 +5867,7 @@
       gesture.lastY = event.clientY;
       gesture.lastTime = now;
       gesture.samples.push({scroll:wheel.scrollTop,time:now});
-      while (gesture.samples.length > 2 && now - gesture.samples[0].time > 110) gesture.samples.shift();
+      while (gesture.samples.length > 2 && now - gesture.samples[0].time > ROUTINE_TIME_WHEEL_SAMPLE_RETENTION_MS) gesture.samples.shift();
       gesture.velocity = estimateRoutineTimeWheelVelocity(gesture.samples, now);
       const normalizationShift = normalizeRoutineTimeWheel(wheel, type, gesture);
       if (normalizationShift) {
@@ -5307,7 +5888,7 @@
         gesture.lastY = event.clientY;
         gesture.lastTime = releaseTime;
         gesture.samples.push({scroll:wheel.scrollTop,time:releaseTime});
-        while (gesture.samples.length > 2 && releaseTime - gesture.samples[0].time > 110) gesture.samples.shift();
+        while (gesture.samples.length > 2 && releaseTime - gesture.samples[0].time > ROUTINE_TIME_WHEEL_SAMPLE_RETENTION_MS) gesture.samples.shift();
         if (normalizationShift) {
           for (const sample of gesture.samples) sample.scroll += normalizationShift;
         }
@@ -5370,7 +5951,9 @@
     routineTimeWheelState.hour = parts.hour;
     routineTimeWheelState.minute = parts.minute;
     const display = $('routineResetTimeDisplay');
+    const toggle = $('routineResetTimeToggle');
     if (display) display.textContent = value;
+    if (toggle) toggle.setAttribute('aria-label', `リセット時刻を変更。現在${value}`);
     if (!routineTimeWheelsReady) return;
     if (routineTimeWheelCommitTimer) clearTimeout(routineTimeWheelCommitTimer);
     routineTimeWheelCommitTimer = 0;
@@ -5379,7 +5962,17 @@
     const minuteWheel = routineTimeWheelElement('minute');
     if (hourWheel) hourWheel.scrollTop = (ROUTINE_TIME_WHEEL_CENTER_CYCLE * 24 + parts.hour) * ROUTINE_TIME_WHEEL_ROW;
     if (minuteWheel) minuteWheel.scrollTop = (ROUTINE_TIME_WHEEL_CENTER_CYCLE * 60 + parts.minute) * ROUTINE_TIME_WHEEL_ROW;
-    updateRoutineTimeWheelReadout();
+    // The wheel is nested inside collapsed settings disclosures at startup.
+    // Browsers report scrollTop=0 while that subtree has no layout box; painting
+    // it here would overwrite the saved 05:00 state with 00:00. Keep the value
+    // derived from data until the wheel becomes visible, then paint on open.
+    if (hourWheel?.clientHeight > 0 && minuteWheel?.clientHeight > 0) {
+      paintRoutineTimeWheel('hour');
+      paintRoutineTimeWheel('minute');
+    }
+    if (display) display.textContent = value;
+    if (input) input.value = value;
+    if (toggle) toggle.setAttribute('aria-label', `リセット時刻を変更。現在${value}`);
     if (routineTimeWheelSyncTimer) clearTimeout(routineTimeWheelSyncTimer);
     routineTimeWheelSyncTimer = window.setTimeout(() => { routineTimeWheelSyncing = false; routineTimeWheelSyncTimer = 0; }, 180);
   }
@@ -5456,7 +6049,9 @@
   $('routineList')?.addEventListener('click', event => {
     const target = event.target instanceof Element ? event.target : null;
     const record = target?.closest('[data-cycle-record]');
+    const quota = target?.closest('[data-cycle-quota]');
     if (record && !record.disabled) recordCycleRoutine(record.dataset.cycleRecord);
+    if (quota && !quota.disabled) addCycleQuota(quota.dataset.cycleQuota);
   });
   $('routineSettingsList')?.addEventListener('click', async event => {
     const target = event.target instanceof Element ? event.target : null;
@@ -5600,7 +6195,7 @@
   settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel?.open));
   settingsPanel?.addEventListener('toggle', () => settingsSummary?.setAttribute('aria-expanded', String(!!settingsPanel.open)));
   $('stopTimerBtn').addEventListener('click',stopSession);
-  $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const label={id:makeId(),name:`新しいラベル${data.labels.length}`,color:LABEL_COLOR_TEMPLATES[data.labels.length%LABEL_COLOR_TEMPLATES.length].color,subLabels:[],autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}};data.labels.push(label);selectedLabelId=label.id;selectedSubLabelId='';save();renderAll();showToast('ラベルを追加しました');});
+  $('addLabelBtn').addEventListener('click',()=>{if(data.labels.length>=12)return;const newLabelId=makeId();const label={id:newLabelId,name:`新しいラベル${data.labels.length}`,color:chooseNextLabelPaletteColor(data.labels,newLabelId),subLabels:[],autoStopDefault:{mode:'off',durationMinutes:60,time:'18:00'}};data.labels.push(label);selectedLabelId=label.id;selectedSubLabelId='';save();renderAll();showToast('ラベルを追加しました');});
   $('themeSelect').addEventListener('change',e=>{data.settings.theme=e.target.value;save();renderAll();});
   initializeRoutineTimeWheels();
   $('ambientEnabled').addEventListener('change',e=>{data.settings.ambientEnabled=e.target.checked;save();renderTimer();});
@@ -5642,7 +6237,75 @@
     if ($('trendDetails').open) requestAnimationFrame(renderAdvancedAnalytics);
     else closeAnalysisCalendar();
   });
+  $('analysisSettingsDetails').addEventListener('toggle', () => {
+    if (!$('analysisSettingsDetails').open) closeAnalysisCalendar();
+  });
   $('analysisPeriod').addEventListener('change', () => { closeAnalysisCalendar(); analysisPrefs.period=$('analysisPeriod').value; if(analysisPrefs.period==='custom') normalizeCustomRange(); saveAnalysisPrefs(); renderAdvancedAnalytics(); });
+  document.querySelector('.analysis-weekday-presets')?.addEventListener('click', event => {
+    const button=event.target.closest('[data-analysis-weekday-preset]');
+    if(!button) return;
+    const preset=button.dataset.analysisWeekdayPreset;
+    if(preset==='all') setAnalysisWeekdays([0,1,2,3,4,5,6]);
+    else if(preset==='weekdays') setAnalysisWeekdays([1,2,3,4,5]);
+    else if(preset==='weekend') setAnalysisWeekdays([0,6]);
+  });
+  $('analysisWeekdayChoices').addEventListener('click', event => {
+    const button=event.target.closest('[data-analysis-weekday]');
+    if(!button || button.disabled) return;
+    const day=Number(button.dataset.analysisWeekday);
+    const current=normalizeAnalysisWeekdays(analysisPrefs.weekdays);
+    const next=current.includes(day)?current.filter(value=>value!==day):[...current,day];
+    if(!next.length) return;
+    setAnalysisWeekdays(next);
+  });
+  $('analysisDayLabelFilter').addEventListener('click', event => {
+    const expand = event.target.closest('[data-day-label-expand]');
+    if (expand) {
+      const scope = expand.dataset.dayLabelScope;
+      const labelId = expand.dataset.dayLabelExpand;
+      const expanded = analysisDayLabelExpanded[scope];
+      if (expanded.has(labelId)) expanded.delete(labelId); else expanded.add(labelId);
+      renderAnalysisDayLabelFilter();
+      return;
+    }
+    const clear = event.target.closest('[data-day-filter-clear]');
+    if (clear) {
+      if (clear.dataset.dayFilterClear === 'include') analysisPrefs.dayIncludeTokens = [];
+      else analysisPrefs.dayExcludeTokens = [];
+      saveAnalysisPrefs(); renderAnalysisDayLabelFilter(); renderAdvancedAnalytics();
+      return;
+    }
+    if (event.target.closest('#analysisDayLabelClearAll')) {
+      analysisPrefs.dayIncludeTokens = []; analysisPrefs.dayExcludeTokens = []; analysisPrefs.dayLabelMode = 'any';
+      saveAnalysisPrefs(); renderAnalysisDayLabelFilter(); renderAdvancedAnalytics();
+      return;
+    }
+    const modeButton = event.target.closest('[data-day-label-mode]');
+    if (modeButton) {
+      analysisPrefs.dayLabelMode = modeButton.dataset.dayLabelMode === 'all' ? 'all' : 'any';
+      saveAnalysisPrefs(); updateAnalysisDayLabelFilterControls(); renderAdvancedAnalytics();
+      return;
+    }
+    const chip = event.target.closest('[data-day-label-token][data-day-label-scope]');
+    if (!chip) return;
+    const scope = chip.dataset.dayLabelScope;
+    const token = chip.dataset.dayLabelToken;
+    const key = scope === 'include' ? 'dayIncludeTokens' : 'dayExcludeTokens';
+    let values = normalizeAnalysisDayLabelTokens(analysisPrefs[key]);
+    if (values.includes(token)) values = values.filter(value => value !== token);
+    else if (token.startsWith('L:')) {
+      const parentId = token.slice(2);
+      values = values.filter(value => !(value.startsWith('S:') && value.slice(2, value.indexOf('::', 2)) === parentId));
+      values.push(token);
+    } else {
+      const split = token.indexOf('::', 2);
+      const parentToken = `L:${token.slice(2, split)}`;
+      values = values.filter(value => value !== parentToken);
+      values.push(token);
+    }
+    analysisPrefs[key] = normalizeAnalysisDayLabelTokens(values);
+    saveAnalysisPrefs(); renderAnalysisDayLabelFilter(); renderAdvancedAnalytics();
+  });
   $('analysisCustomStartButton').addEventListener('click', () => openAnalysisCalendar('start'));
   $('analysisCustomEndButton').addEventListener('click', () => openAnalysisCalendar('end'));
   $('analysisCustomRange').addEventListener('click', event => {
@@ -5869,12 +6532,11 @@
     return parseJsonText(await readJsonFileText(file));
   }
   async function handleBackupFileChange(e) {
-    // Event.currentTarget becomes null after the async handler yields. Capture
-    // the initiating control synchronously before any await.
-    const requestedFromAnalysis = e.currentTarget?.id === 'analysisImportFile';
+    // Event.currentTarget becomes null after the async handler yields, so
+    // capture the file synchronously before any await.
     const file=e.target.files?.[0];
     if(!file)return;
-    const importPickers=[$('importFile'),$('analysisImportFile')].filter(Boolean);
+    const importPickers=[$('importFile')].filter(Boolean);
     const importLabels=importPickers.map(input=>input.closest('.file-picker-label')).filter(Boolean);
     importPickers.forEach(input=>input.disabled=true);
     importLabels.forEach(label=>label.classList.add('is-disabled'));
@@ -5907,15 +6569,6 @@
       persistDataSnapshot(staged);
       importCommitted = true;
       updateLoading(saveToken,'画面と分析データを更新しています',98);
-      // The analysis-specific importer means 'analyze this backup'. Switch to
-      // the full imported record set (both scope and date range) so a stale
-      // label filter or short period cannot make the newly imported data look
-      // empty. General settings import continues to preserve analysis prefs.
-      if (requestedFromAnalysis) {
-        analysisPrefs.mode = 'all';
-        analysisPrefs.period = 'all';
-        saveAnalysisPrefs();
-      }
       data = staged;
       invalidateDataCaches();
       resetActiveSessionCache();
@@ -5932,7 +6585,7 @@
       renderAll();
       scheduleAutoStop();
       updateLoading(saveToken,'読み込みが完了しました',100);
-      showToast(requestedFromAnalysis ? `JSONを読み込み、記録済み全体・全期間で分析します（${summary}）` : `JSONを読み込みました（${summary}）`);
+      showToast(`JSONを読み込みました（${summary}）`);
       finishLoading(saveToken);
     } catch(error) {
       const detail = error?.message || 'ファイルの形式や内容を確認してください。';
@@ -5946,7 +6599,6 @@
     }
   }
   $('importFile').addEventListener('change',handleBackupFileChange);
-  $('analysisImportFile').addEventListener('change',handleBackupFileChange);
   $('mergeSessionsFile').addEventListener('change',async e=>{
     const file=e.target.files?.[0];
     if(!file)return;

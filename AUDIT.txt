@@ -1,82 +1,154 @@
-DAYLOG v95 audit
+DAYLOG v145 final stability audit
+=================================
+- Fixed a startup display defect in the daily-reset time wheel. The wheel is nested inside collapsed settings disclosures; while hidden, browsers report scrollTop=0. The old synchronization path painted this zero position over the stored/default 05:00 value. The updated path keeps the normalized data value authoritative and paints wheel state only when both wheel viewports are laid out.
+- The correction changes only time-wheel initialization/synchronization. It does not change the daily reset algorithm, stored resetTime, task stocks, streaks, check history, storage key, data format v6, JSON backup format, analysis preferences, or timer records.
+- Browser UI test suite: 47/47 checks passed, including daily and periodic routine creation, checklist completion, stock/quota actions, time-wheel selection and reopen, timer start/pause/resume/stop, weekday presets, contradictory date-label filter warning/clear, theme changes, JSON backup round-trip, cross-device merge de-duplication, invalid-file preservation, v5 backup migration, and no horizontal overflow at 320/360/375/390/430/768/1024 CSS pixels.
+- Additional browser tests passed: 1-minute duration auto-stop via a controlled clock; localStorage-path simulation for normal save/reload, 05:30 reset-time persistence across a full reload, and QuotaExceededError rollback (the previous snapshot remained unchanged); no JavaScript runtime errors in tested flows.
+- Service Worker mock-runtime test passed: 15 app-shell resources are precached, v144/known DAYLOG caches are retired without deleting unrelated caches, same-scope cache-first fetch and offline navigation fallback work, and POST/out-of-scope requests are not intercepted.
+- Static checks passed: Node.js syntax for app and Service Worker; lxml HTML parse (0 errors); tinycss2 CSS parse (0 rule/declaration errors); 162 unique static IDs; all manifest icons and 15 precache resources resolve; PNG dimensions match the manifest; standalone HTML and PWA index are byte-identical.
+- Browser navigation is restricted in the execution environment (`ERR_BLOCKED_BY_ADMINISTRATOR`), so application interaction tests loaded the complete HTML directly into Chromium. Web Storage was separately exercised with a map-backed Storage test double, not the browser's actual persistent profile. Service Worker lifecycle was simulated in Node, not installed in a real browser.
+- Physical iPhone/iPad Safari, actual PWA installation, real-device offline launch, and cross-browser rendering are not certified by this environment.
 
-Color audit findings and fixes:
-1. v94 had an eight-entry dark display map with a sage fallback for every unlisted HEX color.
-2. v94 safeColor() snapped valid non-preset HEX values to the nearest of eight presets, destroying custom hue distinctions.
-3. v95 preserves every valid six-digit HEX color as lowercase canonical data; invalid values alone use the safe sage default.
-4. v95 keeps all eight existing presets and adds four distinct purple/blue-purple presets (lilac, violet, plum, indigo).
-5. v95 maps the original eight presets to their established dark variants; every other valid HEX value is converted by a hue-preserving RGB blend toward a neutral dark base. The blend reduces luminance for non-black colors while preserving hue within integer-rounding tolerance; pure black remains black.
-6. The label editor exposes a custom/imported color as a "current color" swatch when it is not one of the presets.
-7. Every label-color presentation path continues to use displayLabelColor(): label palette, timer tint/dots, label picker, overview, calendar, records, hourly breakdown, selected analysis choices, multi-series, legends, and charts.
-8. Data format v6 and storage key daylog.data.v3 remain unchanged. Color conversion is presentation-only; saved color strings and exported colors are not rewritten by theme changes.
+DAYLOG v143 audit: explanatory copy only. Shortened the label and routine management notes, clarified reset-time behavior, condensed JSON import/merge guidance, and clarified long-range and multi-series chart explanations. No application behavior, settings, session records, data format or backup format changed. Standalone HTML and PWA index.html are byte-identical.
 
-Validation: see TEST-RESULTS.txt.
+DAYLOG v142 audit: removed the analysis-only JSON import entry and dedicated analysis import path; standard JSON import and cross-device merge remain. No data or analysis aggregation changes.
+
+DAYLOG v139 audit: CSS-only divider spacing change; no data or analysis behavior changes.
+
+DAYLOG v138 audit
+================
+- Removed the outer collapsible `日付` panel. The frequently used `集計期間` selector is now directly visible rather than nested inside another selection panel.
+- The custom start/end date controls still appear only for the custom period, and the dedicated `特殊絞り込み` disclosure is preserved.
+- Existing analysis preference keys, date selection behavior, filtering semantics, records, data format, and backup format are unchanged.
+- Standalone HTML and PWA DAYLOG/index.html are byte-identical. Service Worker cache is daylog-analysis-date-selector-inline-v138; v137 is listed as a known legacy DAYLOG cache.
+
+See TEST-RESULTS.txt for executed checks.
+
+DAYLOG v134 audit
+================
+- The include-label and exclude-label date-filter areas are now separate native disclosure sections. Both begin collapsed, reducing the space used in the analysis settings view.
+- Collapsed summaries show the number of selected items; the include summary also indicates whether the selection uses OR (any) or AND (all).
+- Existing selector IDs, data attributes, event delegation, preference keys and date-qualification logic are retained. Each disclosure has a local clear action and the existing clear-all control remains available.
+- This is a presentation-only adjustment to the v133 hierarchical date filter. No date-filter semantics, stored values, session records, data format or backup format are changed.
+- Standalone HTML and PWA DAYLOG/index.html are byte-identical. Service Worker cache is daylog-analysis-day-filter-disclosures-v134; v133 is listed as a known legacy cache.
+
+See TEST-RESULTS.txt for executed checks.
+
+DAYLOG v133 audit
+================
+- Date filtering is stored as optional analysis preferences and does not alter the session, label, backup or v6 data schemas.
+- The same local-day token set is built while existing session segments are split across local date boundaries. Parent tokens are recorded for all sessions; sublabel tokens are added when present, including the legacy name fallback.
+- Parent selection covers all of its child sublabels and parent-level sessions without a sublabel. Individual sublabels can be selected independently. Parent/child redundancy is normalized within each include/exclude group.
+- Include selection can be OR or AND across tokens; exclusions are OR. Include and exclude groups are ANDed with each other and with the existing weekday filter. Logical contradictions are surfaced in the UI.
+- Date filtering is applied before common period aggregation; thus all analysis target modes and their totals, averages, breakdowns, hourly distributions and series use the same qualifying date set. Data from every label remains in the selected dates unless a separate existing analysis-target selection narrows the displayed series.
+- Empty filter preferences preserve legacy behavior. No recorded session or data migration is performed.
+- Standalone HTML and PWA DAYLOG/index.html are byte-identical. Service Worker cache is daylog-analysis-day-label-hierarchy-v133; v132 is listed as a known legacy cache.
+
+See TEST-RESULTS.txt for executed checks.
+
+DAYLOG v131 audit
+================
+- Weekday-filter chips are displayed Sunday through Saturday; each button retains its original Date#getDay() numeric ID (Sunday=0 through Saturday=6).
+- Normalized weekday order and custom selection summary order are Sunday-first. Existing stored preference arrays are normalized by the same weekday IDs, so selected days are preserved.
+- Weekday presets, inclusion rules, aggregation, averages, comparisons, and recorded session data are unchanged.
+- Standalone HTML and PWA DAYLOG/index.html are byte-identical. Service Worker cache: daylog-analysis-weekday-sunday-start-v131; v130 cache is listed as a known legacy cache.
+
+DAYLOG v130 audit
+================
+- Weekday filtering lives only inside the existing Analysis Settings disclosure.
+- Presets: all days, weekdays (Mon-Fri), weekend (Sat-Sun); individual weekday toggles support any combination.
+- Preference key daylog.analysis.v1 gains optional `weekdays`; older settings without it default to all days. Invalid/empty values safely default to all days; UI always keeps at least one weekday selected.
+- The same weekday set is applied to current and comparison date keys before aggregation, so totals, per-day averages, session counts, recorded rate, daily chart, hourly averages, breakdowns, selected labels and overlay series all use identical day inclusion.
+- Aggregator now advances through local calendar-day boundaries across unselected gaps. This preserves segments that span an excluded day into a later selected day and handles local DST day lengths.
+- Existing selected range bounds, partial current-day cutoff, and comparison elapsed-time behavior are retained.
+- No recorded sessions, storage format v6, backup format, label colors, timer behavior, or unrelated settings are modified.
+- Standalone HTML and PWA DAYLOG/index.html are byte-identical. Service Worker cache: daylog-analysis-weekday-filter-v130; v129 is listed as a known legacy cache.
+
+DAYLOG v128 audit
+================
+- Scope: harmonize the nine light-/dark-theme label display colors with the app's warm cream and charcoal backgrounds/cards.
+- Only LIGHT_LABEL_COLOR_MAP and DARK_LABEL_COLOR_MAP values changed. Canonical saved HEX palette, label/session data, migration functions, data format v6 and localStorage key remain unchanged.
+- Verified that all nine canonical colors have exactly one presentation mapping in each theme and all values are unique within each theme.
+- Verified all palette display routes continue to use displayLabelColor(); custom color fallback remains unchanged.
+- PWA index.html is byte-identical to standalone HTML. Service Worker cache is v128 and lists the v127 cache for cleanup.
+
+See TEST-RESULTS.txt for executed checks.
+
+DAYLOG v127 audit
+================
+- Dark-theme display map only: each of the 9 colors has HSL lightness reduced by 0.5 percentage points (rounded to HEX).
+- Confirmed the v126 light-theme map is byte-for-byte unchanged.
+- Confirmed canonical saved palette HEX values, storage format v6, label migration/assignment logic, and history data handling are unchanged.
+- PWA index.html is byte-identical to the standalone HTML. Service Worker cache is v127 and includes the known v126 cache in its legacy cleanup list.
+- No user data is embedded in the deliverables.
+
+DAYLOG v126 audit
+
+Scope: tiny light-theme label-color lightness increase.
+
+- Exactly the nine existing light-theme display values were adjusted by +1.25 HSL lightness points; hue and HSL saturation are preserved by construction.
+- Dark-theme display values and all canonical saved palette HEX values are byte-for-byte unchanged from v125.
+- displayLabelColor() and all existing label/session color paths remain unchanged.
+- Color migration/allocation, label IDs, historical session synchronization, data format v6, localStorage key, backups, routines, timer and analysis data are unchanged.
+- Service Worker cache is v126 and removes the known v125 DAYLOG cache.
+
+See TEST-RESULTS.txt for checks performed.
+
+DAYLOG v124 audit
+
+Scope: mild desaturation of the warm nine-color palette.
+
+- The nine color families from v123 are retained; canonical and theme-specific HEX values are slightly desaturated.
+- Light and dark presentation maps each contain one explicit color per canonical palette color.
+- The v123 palette is recognized as legacy and reallocated with the established balanced, perceptually separated, deterministic per-label mechanism.
+- Existing sessions remain associated with their label color by label ID.
+- Data format v6, localStorage key, backup structure, routines, timer and analysis data are unchanged.
+- Service Worker cache is v124 and removes the known v123 DAYLOG cache.
+
+See TEST-RESULTS.txt for checks performed.
+
+DAYLOG v123 audit
+
+Scope: warm-muted nine-color palette and theme presentation.
+
+- The canonical palette contains exactly nine colors; each has a dedicated light- and dark-theme presentation color.
+- Palette display maps are used through displayLabelColor(); saved label/session colors remain canonical HEX values.
+- Existing migration logic treats v122 palette colors as legacy and assigns colors per label identity using balanced use counts, perceptual separation, and deterministic tie-breaking.
+- Known historical sessions are synchronized to their parent label's new color; orphan/deleted-label sessions remain grouped by label identity.
+- Data format v6, localStorage key, routines, timer and analysis structures are unchanged.
+- Service Worker cache is v123 and removes only the known v122 DAYLOG cache in addition to previously tracked DAYLOG caches.
+
+See TEST-RESULTS.txt for checks performed.
+
+DAYLOG v122 audit
+
+Scope: theme-specific label color presentation, nine-color palette, legacy migration and balanced color allocation.
+
+- 9 standard HEX colors are defined once and used by the existing label swatch UI, timer accents, records and analysis visualizations.
+- Existing valid new-palette colors are retained. Any other valid HEX color is migrated per label identity rather than per old HEX value.
+- Migration uses balanced usage counts first, then the greatest minimum CIE Lab distance from already assigned colors. Stable ID-based tie-breaking keeps results deterministic.
+- Sessions linked to a current label are synchronized to that label color. Sessions linked to deleted/orphan labels are grouped by label ID (or name if ID is absent) so their historical color identity remains consistent.
+- Backup import normalizes legacy colors. Merge-added labels are allocated against the receiving device's current palette usage.
+- Existing app data version, local storage key, session IDs, timestamps, routines and analysis data are unchanged.
+- Service Worker cache is versioned v122 and removes the v121 cache on activation.
+
+See TEST-RESULTS.txt for executed checks.
 
 
-DAYLOG v96 analysis-color audit:
-1. Analysis target mode `all` previously used one accent color for the entire recorded total, unlike the colored proportional stack used by multi-label selection.
-2. Added a tracked composition builder keyed by the complete analysis label catalog, including labels that remain only in historical sessions.
-3. Per-day label totals are proportionally normalized to the union of recorded intervals, preventing overlapping sessions from inflating the sum.
-4. The hourly graph performs the same per-hour interval-union normalization.
-5. The overall trend graph, legend, hourly graph, and breakdown now share the same label color mapping, including dark-mode conversion.
-6. Existing selected-label, compare, unrecorded, and multi-series modes remain separate and unchanged.
+DAYLOG v135 audit
 
+Scope: analysis settings control order only.
 
-DAYLOG v97 responsive toast audit:
-1. The v96 toast used `white-space: nowrap`, so long notices could extend beyond narrow mobile viewports.
-2. Added a narrow-screen layout using safe left/right insets and automatic width so the notice can wrap across the available screen width.
-3. Applied `white-space: normal`, `overflow-wrap: anywhere`, and centered text to handle Japanese and long uninterrupted Latin strings/file names.
-4. The mobile toast uses a vertical-only transform so the left/right layout is not shifted by the desktop centering transform.
-5. Desktop toast geometry and short-message appearance remain unchanged. Toast text, display duration, ARIA role/live region, and application data are unchanged.
-6. PWA cache is bumped to `daylog-toast-wrap-v97`; the v96 cache is explicitly retired.
+- Existing period, analysis-target and chart-mode controls are contiguous at the top of the analysis settings section.
+- The two newer filters (weekday and label-based date filter) follow as a grouped pair, so they no longer split the original controls.
+- All existing control IDs, event targets, filter state, persisted preferences, date-selection logic, and aggregation logic are unchanged.
+- Service Worker cache is v135 and removes the known v134 DAYLOG cache.
 
-Validation: see TEST-RESULTS.txt.
+See TEST-RESULTS.txt for checks performed.
 
-
-2026-11-26 v98: calendar day-duration display adjusted for narrow mobile columns; no data/schema changes.
-
-
-DAYLOG v100 routine summary progress audit:
-1. Added a compact progress bar to the collapsed daily-routine disclosure summary.
-2. The summary count and percentage are refreshed by the existing checklist render path after every daily checkbox mutation and after reset-boundary refresh.
-3. Only items with kind !== 'cycle' contribute to daily done/total and percentage. Cycle stock remains displayed and managed separately in the expanded list.
-4. When there are no daily items, the compact progress bar is hidden and the summary explicitly reports that no daily tasks are present.
-5. Existing expanded progress display, reset-time logic, backup format v6, and storage key daylog.data.v3 are unchanged.
-6. PWA cache name bumped to daylog-routine-summary-progress-v100; v99 cache explicitly retired.
-
-
-DAYLOG v101 routine custom-select audit:
-1. Routine-add task kind is present in the initial DOM and already receives the app-wide custom-select decoration.
-2. Routine-edit execution mode is inserted dynamically by renderRoutineSettingsList(), after the one-time page-load decoration pass, and therefore remained a native browser select.
-3. Added a scoped decoration pass for select[data-routine-kind] immediately after dynamic routine list rendering. decorateSelect() is idempotent and does not double-wrap already customized selects.
-4. The existing bubbled change event remains intact, so the delegated handler still toggles the periodic fields and the existing form submit path receives the selected value.
-5. Added full-width display rules for select controls within routine add/edit labels. No data/schema or reset logic changes.
-
-
-DAYLOG v103 routine-options hierarchy audit:
-1. The routine-add options disclosure now uses the same nested border/background mix as the label sublabel disclosure (`var(--line)` and 75% `var(--bg)` + 25% `var(--surface)`).
-2. Its summary uses the same restrained type weight, muted text, and rotating chevron affordance as label sublabel settings.
-3. The content spacing and field backgrounds align with the sublabel editor's nested controls (the app background color); the routine name field remains the more prominent entry point.
-4. Both themes continue to resolve through the existing CSS variables; no saved data or form behavior changes.
-
-
-DAYLOG v109 time-wheel motion audit:
-1. Replaced the short interval-average fling estimate with a recency-weighted velocity estimate over the last 100ms, with a bounded minimum interval for coalesced pointer events.
-2. Pointer-up position is included where it differs from the last pointer-move; pauses before release bleed away momentum and a pause beyond 115ms cancels the fling.
-3. Fling launch velocity is scaled by 5.0 and capped at 14 CSS px/ms. Retention is 0.9885 per 16.67ms frame, with a 9s safety maximum.
-4. Reduced the post-coast alignment from quintic to cubic easing and shortened its duration. It remains aligned to a 36px row to keep the selected time unambiguous.
-5. Circular normalization shifts the active gesture samples into the new coordinate space so a seam crossing does not discard fling velocity. Daily reset scheduling, save format v6, and storage key daylog.data.v3 are unchanged.
-
-Validation: see TEST-RESULTS.txt.
-
-
-DAYLOG v110 routine meter rendering audit:
-1. Consolidated the periodic stock meter's normal and buffer fills into one positioned fill element using a two-tone linear gradient. This removes reliance on adjacent absolute-positioned fill layers to paint contiguously.
-2. Set explicit display, height, z-index, pointer behavior and fallback colors for the meter fill and track zones.
-3. Clamped stock count, maximum stock, total fill width, goal width and normal-color share to finite bounds before generating CSS percentages.
-4. Added explicit block display and color fallbacks to both daily progress meters; the daily completion percentage is clamped to 0..100.
-5. Zero stock intentionally remains visually empty; any positive stock produces a finite, non-negative fill width. The normal goal portion uses the accent color and excess stock uses the buffer color.
-6. Storage schema v6, storage key daylog.data.v3, reset behavior and token/streak calculations remain unchanged.
-7. Service Worker cache bumped to daylog-routine-meter-fix-v110 and v109 retired.
-
-Validation: see TEST-RESULTS.txt.
+## v137 (2026-11-28)
+- Split the former single analysis-settings disclosure into two independent sections: **Date** and **Special filters**.
+- Date section opens by default for frequent period changes; Special filters starts collapsed for infrequently changed weekday and label conditions.
+- Kept Analysis target and Chart display together and directly accessible outside the two disclosures.
+- Date disclosure summary reflects the selected period, including a custom date range. Special-filter summary reflects weekday and label conditions.
+- Existing analysis preferences, weekday/label filters, aggregation logic, and backup data format remain unchanged.

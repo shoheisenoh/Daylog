@@ -1,3 +1,64 @@
+DAYLOG v145 compatibility
+=========================
+- Data format remains v6; localStorage key remains `daylog.data.v3`. Routine item/check structures, `routines.resetTime`, session history, analysis preferences, and JSON backup format are unchanged.
+- The daily-reset time-wheel synchronization now treats normalized stored data as authoritative until the wheel is visible. This prevents a hidden wheel's zero scroll offset from being written/displayed as 00:00 during startup. When opened, the wheel is positioned to the saved value and then paints its selection.
+- Default reset time remains 05:00. Existing valid saved reset times are retained. Older v5-shaped backups without `routines` continue to normalize to an empty routine list and reset time 05:00; this path was exercised with a v5 backup fixture.
+- Storage failure protection remains transactional: a simulated quota exception on routine mutation left the previous serialized `daylog.data.v3` snapshot unchanged, and the previously saved routine reloaded from the saved snapshot.
+- PWA Service Worker cache: `daylog-final-stability-v145`; `daylog-auto-stop-note-refined-v144` is registered as a known legacy DAYLOG cache. Cache cleanup remains restricted to known DAYLOG cache IDs / the DAYLOG cache prefix.
+- Standalone HTML and PWA `index.html` are byte-identical.
+- Device-specific browser persistence, iOS Safari, and a real installed-PWA session require physical-browser validation and are not certified by the automated environment.
+
+DAYLOG v142 compatibility
+
+- Removes only the analysis-screen JSON import shortcut and its special post-import analysis reset.
+- The standard settings JSON import continues to replace app data as before; cross-device merge remains available.
+- No stored analysis preference, local data schema v6, session record, export or backup format changes.
+- Service Worker cache: daylog-analysis-json-import-entry-removed-v142; v141 is registered as a known legacy DAYLOG cache.
+- Standalone HTML and PWA index.html are byte-identical.
+
+DAYLOG v139: CSS-only adjustment to analysis section divider spacing. No data schema, storage key, or browser API changes.
+
+DAYLOG v134 compatibility
+
+- The include and exclude date-filter controls are displayed as independent collapsed disclosure panels. Their selected filter tokens and OR/AND mode are stored and read exactly as in v133.
+- No preference key, data schema, session record, label record, export or backup format changes are made by this UI adjustment.
+- Existing saved conditions remain active when the panels are collapsed; expanding or collapsing a panel does not change the conditions.
+- Service Worker cache: daylog-analysis-day-filter-disclosures-v134; v133 is registered as a known legacy DAYLOG cache.
+- Standalone HTML and PWA `index.html` are byte-identical.
+
+DAYLOG v131 compatibility
+
+- Existing analysis weekday preferences keep the same numeric weekday IDs (Sunday=0 … Saturday=6); only display/normalization order changes to Sunday-first.
+- No user re-selection is required. All, weekday, weekend, and custom weekday sets retain the same meaning.
+- Storage format v6, localStorage keys, session records, and backup format are unchanged.
+- Service Worker cache: daylog-analysis-weekday-sunday-start-v131; v130 is registered as a known legacy DAYLOG cache.
+- Standalone HTML and PWA `index.html` are byte-identical.
+
+DAYLOG v130 compatibility
+
+- Optional analysis preference `weekdays` is backward-compatible; absent, invalid, or empty values resolve to all seven days.
+- Existing localStorage key `daylog.analysis.v1`, storage format v6, and backup format are retained.
+- No session or history records are transformed. Weekday selection changes analysis inclusion only.
+- Service Worker cache: daylog-analysis-weekday-filter-v130; v129 registered as a known legacy DAYLOG cache.
+- Standalone HTML and PWA `index.html` are byte-identical.
+
+DAYLOG v128 compatibility
+
+- Keeps data format v6 and localStorage key daylog.data.v3.
+- Changes only the nine light-/dark-theme display color maps; canonical saved colors and historical session color values are unchanged.
+- Keeps all theme-aware rendering through displayLabelColor(); custom HEX fallback behavior is unchanged.
+- Keeps existing migration/allocation behavior: usage balancing, CIE Lab color separation, deterministic ID tie-break, and session synchronization by label ID.
+- The standalone HTML and PWA index.html are byte-identical.
+- Service Worker cache: daylog-background-harmonized-label-palette-v128; v127 is registered as a known legacy DAYLOG cache.
+
+DAYLOG v123 compatibility
+
+- Keeps data format v6 and localStorage key daylog.data.v3.
+- Moves valid legacy/custom colors to the v123 canonical nine-color palette by label identity; historical sessions follow their label ID.
+- Theme-specific display colors are presentation-only; theme changes do not rewrite saved canonical color HEX values.
+- The standalone HTML and PWA index.html are byte-identical.
+- Service Worker cache: daylog-warm-muted-palette-v123; v122 is registered as a known legacy cache.
+
 DAYLOG v95 compatibility
 
 - Keeps v94 and earlier data format v6 and localStorage key daylog.data.v3.
@@ -49,3 +110,17 @@ DAYLOG v108
 - Extends time-wheel flick momentum while retaining loop normalization and final row snapping.
 - PWA cache name: `daylog-routine-apple-scroll-v108`; v107 cache is registered as a known legacy cache.
 - Standalone HTML and PWA `index.html` are byte-identical.
+
+
+DAYLOG v114
+- Data format v6, localStorage key `daylog.data.v3`, JSON backup format, routines, sessions and analysis data are unchanged.
+- Time-wheel interaction tuning only: reduced flick velocity multiplier and cap, slightly shorter glide range, and stronger quintic snap easing.
+- Reduced-motion preference does not disable direct-manipulation flick inertia.
+- Standalone HTML and PWA index.html are byte-identical.
+
+
+DAYLOG v116
+- UI-only CSS stacking change: the translucent selected-row frame is behind the time labels; wheel content remains above it.
+- The wheel window owns the surface background; the scroll layer is transparent. Fade masks remain above the text.
+- Data format v6, localStorage key daylog.data.v3, JSON backup format, gestures, inertia, snapping, and save logic are unchanged.
+- Standalone HTML and PWA index.html are byte-identical.
